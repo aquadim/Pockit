@@ -2,6 +2,7 @@
 // Оценки
 
 class GradesView extends LayoutView {
+
 	public function content():void { ?>
 
 <h1>Оценки</h1>

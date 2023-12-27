@@ -1,3 +1,6 @@
 pockit.geany
 src/vendor
 src/.env
+src/jquery
+src/jqueryui
+src/db.sqlite3

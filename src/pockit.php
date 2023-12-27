@@ -29,7 +29,7 @@ class Router {
 
 	// Выполняет маршрутизацию
 	public function handle(string $request_uri) {
-		if (preg_match('/^\/(?:css|fonts|img|doc|js)\//', $request_uri)) {
+		if (preg_match('/^\/(?:css|fonts|img|jquery|jqueryui|js)\//', $request_uri)) {
 			// Подача как есть
 			return false;
 		}
@@ -43,6 +43,7 @@ class Router {
 		}
 
 		// Маршрут не найден, вызываем 404!
+		header("HTTP/1.1 404 Not Found");
 		$this->invoke($this->not_found_handler, $request_uri);
 	}
 
@@ -53,4 +54,25 @@ class Router {
 		$h->$handle_method();
 		exit();
 	}
+}
+
+// Класс работы с БД
+class Database {
+    private static $db;
+    private $connection;
+    
+    private function __construct() {
+        $this->connection = new SQLite3(rootdir.'/db.sqlite3');
+    }
+
+    function __destruct() {
+        $this->connection->close();
+    }
+
+    public static function getConnection() {
+        if (self::$db == null) {
+            self::$db = new Database();
+        }
+        return self::$db->connection;
+    }
 }

@@ -7,7 +7,7 @@ class GradesController extends Controller {
 	public function index() {
 		$view = new GradesView([
 			"page_title"=>"Оценки",
-			"crumbs" => ["Главная" => "/"]
+			"crumbs" => ["Главная" => "/", "Оценки" => "/grades"]
 		]);
 		$view->view();
 	}

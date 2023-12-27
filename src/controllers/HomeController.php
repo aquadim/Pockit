@@ -18,11 +18,9 @@ class HomeController extends Controller {
 		}
 		$welcome_text .= ", ".$_ENV["user_name"];
 
-		//~ echo $welcome_text;
-
 		$view = new HomeView([
 			"welcome_text" => $welcome_text,
-			"page_title" => "ДОМ"
+			"page_title" => "Pockit"
 		]);
 		$view->view();
 	}
