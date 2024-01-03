@@ -6,16 +6,16 @@ class LayoutView extends View {
 	protected $crumbs = array();
 
 	protected function breadcrumbs() { ?>
-<nav aria-label="breadcrumb">
-	<ol class="breadcrumb" style="--bs-breadcrumb-divider-color:var(--bs-light)">
+<nav class="breadcrumb">
+	<ul>
 	<?php foreach ($this->crumbs as $crumb => $url) {
 		if ($crumb === array_key_last($this->crumbs)) { ?>
-			<li class="text-light breadcrumb-item"><?= $crumb ?></li>
+			<li class="breadcrumb-item active"><?= $crumb ?></li>
 		<?php } else { ?>
-			<li class="breadcrumb-item active"><a href="<?= $url ?>"><?= $crumb ?></a></li>
+			<li class="breadcrumb-item"><a href="<?= $url ?>"><?= $crumb ?></a></li>
 		<?php } ?>
 	<?php } ?>
-	</ol>
+	</ul>
 </nav>
 <?php }
 
@@ -32,12 +32,13 @@ class LayoutView extends View {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title><?= $this->page_title ?></title>
 		<link rel="stylesheet" href="/jqueryui/themes/base/jquery-ui.min.css">
+		<link rel="stylesheet" href="/css/pockit.css">
 		<script src="/jquery/jquery.min.js"></script>
 		<script src="/jqueryui/jquery-ui.min.js"></script>
 
 		<?php $this->customHead() ?>
 	</head>
-	<body class="container bg-dark text-light">
+	<body>
 		<?php $this->breadcrumbs(); ?>
 		<?php $this->content(); ?>
 	</body>

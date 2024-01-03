@@ -3,48 +3,34 @@
 
 class HomeView extends LayoutView {
 	protected $welcome_text;
+
+	protected function customHead() { ?>
+<link rel="stylesheet" href="/css/home.css">
+	<?php }
+	
 	public function content():void { ?>
 
-<!--Добро пожаловать-->
-<h1><?= $this->welcome_text ?></h1>
-<h3>Выбери действие</h3>
-
-<div>
-	<div>
-		<p><a href="/regen/new">Создать отчёт</a></p>
-		<p><a href="/regen/new">Архив отчёт</a></p>
-		<p><a href="/grades">Оценки</a></p>
-	</div>
+<div class='text-center'>
+	<h1><?= $this->welcome_text ?></h1>
+	<h3>Выбери действие</h3>
 </div>
 
-<!--Меню действий-->
-<!--
-<div id='home-actions'>
-	<div class='home-action'>
-		<img src="/img/home-actions/file.png">
-		<a class='full-link' href="/regen/new" target="_blank">Создать отчёт<span></span></a>
-	</div>
-	<div class='home-action'>
-		<img src="/img/home-actions/archive.png">
-		<a class='full-link' href="/regen/archive">Архив отчётов<span></span></a>
-	</div>
-	<div class='home-action'>
-		<img src="/img/home-actions/table.png">
-		<a class='full-link' href="/regen/tabgen">Генератор таблиц<span></span></a>
-	</div>
-	<div class='home-action'>
-		<img src="/img/home-actions/settings.png">
-		<a class='full-link' href="#">Настройки<span></span></a>
-	</div>
-	<div class='home-action'>
-		<img src="/img/home-actions/lock.png">
-		<a class='full-link' href="/passwords">Менеджер паролей<span></span></a>
-	</div>
-	<div class='home-action'>
-		<img src="/img/home-actions/search.png">
-		<a class='full-link' href="/knowledge">Учебные материалы<span></span></a>
+<div class='actions' style='width: 50%; margin: auto;'>
+	<div class='actions-row'>
+		<div class='action'>
+			<img src="/img/actions/file.png">
+			<a href="/regen/new">Создать отчёт<span class='stretched-link'></span></a>
+		</div>
+		<div class='action'>
+			<img src="/img/actions/archive.png">
+			<a href="/regen/new">Архив отчётов<span class='stretched-link'></span></a>
+		</div>
+		<div class='action'>
+			<img src="/img/actions/exam.png">
+			<a href="/grades">Оценки<span class='stretched-link'></span></a>
+		</div>
 	</div>
 </div>
--->
 		
-<?php }}
+<?php }
+}

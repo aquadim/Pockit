@@ -7,7 +7,8 @@ class RegenNewReportView extends LayoutView {
 	protected $error_text;
 
 	protected function content():void { ?>
-<h1 class='page-title'>Создание отчёта</h1>
+
+<h1 class='text-center'>Создание отчёта</h1>
 
 <?php if (isset($this->error_text)) {?>
 	<div class='card error'>

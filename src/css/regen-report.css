@@ -1,43 +1,43 @@
-#markup {
-	display: flex;
-	justify-content: center;
-}
-
-#markuparea {
-	width: 95%;
-	height: 100%;
+#controls > textarea {
+	width: -moz-available;
 	resize: vertical;
+	background-color: #404040;
+	outline: none;
+	border: 1px solid var(--card-border);
+	color: var(--fg);
 }
 
-/*https://stackoverflow.com/questions/90178/make-a-div-fill-the-height-of-the-remaining-screen-space*/
-#previewdiv {
+#control-buttons {
+	margin-bottom: 1em;
+}
+
+#preview {
 	font-family: timesnewroman;
 	background-color: #383838;
 	color: #aaa;
 	font-size: 12pt;
-	margin:0;
-	height: 70vh;
+	margin: 0;
 	overflow: scroll;
 }
 
-.preview span {
+#preview span {
 	position: absolute;
 	font-size: 12px;
 	user-select: none;
 }
 
 /* Контейнер страницы */
-.preview .page-container {
+#preview .page-container {
 	padding: 16px;
 }
 
 /* Разделитель */
-.preview hr {
+#preview hr {
 	width: 50%;
 }
 
 /* Все страницы */
-.preview .page {
+#preview .page {
 	background-position:2cm 1cm;
 	background-size: 18.5cm 28.2cm;
 	box-sizing: border-box;
@@ -53,37 +53,37 @@
 }
 
 /* Страницы с большой рамкой */
-.preview .page.big {
+#preview .page.big {
 	background-image: url(/img/regen/bigframe.gif);
 }
 
 /* Страницы с маленькой рамкой */
-.preview .page.small {
+#preview .page.small {
 	background-image: url(/img/regen/smallframe.gif);
 }
 
 /* Страницы без рамки */
-#previewdiv .page.tpage,
-#previewdiv .page.apage {
+#preview .page.tpage,
+#preview .page.apage {
 	padding: 2cm
 }
 
 /* Заголовок (по центру) */
-.preview .page .title {
+#preview .page .title {
 	text-align:center;
 	text-align-last:center;
 	text-indent:0cm;
 }
 
 /* Текст по правому краю */
-.preview .page .r {
+#preview .page .r {
 	text-align:right;
 	text-align-last:right;
 	text-indent:0cm;
 }
 
 /* Обычный текст */
-.preview .page p {
+#preview .page p {
 	line-height: 1.5;
 	padding: 0;
 	margin: 0;
@@ -93,12 +93,12 @@
 }
 
 /* Заголовок таблицы */
-.preview .page .tt {
+#preview .page .tt {
 	text-indent:0;
 }
 
 /* Изображение */
-.preview img {
+#preview img {
 	max-width: 12cm;
 	margin:0.5cm auto 0.25cm auto;
 	display:block;
@@ -112,67 +112,65 @@ td {padding: 0 0.3cm;vertical-align:top;}
 th {text-align:center !important;font-weight:normal}
 
 /* Текст в рамках */
-.preview .iz::after {content: "Изм.";}
-.preview .ls::after,
-.preview .pl::after {content: "Лист";}
-.preview .nd::after {content: "№ докум.";}
-.preview .pd::after {content: "Подпись";}
-.preview .dt::after {content: "Дата";}
-.preview .rz::after {content: "Разраб.";}
-.preview .lt::after {content: "Лит.";}
-.preview .al::after {content: "Листов";}
-.preview .pr::after {content: "Провер.";}
-.preview .nc::after {content: "Н. Контр.";}
-.preview .ut::after {content: "Утверд.";}
+#preview .iz::after {content: "Изм.";}
+#preview .ls::after,
+#preview .pl::after {content: "Лист";}
+#preview .nd::after {content: "№ докум.";}
+#preview .pd::after {content: "Подпись";}
+#preview .dt::after {content: "Дата";}
+#preview .rz::after {content: "Разраб.";}
+#preview .lt::after {content: "Лит.";}
+#preview .al::after {content: "Листов";}
+#preview .pr::after {content: "Провер.";}
+#preview .nc::after {content: "Н. Контр.";}
+#preview .ut::after {content: "Утверд.";}
 
-.preview .page.big .co {left:9.2cm; bottom: 3.5cm; right:0.6cm;font-size:22px;text-align:center;}
-.preview .page.big .iz {left:2.1cm;bottom:3.1cm;}
-.preview .page.big .ls {left:3.15cm;bottom:3.1cm;}
-.preview .page.big .nd {left:4.7cm;bottom:3.1cm;}
-.preview .page.big .pd {left:6.6cm;bottom:3.1cm;}
-.preview .page.big .dt {left:8.24cm;bottom:3.1cm;}
-.preview .page.big .rz {left:2.15cm;bottom:2.6cm;}
-.preview .page.big .sr {left:4.13cm; bottom:2.6cm;}
-.preview .page.big .lt {left:15.6cm;bottom:2.6cm;}
-.preview .page.big .pl {left:17.1cm;bottom:2.6cm;}
-.preview .page.big .al {left:18.8cm;bottom:2.6cm;}
-.preview .page.big .pr {left:2.15cm;bottom:2.1cm;}
-.preview .page.big .st {left:4.13cm; bottom:2.1cm;}
-.preview .page.big .cp {left:16.71cm;right:2.9cm;bottom:2.1cm;text-align:center;}
-.preview .page.big .pc {left:18.1cm;right:0.6cm;bottom:2.1cm;text-align:center;}
-.preview .page.big .nm {left:9.1cm;bottom:1.6cm;right:5.85cm;font-size:16px;text-align:center;}
-.preview .page.big .gr {left:15.25cm;right:0.6cm;bottom:1cm;text-align:center;font-size:20px;}
-.preview .page.big .nc {left:2.15cm;bottom:1.1cm;}
-.preview .page.big .ut {left:2.15cm;bottom:0.6cm;}
+#preview .page.big .co {left:9.2cm; bottom: 3.5cm; right:0.6cm;font-size:22px;text-align:center;}
+#preview .page.big .iz {left:2.1cm;bottom:3.1cm;}
+#preview .page.big .ls {left:3.15cm;bottom:3.1cm;}
+#preview .page.big .nd {left:4.7cm;bottom:3.1cm;}
+#preview .page.big .pd {left:6.6cm;bottom:3.1cm;}
+#preview .page.big .dt {left:8.24cm;bottom:3.1cm;}
+#preview .page.big .rz {left:2.15cm;bottom:2.6cm;}
+#preview .page.big .sr {left:4.13cm; bottom:2.6cm;}
+#preview .page.big .lt {left:15.6cm;bottom:2.6cm;}
+#preview .page.big .pl {left:17.1cm;bottom:2.6cm;}
+#preview .page.big .al {left:18.8cm;bottom:2.6cm;}
+#preview .page.big .pr {left:2.15cm;bottom:2.1cm;}
+#preview .page.big .st {left:4.13cm; bottom:2.1cm;}
+#preview .page.big .cp {left:16.71cm;right:2.9cm;bottom:2.1cm;text-align:center;}
+#preview .page.big .pc {left:18.1cm;right:0.6cm;bottom:2.1cm;text-align:center;}
+#preview .page.big .nm {left:9.1cm;bottom:1.6cm;right:5.85cm;font-size:16px;text-align:center;}
+#preview .page.big .gr {left:15.25cm;right:0.6cm;bottom:1cm;text-align:center;font-size:20px;}
+#preview .page.big .nc {left:2.15cm;bottom:1.1cm;}
+#preview .page.big .ut {left:2.15cm;bottom:0.6cm;}
 
-.preview .page.small .iz {left:2.15cm;bottom:0.6cm;}
-.preview .page.small .ls {left:3.15cm;bottom:0.6cm;}
-.preview .page.small .nd {left:4.61cm;bottom:0.6cm;}
-.preview .page.small .pd {left:6.6cm;bottom:0.6cm;}
-.preview .page.small .dt {left:8.25cm;bottom:0.6cm;}
-.preview .page.small .co {left:9.1cm;bottom:1.0cm;right:1.5cm;font-size:22px;text-align:center;}
-.preview .page.small .pl {left:19.55cm;bottom:1.55cm;}
-.preview .page.small .cp {left:19.5cm;bottom:0.90cm;right:0.5cm;text-align:center;}
+#preview .page.small .iz {left:2.15cm;bottom:0.6cm;}
+#preview .page.small .ls {left:3.15cm;bottom:0.6cm;}
+#preview .page.small .nd {left:4.61cm;bottom:0.6cm;}
+#preview .page.small .pd {left:6.6cm;bottom:0.6cm;}
+#preview .page.small .dt {left:8.25cm;bottom:0.6cm;}
+#preview .page.small .co {left:9.1cm;bottom:1.0cm;right:1.5cm;font-size:22px;text-align:center;}
+#preview .page.small .pl {left:19.55cm;bottom:1.55cm;}
+#preview .page.small .cp {left:19.5cm;bottom:0.90cm;right:0.5cm;text-align:center;}
 
 .opt {display:block;text-align:center !important;font-size:18px;color:white;font-family:sans;margin: 8px 0px;user-select:none;}
 .opt:hover {color:#005BFF;}
 
 @media print {
-
-	#tabs,
-	#printReportButton,
 	nav,
-	#printpreview hr {
+	#markuparea,
+	button,
+	#preview hr {
 		display: none;
 	}
 
-	#printpreview .page-container {
+	#preview .page-container {
 		padding: 0;
 	}
 
-	#printpreview .page {
-		background-color:#fff;
-		color:#000
+	#preview .page {
+		background-color: white;
+		color: black;
 	}
-
 }

@@ -3,9 +3,13 @@
 
 class GradesView extends LayoutView {
 
+	public function customHead() { ?>
+<link rel='stylesheet' href='/css/grades.css'>
+	<?php }
+
 	public function content():void { ?>
 
-<h1>Оценки</h1>
+<h1 class='text-center'>Оценки</h1>
 
 <svg id="loading" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin:auto;background:transparent;display:block;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
 <g transform="translate(80,50)">

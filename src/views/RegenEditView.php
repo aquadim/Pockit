@@ -10,24 +10,17 @@ class RegenEditView extends LayoutView {
 
 	public function content():void { ?>
 
-<div id="tabs">
-	<ul>
-		<li><a href="#markup"><span>Разметка</span></a></li>
-		<li><a href="#preview"><span>Превью</span></a></li>
-	</ul>
-
-	<div id="markup">
-		<textarea onkeyup="textAreaAdjust(this)" id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
+<div class='card' id="controls">
+	<div id='control-buttons'>
+		<button id='switchMarkup'>Разметка</button>
+		<button id='switchPreview'>Превью</button>
+		<button id='printReportButton' onclick="printReport()">Печать</button>
 	</div>
 
-	<div id="preview">
-		<div class='preview' id="previewdiv"></div>
-	</div>
+	<textarea onkeyup="textAreaAdjust(this)" id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
+	<div id="preview"></div>
 </div>
 
-<button id='printReportButton' onclick="printReport()">Печать</button>
-
-<div class='preview' id="printpreview"></div>
  
 <script src="/js/regenpreview.js"></script>
 <?php }
