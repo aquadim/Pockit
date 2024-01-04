@@ -31,6 +31,7 @@ class Router {
 	public function handle(string $request_uri) {
 		if (preg_match('/^\/(?:css|fonts|img|jquery|jqueryui|js)\//', $request_uri)) {
 			// Подача как есть
+			header("Cache-Control: public, max-age=3600");
 			return false;
 		}
 

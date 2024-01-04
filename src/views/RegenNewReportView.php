@@ -17,7 +17,7 @@ class RegenNewReportView extends LayoutView {
 <?php } ?>
 
 <form action="/regen/new" method="POST">
-	<div class="card">
+	<div class="card" style='border-color: var(--accent)'>
 		<div class="form-control-container">
 			<label for="sel-subject_id">Предмет</label>
 			<select class="form-control" id="sel-subject_id" name="subject_id">
@@ -46,7 +46,7 @@ class RegenNewReportView extends LayoutView {
 			<input class="form-control" id="inp-notice" placeholder="Всё что угодно" type="text" name="notice"/>
 		</div>
 
-		<input class="form-control" type="submit" value="Создать">
+		<button type="submit" class="createbutton form-control">Создать</button>
 	</div>
 </form>
 <?php }} ?>

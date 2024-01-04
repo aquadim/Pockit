@@ -30,6 +30,7 @@ class LayoutView extends View {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Cache-control" content="public">
 		<title><?= $this->page_title ?></title>
 		<link rel="stylesheet" href="/jqueryui/themes/base/jquery-ui.min.css">
 		<link rel="stylesheet" href="/css/pockit.css">
