@@ -8,11 +8,13 @@ class RegenController extends Controller {
 		$parts = explode("/", $this->request_uri);
 		$report_id = end($parts);
 		$report = ReportModel::getById($report_id);
+		$subject = SubjectModel::getById($report['subject_id']);
 
 		$view = new RegenEditView([
 			"page_title" => "Regen: редактирование отчёта",
-			"crumbs" => ["Главная"=>"/", "Regen" => "/"],
-			"markup" => $report['markup']
+			"crumbs" => ["Главная"=>"/", "Regen: редактирование отчёта" => "/"],
+			"markup" => $report['markup'],
+			"filename" => $subject['name']." #".$report['work_number']." - Королёв"
 		]);
 		$view->view();
 	}
@@ -63,7 +65,7 @@ class RegenController extends Controller {
 			'subjects' => $subjects,
 			'worktypes' => $worktypes,
 			'error_text' => $error_text,
-			"crumbs" => ["Главная"=>"/", "Regen" => "/"]
+			"crumbs" => ["Главная"=>"/", "Regen: создание отчёта" => "/"]
 		]);
 		$view->view();
 	}

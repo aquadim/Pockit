@@ -17,7 +17,7 @@ class RegenNewReportView extends LayoutView {
 <?php } ?>
 
 <form action="/regen/new" method="POST">
-	<div class="card" style='border-color: var(--accent)'>
+	<div class="card">
 		<div class="form-control-container">
 			<label for="sel-subject_id">Предмет</label>
 			<select class="form-control" id="sel-subject_id" name="subject_id">

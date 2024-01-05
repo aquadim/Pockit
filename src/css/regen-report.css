@@ -1,10 +1,12 @@
 #controls > textarea {
 	width: -moz-available;
 	resize: vertical;
-	background-color: #404040;
+	background-color: var(--gray-4);
 	outline: none;
 	border: 1px solid var(--card-border);
-	color: var(--fg);
+	color: var(--gray-8);
+	border-radius: 5px;
+	font-size: 1rem;
 }
 
 #control-buttons {
@@ -161,8 +163,25 @@ th {text-align:center !important;font-weight:normal}
 	nav,
 	#markuparea,
 	button,
-	#preview hr {
+	#preview hr,
+	#control-buttons,
+	.no-print {
 		display: none;
+	}
+	
+	#controls {
+		visibility: hidden;
+		width: auto;
+		margin: 0;
+		padding: 0;
+		max-width: unset;
+		border: none;
+		border-radius: 0px;
+	}
+
+	#preview {
+		display: block !important;
+		visibility: visible;
 	}
 
 	#preview .page-container {

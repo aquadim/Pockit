@@ -3,6 +3,7 @@
 
 class RegenEditView extends LayoutView {
 	protected $markup;
+	protected $filename;
 
 	public function customHead():void { ?>
 <link rel="stylesheet" href="/css/regen-report.css">
@@ -14,11 +15,15 @@ class RegenEditView extends LayoutView {
 	<div id='control-buttons'>
 		<button id='switchMarkup'>Разметка</button>
 		<button id='switchPreview'>Превью</button>
-		<button id='printReportButton' onclick="printReport()">Печать</button>
+		<button id="printReport">Печать</button>
 	</div>
 
 	<textarea onkeyup="textAreaAdjust(this)" id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
-	<div id="preview"></div>
+	<div style='display: none;' id="preview"></div>
+</div>
+
+<div class='card no-print'>
+	<p>Название файла: <span class='filename'><?= $this->filename ?></span></p>
 </div>
 
  

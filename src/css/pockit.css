@@ -21,15 +21,14 @@
 	--accent: #396690;
 }
 
-@font-face {
-	font-family: 'Finlandica';
-	src: url('/fonts/Finlandica-Regular.otf')
-} 
+@font-face{font-family:'lato'; src: url('/fonts/Lato-Bold.ttf') format('truetype'); font-weight: bold; font-style: normal;}
+@font-face{font-family:'lato'; src: url('/fonts/Lato-BoldItalic.ttf') format('truetype'); font-weight:bold; font-style: italic;}
+@font-face{font-family:'lato'; src: url('/fonts/Lato-Regular.ttf') format('truetype'); font-weight:normal; font-style: normal;}
 
 body {
 	background-color: var(--gray-1);
 	color: var(--gray-8);
-	font-family: 'Finlandica';
+	font-family: 'lato';
 	font-size: 18px;
 	margin: 0;
 }
@@ -74,16 +73,24 @@ nav {
 
 /* End Forms */
 
-
 /* Buttons */
 button,
 input {
 	background-color: var(--gray-4);
 	border: 1px solid var(--gray-5);
-	padding: 0.25em;
-	color: var(--gray-6);
+	padding: 0.5em;
+	color: var(--gray-9);
 	font-size: 1rem;
 	border-radius: 5px;
+}
+
+button:hover {
+	background-color: var(--gray-6);
+}
+
+button:active,
+button:focus {
+	background-color: var(--gray-3);
 }
 
 .createbutton {
@@ -210,3 +217,9 @@ a:hover {
 	color: #f9fbf8;
 }
 /* End Cards */
+
+.filename {
+	user-select: all;
+	font-weight: bold;
+	text-decoration: underline;
+}
