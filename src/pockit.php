@@ -77,3 +77,71 @@ class Database {
         return self::$db->connection;
     }
 }
+
+// Запрос к базе данных
+class DatabaseQuery {
+	private array $conditions;
+	private array $joins;
+	private array $fields;
+	private string $table;
+
+	public static function create() {
+		return new self();
+	}
+
+	#region Setters
+
+	// Setter - поля SELECT
+	public function setFields($fields) {
+		if (gettype($fields) === 'string') {
+			$this->fields = [$fields];
+		} else {
+			$this->fields = $fields;			
+		}
+		return $this;
+	}
+
+	// Setter - название таблицы
+	public function setTable(string $table) {
+		$this->table = $table;
+		return $this;
+	}
+
+	// Setter - условия запроса
+	public function setConditions($conditions) {
+		if (gettype($conditions) === 'string') {
+			$this->conditions = [$conditions];
+		} else {
+			$this->conditions = $conditions;
+		}
+		return $this;
+	}
+
+	// Setter - соединения
+	public function setJoins(array $joins) {
+		$this->joins = $joins;
+		return $this;
+	}
+
+	#endregion
+
+	public function constructQuery() : string {
+		// SELECT
+		$query = "SELECT ".implode(",", $this->fields);
+
+		// FROM
+		$query .= " FROM ".$this->table." ";
+
+		// JOINS
+		foreach ($this->joins as $join) {
+			$query .= "LEFT JOIN ".$join[0]." ON ".$join[1]." = ".$join[2]." ";
+		}
+
+		// WHERE
+		if (!empty($this->conditions)) {
+			$query .= "WHERE ".implode(" AND ", $this->conditions);
+		}
+
+		return $query;
+	}
+}
