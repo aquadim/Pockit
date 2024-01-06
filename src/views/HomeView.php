@@ -23,7 +23,7 @@ class HomeView extends LayoutView {
 		</div>
 		<div class='action'>
 			<img src="/img/actions/archive.png">
-			<a href="/regen/new">Архив отчётов<span class='stretched-link'></span></a>
+			<a href="/regen/archive">Архив отчётов<span class='stretched-link'></span></a>
 		</div>
 		<div class='action'>
 			<img src="/img/actions/exam.png">

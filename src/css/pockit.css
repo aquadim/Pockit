@@ -33,10 +33,20 @@ body {
 	margin: 0;
 }
 
+h1 {
+	margin: 0;
+}
+
 nav {
 	background-color: var(--gray-0);
 	border-bottom: 1px solid var(--gray-2);
 }
+
+/* Colors */
+.danger {
+	background-color: var(--error);
+}
+/* End Colors */
 
 /* Forms */
 .form-control-container {
@@ -216,10 +226,48 @@ a:hover {
 	border-color: red;
 	color: #f9fbf8;
 }
+
+.card.modal {
+	position: fixed;
+	top: 10%;
+	left: 0;
+	right: 0;
+	z-index: 2;
+}
 /* End Cards */
 
 .filename {
 	user-select: all;
 	font-weight: bold;
 	text-decoration: underline;
+}
+
+/* CRUD */
+.crud-item {
+	margin: 1rem auto;
+	padding: 1em;
+	background-color: var(--gray-2);
+	border-radius: 5px;
+	display: grid;
+	grid-template-columns: 75% 25%;
+}
+
+.crud-buttons {
+	display: flex;
+	flex-direction: column;
+}
+
+.crud-buttons button {
+	margin: 0.1em;
+}
+/* End CRUD */
+
+.dark-overlay {
+	background-color: rgba(0,0,0,0.5);
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
 }

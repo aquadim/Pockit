@@ -3,6 +3,18 @@
 
 class RegenController extends Controller {
 
+	// Архив отчётов
+	public function archive() {
+		$subjects = SubjectModel::all();
+
+		$view = new RegenArchiveView([
+			"page_title" => "Regen: архив",
+			"crumbs" => ["Главная" => "/", "Regen: архив" => "/"],
+			"subjects" => $subjects
+		]);
+		$view->view();
+	}
+
 	// Редактирование отчёта
 	public function edit() {
 		$parts = explode("/", $this->request_uri);

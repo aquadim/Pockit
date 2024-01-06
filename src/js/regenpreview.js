@@ -21,7 +21,6 @@ $("#switchMarkup").click(function() {
 });
 
 $("#printReport").click(function() {
-
 	updatePreview(true);
 })
 

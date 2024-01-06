@@ -29,11 +29,10 @@ class Model {
 	}
 
 	// Удаляет запись по ID
-	public static function delete($id) {
+	public static function deleteById($id) {
 		$db = Database::getConnection();
 		$stm = $db->prepare("DELETE FROM ".static::$table_name." WHERE id=:id");
 		$stm->bindValue(":id", $id);
-		echo $stm->getSQL(true);
 		$stm->execute();
 	}
 }
