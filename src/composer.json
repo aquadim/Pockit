@@ -1,15 +1,12 @@
 {
     "require": {
         "vlucas/phpdotenv": "^5.6",
-        "components/jquery": "^3.7",
-        "components/jqueryui": "^1.12"
+        "components/jquery": "^3.7"
     },
     "scripts": {
         "post-update-cmd": [
             "rm -rf jquery",
-            "rm -rf jqueryui",
-            "cp -R vendor/components/jquery/ jquery",
-            "cp -R vendor/components/jqueryui jqueryui"
+            "cp -R vendor/components/jquery/ jquery"
         ]
     }
 }
