@@ -12,4 +12,15 @@ class SubjectModel extends Model {
 		$stm->execute();
 		return $db->lastInsertRowID();
 	}
+
+	// Обновляет запись в таблице
+	public static function update($subject) {
+		$db = Database::getConnection();
+		$stm = $db->prepare("UPDATE ".static::$table_name." SET name=:name,code=:code,teacher_id=:teacher_id WHERE id=:id");
+		$stm->bindValue(":id", $subject['id']);
+		$stm->bindValue(":name", $subject['name']);
+		$stm->bindValue(":code", $subject['code']);
+		$stm->bindValue(":teacher_id", $subject['teacher_id']);
+		$stm->execute();
+	}
 }

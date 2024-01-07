@@ -25,6 +25,7 @@ $router->register("/regen/archive", ['RegenController', 'archive']);
 
 // API
 $router->register('/subjects/create', ['ApiController', 'createSubject']);
+$router->register('/subjects/update', ['ApiController', 'updateSubject']);
 $router->register('/subjects/delete', ['ApiController', 'deleteSubject']);
 $router->register('/teachers/read', ['ApiController', 'getTeachers']);
 
