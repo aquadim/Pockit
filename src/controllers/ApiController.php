@@ -25,6 +25,21 @@ class ApiController extends Controller {
 		SubjectModel::deleteById($_GET['id']);
 	}
 
+	// Обновление отчёта
+	public function updateReport() {
+		$report = ReportModel::getById($_POST['id']);
+		$report['notice'] = $_POST['notice'];
+		$report['work_number'] = $_POST['work_number'];
+		$report['work_type'] = $_POST['work_type'];
+		ReportModel::update($report);
+		echo json_encode($report);
+	}
+
+	// Удаление отчёта
+	public function deleteReport() {
+		ReportModel::deleteById($_GET['id']);
+	}
+
 	// Получение всех преподавателей
 	public function getTeachers() {
 		$teachers = TeacherModel::all();
@@ -32,6 +47,17 @@ class ApiController extends Controller {
 		while ($teacher = $teachers->fetchArray(SQLITE3_ASSOC)) {
 			$teacher['repr'] = $teacher['surname'];
 			$output[] = $teacher;
+		}
+		echo json_encode($output);
+	}
+
+	// Получение всех типов работ
+	public function getWorkTypes() {
+		$worktypes = WorkTypeModel::all();
+		$output = [];
+		while ($worktype = $worktypes->fetchArray(SQLITE3_ASSOC)) {
+			$worktype['repr'] = $worktype['name_nom'];
+			$output[] = $worktype;
 		}
 		echo json_encode($output);
 	}

@@ -3,6 +3,23 @@
 
 class RegenController extends Controller {
 
+	// Список отчётов по дисциплине
+	public function listReports() {
+		$parts = explode("/", $this->request_uri);
+		$subject_id = end($parts);
+		
+		$reports = ReportModel::where("subject_id", $subject_id);
+		$subject = SubjectModel::getById($subject_id);
+
+		$view = new RegenReportsView([
+			"page_title" => "Regen: архив ".$subject['name'],
+			"crumbs" => ["Главная" => "/", "Regen: архив" => "/regen/archive", $subject['name'] => ""],
+			"reports" => $reports,
+			"subject" => $subject
+		]);
+		$view->view();
+	}
+
 	// Архив отчётов
 	public function archive() {
 		$subjects = SubjectModel::all();
