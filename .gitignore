@@ -4,3 +4,4 @@ src/.env
 src/jquery
 src/jqueryui
 src/db.sqlite3
+src/img/regen/rgn*

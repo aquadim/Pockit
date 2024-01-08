@@ -28,9 +28,13 @@ class ApiController extends Controller {
 	// Обновление отчёта
 	public function updateReport() {
 		$report = ReportModel::getById($_POST['id']);
-		$report['notice'] = $_POST['notice'];
-		$report['work_number'] = $_POST['work_number'];
-		$report['work_type'] = $_POST['work_type'];
+
+		$fields = ['work_number', 'work_type', 'notice', 'markup'];
+		foreach ($fields as $field) {
+			if (isset($_POST[$field])) {
+				$report[$field] = $_POST[$field];
+			}
+		}
 		ReportModel::update($report);
 		echo json_encode($report);
 	}

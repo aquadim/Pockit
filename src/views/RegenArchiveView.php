@@ -43,7 +43,7 @@ class RegenArchiveView extends LayoutView {
             <div id='subject`+subject.id+`' class='crud-item'>
                 <p>`+subject.name+`</p>
                 <div class='crud-buttons'>
-                    <button>Отчёты</button>
+                    <button onclick='document.location.href = "/regen/archive/`+subject.id+`"'>Отчёты</button>
                     <button onclick='crudUpdateShowWindow("subjects", {"Название": {type: "plain", name: "name", default: "`+subject.name+`"}, "Шифр": {type: "plain", name: "code", default: "`+subject.code+`"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers", default:`+subject.teacher_id+`}, "ID": {type: "hidden", name: "id", default: `+subject.id+`}}, "Обновление дисциплины", updateSubject)'>Изменить</button>
                     <button onclick='crudDelete("subjects", `+subject.id+`, "subject`+subject.id+`")' class='danger'>Удалить</button>
                 </div>

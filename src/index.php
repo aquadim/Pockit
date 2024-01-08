@@ -19,6 +19,7 @@ $router->register('/grades/get', ['GradesController', 'collect']);
 
 // Regen
 $router->register('/regen/new', ['RegenController', 'newReport']);
+$router->register('/regen/upload-image', ['RegenController', 'uploadImage']);
 $router->register('/regen/edit/\d+', ['RegenController', 'edit']);
 $router->register("/regen/gethtml", ['RegenController', 'getHtml']);
 $router->register("/regen/archive", ['RegenController', 'archive']);

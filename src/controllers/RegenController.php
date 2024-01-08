@@ -3,6 +3,32 @@
 
 class RegenController extends Controller {
 
+	// Загрузка изображений
+	public function uploadImage() {
+
+		if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+			$mime_type = mime_content_type($_FILES['file']['tmp_name']);
+			$filepath = tempnam(rootdir."/img/regen", "rgnupload");
+
+			if ($mime_type == "image/png") {
+				// Конвертирование png в gif
+				$png_image = imagecreatefrompng($_FILES['file']['tmp_name']);
+				$gif_image = imagecreatetruecolor(imagesx($png_image), imagesy($png_image));
+				imagecopy($gif_image, $png_image, 0, 0, 0, 0, imagesx($png_image), imagesy($png_image));
+				imagegif($gif_image, $filepath);
+			} else {
+				// Просто перемещение файла
+				$filepath = tempnam(rootdir."/img/regen", "rgnupload");
+				move_uploaded_file($_FILES['file']['tmp_name'], $filepath);
+			}
+
+			$output = ["ok"=>true, "filename"=>basename($filepath)];
+		} else {
+			$output = ["ok"=>false];
+		}
+		echo json_encode($output);
+	}
+
 	// Список отчётов по дисциплине
 	public function listReports() {
 		$parts = explode("/", $this->request_uri);
@@ -43,7 +69,8 @@ class RegenController extends Controller {
 			"page_title" => "Regen: редактирование отчёта",
 			"crumbs" => ["Главная"=>"/", "Regen: редактирование отчёта" => "/"],
 			"markup" => $report['markup'],
-			"filename" => $subject['name']." #".$report['work_number']." - Королёв"
+			"filename" => $subject['name']." #".$report['work_number']." - Королёв",
+			"report_id" => $report_id
 		]);
 		$view->view();
 	}

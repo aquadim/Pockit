@@ -10,14 +10,14 @@ class RegenNewReportView extends LayoutView {
 
 <h1 class='text-center'>Создание отчёта</h1>
 
-<?php if (isset($this->error_text)) {?>
-	<div class='card error'>
-		<?= $this->error_text ?>
-	</div>
-<?php } ?>
-
 <form action="/regen/new" method="POST">
 	<div class="card">
+		<?php if (isset($this->error_text)) {?>
+			<div class='card error'>
+				<?= $this->error_text ?>
+			</div>
+		<?php } ?>
+
 		<div class="form-control-container">
 			<label for="sel-subject_id">Предмет</label>
 			<select class="form-control" id="sel-subject_id" name="subject_id">

@@ -33,10 +33,8 @@ class LayoutView extends View {
 		<meta http-equiv="Cache-control" content="public">
 		<title><?= $this->page_title ?></title>
 		<link rel='icon' type='image/png' href='/img/favicons/pockit.png'>
-		<link rel="stylesheet" href="/jqueryui/themes/base/jquery-ui.min.css">
 		<link rel="stylesheet" href="/css/pockit.css">
 		<script src="/jquery/jquery.min.js"></script>
-		<script src="/jqueryui/jquery-ui.min.js"></script>
 		<script src="/js/pockit.js"></script>
 		<?php $this->customHead() ?>
 	</head>
