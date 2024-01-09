@@ -4,7 +4,7 @@
 class RegenController extends Controller {
 
 	// Загрузка изображений
-	public function uploadImage() {
+	public static function uploadImage() {
 
 		if (is_uploaded_file($_FILES['file']['tmp_name'])) {
 			$mime_type = mime_content_type($_FILES['file']['tmp_name']);
@@ -30,9 +30,7 @@ class RegenController extends Controller {
 	}
 
 	// Список отчётов по дисциплине
-	public function listReports() {
-		$parts = explode("/", $this->request_uri);
-		$subject_id = end($parts);
+	public static function listReports($subject_id) {
 		
 		$reports = ReportModel::where("subject_id", $subject_id);
 		$subject = SubjectModel::getById($subject_id);
@@ -47,7 +45,7 @@ class RegenController extends Controller {
 	}
 
 	// Архив отчётов
-	public function archive() {
+	public static function archive() {
 		$subjects = SubjectModel::all();
 
 		$view = new RegenArchiveView([
@@ -59,15 +57,13 @@ class RegenController extends Controller {
 	}
 
 	// Редактирование отчёта
-	public function edit() {
-		$parts = explode("/", $this->request_uri);
-		$report_id = end($parts);
+	public function edit($report_id) {
 		$report = ReportModel::getById($report_id);
 		$subject = SubjectModel::getById($report['subject_id']);
 
 		$view = new RegenEditView([
 			"page_title" => "Regen: редактирование отчёта",
-			"crumbs" => ["Главная"=>"/", "Regen: редактирование отчёта" => "/"],
+			"crumbs" => ["Главная"=>"/", "Regen: архив" => "/regen/archive/", $subject['name'] => "/regen/archive/".$subject['id'], "Редактирование"=>"/"],
 			"markup" => $report['markup'],
 			"filename" => $subject['name']." #".$report['work_number']." - Королёв",
 			"report_id" => $report_id
@@ -76,7 +72,7 @@ class RegenController extends Controller {
 	}
 
 	// Валидация создания отчёта
-	private function validateCreation() {
+	private static function validateCreation() {
 		if (empty($_POST["number"])) {
 			// Запрос на создание
 			return 'Не указан номер работы';
@@ -85,12 +81,12 @@ class RegenController extends Controller {
 	}
 
 	// Создание отчёта
-	public function newReport() {
+	public static function newReport() {
 		$subjects = SubjectModel::all();
 		$worktypes = WorkTypeModel::all();
 
 		if (!empty($_POST)) {
-			$response = $this->validateCreation();
+			$response = self::validateCreation();
 			if ($response === true) {
 				// Валидация успешна
 
@@ -127,7 +123,7 @@ class RegenController extends Controller {
 	}
 
 	// Получение HTML
-	public function getHtml() {
+	public static function getHtml() {
 		$report = ReportModel::getById($_POST['report_id']);
 		$subject = SubjectModel::getById($report["subject_id"]);
 		$work_type = WorkTypeModel::getById($report["work_type"]);
@@ -287,7 +283,7 @@ class RegenController extends Controller {
 
 			$output .= $page_wrapped->render();
 
-			if ($this->isCountablePage($current_page_marker) != "!-") {
+			if (self::isCountablePage($current_page_marker) != "!-") {
 				$current_page_number++;
 			}
 		}

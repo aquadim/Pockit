@@ -4,7 +4,7 @@
 class HomeController extends Controller {
 
 	// Главная домашняя страница
-	public function index() {
+	public static function index() {
 		// Определяем текст приветствия
 		$now_hour = localtime(time(), true)['tm_hour'];
 		if ($now_hour < 6 || $now_hour > 20) {

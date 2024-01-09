@@ -4,7 +4,7 @@
 class GradesController extends Controller {
 
 	// Оценки
-	public function index() {
+	public static function index() {
 		$view = new GradesView([
 			"page_title"=>"Оценки",
 			"crumbs" => ["Главная" => "/", "Оценки" => "/grades"]
@@ -13,7 +13,7 @@ class GradesController extends Controller {
 	}
 
 	// Сбор оценок
-	public function collect() {
+	public static function collect() {
 		
 		// Создаём разделяемый обработчик
 		$sh = curl_share_init();

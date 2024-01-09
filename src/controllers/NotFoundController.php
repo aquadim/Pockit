@@ -3,7 +3,7 @@
 
 class NotFoundController {
 	// Главная страница
-	public function index() {
+	public static function index() {
 		$view = new NotFoundView();
 		$view->view();
 	}

@@ -31,49 +31,57 @@ class Router {
 	public function handle(string $request_uri) {
 		if (preg_match('/^\/(?:css|fonts|img|jquery|js)\//', $request_uri)) {
 			// Подача как есть
-			header("Cache-Control: public, max-age=3600");
 			return false;
 		}
 
 		// Ищем подходящий маршрут
+		// TODO: кэшировать regex-выражения если приложение не в режиме разработки
 		foreach ($this->routes as $route => $callback) {
-			$pattern = '/^'.str_replace('/', '\/', $route).'\/?((?:\?|\&)\w+=\w*)*$/';
-			if (preg_match($pattern, $request_uri)) {
-				$this->invoke($callback, $request_uri);
+			// Преобразование маршрута в regex выражение
+			$pattern = preg_replace(
+				['/\//', '/{(\w+)}/'],
+				['\\\/', '(?<$1>\\w+)'],
+				$route
+			);
+			$pattern = '/^'.$pattern.'\/?((?:\?|\&)\w+=\w*)*$/';
+			if (preg_match($pattern, $request_uri, $named_groups)) {
+				// Поиск именованных групп в $named_groups
+				$named_groups = array_filter($named_groups, function($key) {
+					return !is_numeric($key);
+				}, ARRAY_FILTER_USE_KEY);
+				$this->invoke($callback, $named_groups);
 			}
 		}
 
 		// Маршрут не найден, вызываем 404!
 		header("HTTP/1.1 404 Not Found");
-		$this->invoke($this->not_found_handler, $request_uri);
+		$this->invoke($this->not_found_handler, []);
 	}
 
 	// Вызывает функцию, которую определил маршрут
-	private function invoke(callable $callback, string $request_uri) {
-		list($handler, $handle_method) = $callback;
-		$h = new $handler($request_uri);
-		$h->$handle_method();
+	private function invoke(callable $callback, array $parameters) {
+		call_user_func_array($callback, $parameters);
 		exit();
 	}
 }
 
 // Класс работы с БД
 class Database {
-    private static $db;
-    private $connection;
-    
-    private function __construct() {
-        $this->connection = new SQLite3(rootdir.'/db.sqlite3');
-    }
+	private static $db;
+	private $connection;
+	
+	private function __construct() {
+		$this->connection = new SQLite3(rootdir.'/db.sqlite3');
+	}
 
-    function __destruct() {
-        $this->connection->close();
-    }
+	function __destruct() {
+		$this->connection->close();
+	}
 
-    public static function getConnection() {
-        if (self::$db == null) {
-            self::$db = new Database();
-        }
-        return self::$db->connection;
-    }
+	public static function getConnection() {
+		if (self::$db == null) {
+			self::$db = new Database();
+		}
+		return self::$db->connection;
+	}
 }
