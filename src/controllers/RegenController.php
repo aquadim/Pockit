@@ -57,7 +57,7 @@ class RegenController extends Controller {
 	}
 
 	// Редактирование отчёта
-	public function edit($report_id) {
+	public static function edit($report_id) {
 		$report = ReportModel::getById($report_id);
 		$subject = SubjectModel::getById($report['subject_id']);
 
