@@ -19,7 +19,7 @@ class RegenEditView extends LayoutView {
 		<button id="printReport">Печать</button>
 	</div>
 
-	<textarea onkeyup="textAreaAdjust(this)" id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
+	<textarea id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
 	<div style='display: none;' id="preview"></div>
 </div>
 

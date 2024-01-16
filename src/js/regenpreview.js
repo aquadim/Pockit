@@ -53,25 +53,25 @@ $(document).ready(function() {
 			}
 		}
 	});
-});
+	
+	$("#switchPreview").click(function() {
+		markup_area.hide();
+		preview_area.show();
+		updatePreview();
+		saveMarkup();
+	});
 
-$("#switchPreview").click(function() {
-	markup_area.hide();
-	preview_area.show();
-	updatePreview();
-	saveMarkup();
-});
+	$("#switchMarkup").click(function() {
+		markup_area.show();
+		preview_area.hide();
+		saveMarkup();
+	});
 
-$("#switchMarkup").click(function() {
-	markup_area.show();
-	preview_area.hide();
-	saveMarkup();
+	$("#printReport").click(function() {
+		saveMarkup();
+		updatePreview(true);
+	})
 });
-
-$("#printReport").click(function() {
-	saveMarkup();
-	updatePreview(true);
-})
 
 // При печати текста заставляет textbox расширяться
 function textAreaAdjust(element) {

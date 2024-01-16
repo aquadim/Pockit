@@ -186,6 +186,9 @@ class RegenController extends Controller {
 				}
 
 				$str = $lines[$current_line_index];
+				
+				// Все короткие тире в строке заменяются длинными
+				$str = str_replace("-", "&mdash;", $str);
 
 				// Интерпретация строки
 				if ($str == "") {
