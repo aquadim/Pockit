@@ -17,13 +17,13 @@ $router->register('', 'HomeController::index');
 $router->register('/grades', 'GradesController::index');
 $router->register('/grades/get', 'GradesController::collect');
 
-// Regen
-$router->register('/regen/new', 'RegenController::newReport');
-$router->register('/regen/upload-image', 'RegenController::uploadImage');
-$router->register('/regen/edit/{report_id}', 'RegenController::edit');
-$router->register("/regen/gethtml", 'RegenController::getHtml');
-$router->register("/regen/archive", 'RegenController::archive');
-$router->register("/regen/archive/{subject_id}", 'RegenController::listReports');
+// Автогост
+$router->register('/autogost/new', 'AutoGostController::newReport');
+$router->register('/autogost/upload-image', 'AutoGostController::uploadImage');
+$router->register('/autogost/edit/{report_id}', 'AutoGostController::edit');
+$router->register("/autogost/gethtml", 'AutoGostController::getHtml');
+$router->register("/autogost/archive", 'AutoGostController::archive');
+$router->register("/autogost/archive/{subject_id}", 'AutoGostController::listReports');
 
 // API
 $router->register('/subjects/create', 'ApiController::createSubject');

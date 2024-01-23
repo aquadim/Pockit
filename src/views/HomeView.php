@@ -19,11 +19,11 @@ class HomeView extends LayoutView {
 	<div class='actions-row'>
 		<div class='action'>
 			<img src="/img/actions/file.png">
-			<a href="/regen/new">Создать отчёт<span class='stretched-link'></span></a>
+			<a href="/autogost/new">Создать отчёт<span class='stretched-link'></span></a>
 		</div>
 		<div class='action'>
 			<img src="/img/actions/archive.png">
-			<a href="/regen/archive">Архив отчётов<span class='stretched-link'></span></a>
+			<a href="/autogost/archive">Архив отчётов<span class='stretched-link'></span></a>
 		</div>
 		<div class='action'>
 			<img src="/img/actions/exam.png">
