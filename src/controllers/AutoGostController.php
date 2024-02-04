@@ -192,7 +192,10 @@ class AutoGostController extends Controller {
 				if ($str == "") {
 					// Пустая строка
 					$line_content = "";
-
+				
+				} else if ($str == "\\") {
+					// Перенос строки
+					$line_content = '<br/>';
 				} else if ($str[0] == "#") {
 					// Выровененный по центру текст
 					$line_content = "<p class='title'>".trim(substr($str, 1))."</p>";
