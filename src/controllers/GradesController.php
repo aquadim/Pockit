@@ -24,13 +24,13 @@ class GradesController extends Controller {
 		curl_setopt($auth, CURLOPT_COOKIEFILE, "");
 		curl_setopt($auth, CURLOPT_SHARE, $sh);
 		curl_setopt($auth, CURLOPT_POST, 1);
-		curl_setopt($auth, CURLOPT_POSTFIELDS, 'username='.$_ENV["journal_login"].'&userpass='.sha1($_ENV["journal_password"]));
+		curl_setopt($auth, CURLOPT_POSTFIELDS, 'username='.journal_login.'&userpass='.sha1(journal_password));
 		curl_setopt($auth, CURLOPT_ENCODING, 'windows-1251');
 		curl_setopt($auth, CURLOPT_RETURNTRANSFER, 1);
 		curl_exec($auth);
 
 		// Запрос на экспорт оценок
-		$grades = curl_init('http://vpmt.ru:8081/region_pou/region.cgi/journal_och?page=1&marks=1&period_id='.$_ENV['period_id'].'&export=1');
+		$grades = curl_init('http://vpmt.ru:8081/region_pou/region.cgi/journal_och?page=1&marks=1&period_id='.period_id.'&export=1');
 		curl_setopt($grades, CURLOPT_COOKIEFILE, "");
 		curl_setopt($grades, CURLOPT_SHARE, $sh);
 		curl_setopt($grades, CURLOPT_RETURNTRANSFER, 1);

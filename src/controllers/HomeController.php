@@ -16,7 +16,7 @@ class HomeController extends Controller {
 		} else {
 			$welcome_text = 'Добрый вечер';
 		}
-		$welcome_text .= ", ".$_ENV["user_name"];
+		$welcome_text .= ", ".user_name;
 
 		$view = new HomeView([
 			"welcome_text" => $welcome_text,

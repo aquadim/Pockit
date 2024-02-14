@@ -57,7 +57,7 @@ function userInput($prompt) : string {
 }
 
 // 1. Создание БД
-$db_path = __DIR__."/../src/db.sqlite3";
+$db_path = __DIR__."/src/db.sqlite3";
 if (file_exists($db_path)) {
 	displayMessage("Файл базы данных уже существует -- пропускаем создание\n", COLOR_YELLOW);
 } else {
@@ -67,23 +67,42 @@ if (file_exists($db_path)) {
 }
 
 // 2. Заполнение .env файла
-$env_path = __DIR__."/../src/.env";
+$env_path = __DIR__."/src/config.php";
 if (file_exists($env_path)) {
 
-	displayMessage("Файл .env уже существует -- пропускаем создание\n", COLOR_YELLOW);
+	displayMessage("Файл config.php уже существует -- пропускаем создание\n", COLOR_YELLOW);
 
 } else {
 
-	$user_name = userInput("Как тебя зовут?\n");
+	$user_name = userInput("Введи твоё имя\n");
+	$user_surname = userInput("Введи твою фамилию\n");
+	$user_patronymic = userInput("Введи твоё отчество\n");
+	$user_group = userInput("Введи группу в которой ты учишься. Например 3ИС\n");
+	$user_code = userInput("Введи конец шифра в твоих отчётах. Например .012.09.02.07.000\n");
 	$journal_login = userInput("Введи логин от электронного дневника\n");
 	$journal_password = userInput("Введи пароль от электронного дневника\n");
 	$period_id = userInput("Введи текущий period_id\n");
 
+	$full = $user_surname.' '.mb_substr($user_name, 0, 1).'. '.mb_substr($user_patronymic, 0, 1).'.';
+
 	$fp = fopen($env_path, 'w');
-	fwrite($fp, 'user_name="'.$user_name.'"'."\n");
-	fwrite($fp, 'journal_login="'.$journal_login.'"'."\n");
-	fwrite($fp, 'journal_password="'.$journal_password.'"'."\n");
-	fwrite($fp, 'period_id="'.$period_id.'"'."\n");
+	fwrite($fp, '<?php
+// Файл настроек
+
+// Установка временного пояса по умолчанию (GMT+3)
+date_default_timezone_set("Europe/Kirov");
+
+define("rootdir", __DIR__);
+');
+	fwrite($fp, "define('user_name', '".$user_name."');\n");
+	fwrite($fp, "define('journal_login', '".$journal_login."');\n");
+	fwrite($fp, "define('journal_password', '".$journal_password."');\n");
+	fwrite($fp, "define('period_id', '".$period_id."');\n");
+	fwrite($fp, "define('autogost_surname', '".$user_surname."');\n");
+	fwrite($fp, "define('autogost_full', '".$full."');\n");
+	fwrite($fp, "define('autogost_group', '".$user_group."');\n");
+	fwrite($fp, "define('autogost_code', '".$user_code."');\n");
+	
 	fclose($fp);
 
 	displayMessage("Файл настроек успешно создан!\n", COLOR_GREEN);

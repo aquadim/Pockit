@@ -10,6 +10,10 @@ class AutoGostEditView extends LayoutView {
 <link rel="stylesheet" href="/css/autogost-report.css">
 <?php }
 
+	public function customScripts():void { ?>
+<script src="/js/autogostpreview.js"></script>
+<?php }
+
 	public function content():void { ?>
 
 <div class='card' id="controls">
@@ -30,7 +34,5 @@ class AutoGostEditView extends LayoutView {
 	</form>
 	<p>Название файла: <span class='filename'><?= $this->filename ?></span></p>
 </div>
- 
-<script src="/js/autogostpreview.js"></script>
 <?php }
 }

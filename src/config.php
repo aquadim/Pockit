@@ -4,15 +4,12 @@
 // Установка временного пояса по умолчанию (GMT+3)
 date_default_timezone_set("Europe/Kirov");
 
-define('rootdir', __DIR__);
-
-require_once rootdir."/vendor/autoload.php";
-
-if (strtoupper(substr(php_uname("s"), 0, 3)) === 'WIN') {
-    define("server_os", "windows");
-} else {
-    define("server_os", "linux");
-}
-
-$dotenv = Dotenv\Dotenv::createImmutable(rootdir);
-$dotenv->load();
+define("rootdir", __DIR__);
+define('user_name', 'Вадим');
+define('journal_login', 'korolevvs');
+define('journal_password', '4jUPF0WqAX');
+define('period_id', '577');
+define('autogost_surname', 'Королёв');
+define('autogost_full', 'Королёв В. С.');
+define('autogost_group', '3ИС');
+define('autogost_code', '.012.09.02.07.000');

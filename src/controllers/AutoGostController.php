@@ -270,14 +270,14 @@ class AutoGostController extends Controller {
 
 			// Всё то, что нагенерировали засовываем в страницу
 			$page_wrapped = new AutoGostPageView([
-				'work_code' => $subject['code'].$_ENV['autogost_code'],
+				'work_code' => $subject['code'].autogost_code,
 				'teacher_full' => $teacher["surname"]." ".mb_substr($teacher['name'],0,1).'. '.mb_substr($teacher['patronymic'],0,1).'.',
-				'author_surname' => $_ENV['autogost_surname'],
-				'author_full' => $_ENV['autogost_full'],
+				'author_surname' => autogost_surname,
+				'author_full' => autogost_full,
 				'subject' => $subject,
 				'work_type' => $work_type,
 				'pages_count' => $pages_count,
-				'author_group' => $_ENV['autogost_group'],
+				'author_group' => autogost_group,
 				'work_number' => $report['work_number'],
 				'teacher_surname' => $teacher['surname'],
 				'current_page_number' => $current_page_number,

@@ -22,6 +22,10 @@ class LayoutView extends View {
 	protected function customHead() {
 		
 	}
+
+	protected function customScripts() {
+		
+	}
 	
 	public function view():void { ?>
 
@@ -34,13 +38,14 @@ class LayoutView extends View {
 		<title><?= $this->page_title ?></title>
 		<link rel='icon' type='image/png' href='/img/favicons/pockit.png'>
 		<link rel="stylesheet" href="/css/pockit.css">
-		<script src="/jquery/jquery.min.js"></script>
-		<script src="/js/pockit.js"></script>
 		<?php $this->customHead() ?>
 	</head>
 	<body>
 		<?php $this->breadcrumbs(); ?>
 		<?php $this->content(); ?>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+		<script src="/js/pockit.js"></script>
+		<?php $this->customScripts(); ?>
 	</body>
 </html>
 
