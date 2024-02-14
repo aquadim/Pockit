@@ -204,7 +204,7 @@ class AutoGostController extends Controller {
 					// Изображение
 					list($image_path, $image_title) = explode(":", substr($str, 1));
 					$picture_title = "Рисунок {$current_image_number} - {$image_title}";
-					$line_content = "<img src='/img/autogost/$image_path' title='$picture_title'><p class='title'>$picture_title</p>";
+					$line_content = "<br/><img src='/img/autogost/$image_path' title='$picture_title'><p class='title'>$picture_title</p><br/>";
 
 					$current_image_number++;
 
