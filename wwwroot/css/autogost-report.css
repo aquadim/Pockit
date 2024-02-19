@@ -1,0 +1,122 @@
+#preview {
+	font-family: "Times New Roman";
+	background-color: #383838;
+	color: #aaaaaa;
+	font-size: 12pt;
+	margin: 0;
+	overflow: scroll;
+	line-height: 1.5;
+}
+
+.page {
+	width: 210mm;
+	height: 297mm;
+	background-color: #CCCCCC;
+	color: #252525;
+	margin: 1em auto;
+	border-radius: 10px;
+	border: 2px solid #404040;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Браузеры... */
+.page p,
+.page figure {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.page .report-text {
+	text-indent: 15mm;
+	text-align: justify;
+	text-align-last: left;
+}
+
+.page figure {
+	margin: 1lh auto;
+	text-align: center;
+}
+
+.page figure img {
+	max-height: 10cm;
+	border: 1px solid #252525;
+}
+
+#titlepage .page {
+	padding: 2cm;
+}
+
+.section-heading {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+/* Основная часть */
+.subsection .page {
+	padding: 2cm 1.5cm 0cm 3cm;
+	background-image: url(/img/autogost/smallframe.gif);
+}
+
+/* Основная часть - первая страница */
+.subsection .page:first-child {
+	background-image: url(/img/autogost/bigframe.gif);
+}
+
+/* Текст по центру */
+.page .t-center {
+	text-align: center;
+}
+
+/* Текст справа */
+.page .t-right {
+	text-align: right;
+}
+
+/* Legacy правила для <span> */
+.page span {
+	position: absolute;
+	font-size: 11pt;
+}
+.page .nm {
+	position: absolute;
+	left: 91mm;
+	top: 267mm;
+	width: 6cm;
+	height: 24mm;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.page:first-child .co {left:9.2cm; bottom: 32mm; right:0.6cm;font-size:18pt;text-align:center;}
+.page:first-child .iz {left:2.1cm;bottom:29mm;}
+.page:first-child .ls {left:30.5mm;bottom:29mm;}
+.page:first-child .nd {left:45mm;bottom:29mm;}
+.page:first-child .pd {left:66mm;bottom:29mm;font-size: 11pt;}
+.page:first-child .dt {left:82mm;bottom:29mm;}
+.page:first-child .rz {left:2.15cm;bottom:23mm;}
+.page:first-child .sr {left:4.13cm; bottom:24mm;}
+.page:first-child .lt {left:15.6cm;bottom:24mm;}
+.page:first-child .pl {left:17.1cm;bottom:24mm;}
+.page:first-child .al {left:18.8cm;bottom:24mm;}
+.page:first-child .pr {left:2.15cm;bottom:19mm;}
+.page:first-child .st {left:4.13cm; bottom:19mm;}
+.page:first-child .cp {left:16.71cm;right:2.9cm;bottom:2.1cm;text-align:center;}
+.page:first-child .pc {left:181mm;right:4mm;bottom:19mm;text-align:center;}
+.page:first-child .gr {left:15.25cm;right:0.6cm;bottom:8mm;text-align:center;font-size:20px;}
+.page:first-child .nc {left:2.15cm;bottom:13mm;}
+.page:first-child .ut {left:2.15cm;bottom:0.6cm;}
+
+.page .iz {left:2.15cm;bottom:4mm;}
+.page .ls {left:3.15cm;bottom:4mm;}
+.page .nd {left:4.61cm;bottom:4mm;}
+.page .pd {left:6.6cm;bottom:4mm;}
+.page .dt {left:8.25cm;bottom:4mm;}
+.page .co {left:9.1cm;bottom:8mm;right:1.5cm;font-size:22px;text-align:center;}
+.page .pl {left:19.55cm;bottom:14mm;}
+.page .cp {left:19.5cm;bottom:0.90cm;right:0.5cm;text-align:center;}
