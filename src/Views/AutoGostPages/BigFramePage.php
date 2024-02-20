@@ -30,7 +30,7 @@ class BigFramePage extends AutoGostPage {
     <span class="al">Листов</span>
     <span class="pr">Провер.</span>
     <span class="st"><?= static::$teacher_surname ?></span>
-    <span class="cp"><?= $this->current_page_number ?></span>
+    <span class="cp"><?= $this->current_page ?></span>
     <span class="pc"><?= static::$pages_count ?></span>
     <div class='nm'>
         <div><?= $this->framename ?></div>

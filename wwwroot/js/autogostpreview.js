@@ -9,8 +9,7 @@ var saveButton = $('#saveMarkupButton');
 $(document).ready(function() {
 	textAreaAdjust(document.getElementById("markuparea"));
 
-	$("#saveForm").submit(function(e) {
-		e.preventDefault();
+	$("#saveMarkupButton").click(function(e) {
 		saveMarkup();
 	});
 
@@ -55,6 +54,9 @@ $(document).ready(function() {
 	});
 	
 	$("#switchPreview").click(function() {
+		$("#switchMarkup").removeClass('selected');
+		$("#switchPreview").addClass('selected');
+		preview_area.html('<div class="loader"></div>');
 		markup_area.hide();
 		preview_area.show();
 		saveMarkup();
@@ -62,6 +64,8 @@ $(document).ready(function() {
 	});
 
 	$("#switchMarkup").click(function() {
+		$("#switchMarkup").addClass('selected');
+		$("#switchPreview").removeClass('selected');
 		markup_area.show();
 		preview_area.hide();
 		saveMarkup();

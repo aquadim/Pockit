@@ -38,6 +38,7 @@ class LayoutView extends View {
 		<title><?= $this->page_title ?> | Карманный сервер</title>
 		<link rel='icon' type='image/png' href='/img/favicon.png'>
 		<link rel="stylesheet" href="/css/pockit.css">
+		<link rel="stylesheet" href="/css/spinner.css">
 		<?php $this->customHead() ?>
 	</head>
 	<body>

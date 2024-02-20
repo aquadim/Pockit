@@ -18,23 +18,24 @@ class AutoGostEditView extends LayoutView {
 
 	public function content():void { ?>
 
-<div class='card' id="controls">
-	<div id='control-buttons'>
-		<button class='btn' id='switchMarkup'>Разметка</button>
-		<button class='btn' id='switchPreview'>Превью</button>
-		<button class='btn' id="printReport">Печать</button>
+<div id='control-sidebar' class='card no-print'>
+	
+	<button class='btn selected' id='switchMarkup'>Разметка</button>
+	<button class='btn' id='switchPreview'>Превью</button>
+	<button class='btn' id="printReport">Печать</button>
+	<button class='btn'>Получить название файла</button>
+	<button class='btn success' id='saveMarkupButton'>Сохранить</button>
+	
+</div>
+
+<div style='margin-left:200px'>
+	<div class='card' id="controls">
+		<textarea id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
+		<div style='display: none;' id="preview"></div>
 	</div>
-
-	<textarea id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
-	<div style='display: none;' id="preview"></div>
 </div>
 
-<div class='card no-print'>
-	<form id='saveForm'>
-		<input id='idInput' type='hidden' name='id' value='<?=$this->report_id?>'>
-		<button id='saveMarkupButton' class='form-control success' style='width:100%'>Сохранить</button>
-	</form>
-	<p>Название файла: <span class='filename'><?= $this->filename ?></span></p>
-</div>
+<input type='hidden' id='idInput' value='<?= $this->report_id ?>'>
+
 <?php }
 }
