@@ -11,6 +11,7 @@ var reportId = $("#idInput").val();
 var filename = $("#filename").val().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
 
 var isDirty = false;
+var state = 0; // 0 - редактирование, 1 - превью
 
 $(document).ready(function() {
 	textAreaAdjust(document.getElementById("markuparea"));
@@ -65,6 +66,7 @@ $(document).ready(function() {
 	});
 	
 	btnPreview.click(function() {
+		state = 1;
 		$("#switchMarkup").removeClass('selected');
 		$("#switchPreview").addClass('selected');
 		previewArea.html('<div class="loader"></div>');
@@ -75,6 +77,7 @@ $(document).ready(function() {
 	});
 
 	btnMarkup.click(function() {
+		state = 0;
 		$("#switchMarkup").addClass('selected');
 		$("#switchPreview").removeClass('selected');
 		textAreaAdjust(markupArea);
@@ -120,7 +123,13 @@ function updatePreview(thenPrint=false) {
 		success: function (data, textStatus, xhr) {
 			previewArea.html(data);
 			if (thenPrint) {
+				if (state == 0) {
+					previewArea.show();
+				}
 				window.print();
+				if (state == 0) {
+					previewArea.hide();
+				}
 			}
 		}
 	});
