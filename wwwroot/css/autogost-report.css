@@ -1,6 +1,6 @@
 #preview {
 	font-family: "Times New Roman";
-	background-color: #383838;
+	background-color: var(--gray-3);
 	color: #aaaaaa;
 	font-size: 12pt;
 	margin: 0;
@@ -122,3 +122,30 @@
 .page .co {left:9.1cm;bottom:8mm;right:1.5cm;font-size:22px;text-align:center;}
 .page .pl {left:19.55cm;bottom:14mm;}
 .page .cp {left:19.5cm;bottom:7mm;right:0.5cm;text-align:center;}
+
+/* Стили для печатания */
+@media print {
+	body {
+		visibility: hidden;
+	}
+
+	#preview {
+		visibility: visible;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	#preview .page {
+		margin: 0;
+		border-radius: 0;
+		color: #000;
+		background-color: #fff;
+		border: none;
+	}
+}
+
+@print {
+	size: A4;
+	margin: 0;
+}

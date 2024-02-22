@@ -18,17 +18,17 @@ class AutoGostEditView extends LayoutView {
 
 	public function content():void { ?>
 
-<div id='control-sidebar' class='card no-print'>
+<div id='control-sidebar' class='card'>
 	
 	<button class='btn selected' id='switchMarkup'>Разметка</button>
 	<button class='btn' id='switchPreview'>Превью</button>
 	<button class='btn' id="printReport">Печать</button>
-	<button class='btn'>Получить название файла</button>
+	<button class='btn' id="getFilename">Получить название файла</button>
 	<button class='btn success' id='saveMarkupButton'>Сохранить</button>
 	
 </div>
 
-<div style='margin-left:200px'>
+<div style='margin-left:215px'>
 	<div class='card' id="controls">
 		<textarea id="markuparea" autocomplete="off"><?= $this->markup ?></textarea>
 		<div style='display: none;' id="preview"></div>
@@ -36,6 +36,7 @@ class AutoGostEditView extends LayoutView {
 </div>
 
 <input type='hidden' id='idInput' value='<?= $this->report_id ?>'>
+<input type='hidden' id='filename' value='<?= $this->filename ?>'>
 
 <?php }
 }

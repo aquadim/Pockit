@@ -20,12 +20,19 @@ use Pockit\AutoGostSections\SubSection;
 
 class AutoGostController {
 
+	// Применение правил подписи рисунков
+	// https://www.php.net/manual/ru/function.ucfirst.php#84122
+	private static function makeValidPictureTitle(string $title) : string {
+		return mb_strtoupper(mb_substr($title, 0, 1)) .
+			mb_strtolower(mb_substr($title, 1));
+	}
+
 	// Загрузка изображений
 	public static function uploadImage() {
 
 		if (is_uploaded_file($_FILES['file']['tmp_name'])) {
 			$mime_type = mime_content_type($_FILES['file']['tmp_name']);
-			$filepath = tempnam(rootdir."/img/autogost", "rgnupload");
+			$filepath = index_dir."/wwwroot/img/autogost/rgnupload".uniqid();
 
 			if ($mime_type == "image/png") {
 				// Конвертирование png в gif
@@ -35,7 +42,7 @@ class AutoGostController {
 				imagegif($gif_image, $filepath);
 			} else {
 				// Просто перемещение файла
-				$filepath = tempnam(rootdir."/img/autogost", "rgnupload");
+				$filepath = tempnam(index_dir."/img/autogost", "rgnupload");
 				move_uploaded_file($_FILES['file']['tmp_name'], $filepath);
 			}
 
@@ -116,7 +123,7 @@ class AutoGostController {
 					$_POST['work_type'],
 					$_POST['number'],
 					$_POST['notice'],
-					"!-\n!\n#{$work_type['name_nom']} №{$_POST['number']}\n"
+					"@titlepage\n@section:{$work_type['name_nom']} №{$_POST['number']}\n@section:Ответы на контрольные вопросы"
 				);
 
 				// Перенаправляем на предпросмотр этого отчёта
@@ -197,10 +204,13 @@ class AutoGostController {
 					} else {
 						$imgwidth = "";
 					}
+
+					$pictitle = self::makeValidPictureTitle($command[2]);
+					
 					end($document)->addHTML(
 						"<figure>
 							<img ".$imgwidth." src='/img/autogost/".$command[1]."'>
-							<figcaption>Рисунок ".$current_img." - ".$command[2]."</figcaption>
+							<figcaption>Рисунок ".$current_img." - ".$pictitle."</figcaption>
 						</figure>"
 					);
 					$current_img++;
@@ -237,14 +247,8 @@ class AutoGostController {
 			$report
 		);
 
-		echo "<!DOCTYPE html>";
-		echo "<html>";
-		echo "<head><link rel='stylesheet' href='/css/autogost-report.css'></head>";
-		echo "<body><div id='preview'>";
 		foreach ($document as $section) {
 			$section->output();
 		}
-		echo "</div></body>";
-		echo "</html>";
 	}
 }

@@ -1,29 +1,40 @@
-// Текущее состояние страницы
-// 0 - режим редактирования
-// 1 - режим просмотра превью
-var current_state = 0;
-var markup_area = $('#markuparea');
-var preview_area = $('#preview');
-var saveButton = $('#saveMarkupButton');
+var markupArea = $('#markuparea');
+var previewArea = $('#preview');
+
+var btnPreview = $("#switchPreview");
+var btnMarkup = $("#switchMarkup");
+var btnPrint = $('#printReport');
+var btnSave = $('#saveMarkupButton');
+var btnFilename = $('#getFilename');
+
+var reportId = $("#idInput").val();
+var filename = $("#filename").val().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
+
+var isDirty = false;
 
 $(document).ready(function() {
 	textAreaAdjust(document.getElementById("markuparea"));
 
-	$("#saveMarkupButton").click(function(e) {
+	markupArea.keyup(function() {
+		isDirty = true;
+	});
+
+	// Сохранение по кнопке
+	btnSave.click(function(e) {
 		saveMarkup();
 	});
 
 	// Сохранение на Ctrl+S
 	document.addEventListener("keydown", function(e) {
-	  if (e.keyCode === 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-		e.preventDefault();
-		saveMarkup();
-	  }
+		if (e.keyCode === 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+			e.preventDefault();
+			saveMarkup();
+		}
 	}, false);
 
 	// Вставка картинок на Ctrl+V
 	// https://stackoverflow.com/a/6338207
-	$("#markuparea").on('paste', function (e) {
+	markupArea.on('paste', function (e) {
 		let items = (e.clipboardData || e.originalEvent.clipboardData).items;
 		for (let index in items) {
 			let item = items[index];
@@ -44,8 +55,8 @@ $(document).ready(function() {
 						response = JSON.parse(response);
 
 						if (response.ok) {
-							const line = "?"+response.filename+":"+"Подпись изображения";
-							markup_area.val(markup_area.val() + line);
+							const line = "\n@img:"+response.filename+":Изображение";
+							insertAtCursor(document.getElementById("markuparea"), line);
 						}
 					}
 				});
@@ -53,52 +64,66 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#switchPreview").click(function() {
+	btnPreview.click(function() {
 		$("#switchMarkup").removeClass('selected');
 		$("#switchPreview").addClass('selected');
-		preview_area.html('<div class="loader"></div>');
-		markup_area.hide();
-		preview_area.show();
+		previewArea.html('<div class="loader"></div>');
+		markupArea.hide();
+		previewArea.show();
 		saveMarkup();
 		updatePreview();
 	});
 
-	$("#switchMarkup").click(function() {
+	btnMarkup.click(function() {
 		$("#switchMarkup").addClass('selected');
 		$("#switchPreview").removeClass('selected');
-		markup_area.show();
-		preview_area.hide();
+		textAreaAdjust(markupArea);
+		markupArea.show();
+		previewArea.hide();
 		saveMarkup();
 	});
 
-	$("#printReport").click(function() {
+	// Скопировать текст в буфер обмена
+	btnFilename.click(async function() {
+		await navigator.clipboard.writeText(filename);
+		btnFilename.text("Название скопировано");
+		btnFilename.blur();
+	});
+
+	btnFilename.mouseleave(function () {
+		btnFilename.text("Получить название файла");
+	});
+
+	btnPrint.click(function() {
 		saveMarkup();
 		updatePreview(true);
-	})
+	});
 });
 
-// При печати текста заставляет textbox расширяться
+// Заставляет textarea расширяться так, чтобы был текст в ней был полностью
+// виден
 function textAreaAdjust(element) {
-	element.style.height = "1px";
-	element.style.height = (25+element.scrollHeight)+"px";
+	if (element.scrollHeight > element.clientHeight) {
+		// Содержимое полностью не вмещается
+		element.style.height = "calc(1lh + " + element.scrollHeight +"px)";
+	}
 }
 
-function updatePreview(then_print=false) {
-	const str = document.location.toString();
-	const slash_idx = str.lastIndexOf('/');
-	const report_id = str.substring(slash_idx + 1);
-	$.post(
-		"/autogost/gethtml",
-		{
-			report_id: report_id
+// Обновляет #preview на странице, отсылая запрос на получение HTML
+function updatePreview(thenPrint=false) {
+	$.ajax({
+		url: "/autogost/gethtml",
+		type: "post",
+		data: {
+			report_id: reportId
 		},
-		function (data, textStatus, xhr) {
-			$("#preview").html(data);
-			if (then_print) {
+		success: function (data, textStatus, xhr) {
+			previewArea.html(data);
+			if (thenPrint) {
 				window.print();
 			}
 		}
-	);
+	});
 }
 
 // Сохраняет разметку для данного отчёта
@@ -107,11 +132,50 @@ function saveMarkup() {
 		url: "/reports/update",
 		type: "post",
 		data: {
-			id: $("#idInput").val(),
-			markup: $("#markuparea").val()
+			id: reportId,
+			markup: markupArea.val()
 		},
 		success: function() {
-			saveButton.blur();
+			isDirty = false;
+			btnSave.blur();
 		}
 	});
 }
+
+// Вставка текста на текущую позицию курсора
+// https://stackoverflow.com/a/11077016
+function insertAtCursor(myField, myValue) {
+    //IE support
+    if (document.selection) {
+        myField.focus();
+        sel = document.selection.createRange();
+        sel.text = myValue;
+    }
+    //MOZILLA and others
+    else if (myField.selectionStart || myField.selectionStart == '0') {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        myField.value = myField.value.substring(0, startPos)
+            + myValue
+            + myField.value.substring(endPos, myField.value.length);
+    } else {
+        myField.value += myValue;
+    }
+    textAreaAdjust(myField);
+    isDirty = true;
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
+const beforeUnloadHandler = (event) => {
+	if (isDirty == false) {
+		return true;
+	}
+
+	// Recommended
+	event.preventDefault();
+
+	// Included for legacy support, e.g. Chrome/Edge < 119
+	event.returnValue = true;
+};
+
+window.addEventListener("beforeunload", beforeUnloadHandler);
