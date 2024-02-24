@@ -1,151 +1,37 @@
-var markupArea = $('#markuparea');
-var previewArea = $('#preview');
+// Возвращает количество строк разметки
+function getMarkupLineCount() {
+	return tareaMarkup.value.split('\n').length;
+}
 
-var btnPreview = $("#switchPreview");
-var btnMarkup = $("#switchMarkup");
-var btnPrint = $('#printReport');
-var btnSave = $('#saveMarkupButton');
-var btnFilename = $('#getFilename');
-
-var reportId = $("#idInput").val();
-var filename = $("#filename").val().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
-
-var isDirty = false;
-var state = 0; // 0 - редактирование, 1 - превью
-
-$(document).ready(function() {
-	textAreaAdjust(document.getElementById("markuparea"));
-
-	markupArea.keyup(function() {
-		isDirty = true;
-	});
-
-	// Сохранение по кнопке
-	btnSave.click(function(e) {
-		saveMarkup();
-	});
-
-	// Сохранение на Ctrl+S
-	document.addEventListener("keydown", function(e) {
-		if (e.keyCode === 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-			e.preventDefault();
-			saveMarkup();
-		}
-	}, false);
-
-	// Вставка картинок на Ctrl+V
-	// https://stackoverflow.com/a/6338207
-	markupArea.on('paste', function (e) {
-		let items = (e.clipboardData || e.originalEvent.clipboardData).items;
-		for (let index in items) {
-			let item = items[index];
-			if (item.kind === 'file') {
-
-				// Загрузка файла через jQuery AJAX
-				// https://stackoverflow.com/a/13333478
-				var fd = new FormData();
-				fd.append('file', item.getAsFile());
-
-				$.ajax({
-					url: "/autogost/upload-image",
-					type: "post",
-					data: fd,
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						response = JSON.parse(response);
-
-						if (response.ok) {
-							const line = "\n@img:"+response.filename+":Изображение";
-							insertAtCursor(document.getElementById("markuparea"), line);
-						}
-					}
-				});
-			}
-		}
-	});
-	
-	btnPreview.click(function() {
-		state = 1;
-		$("#switchMarkup").removeClass('selected');
-		$("#switchPreview").addClass('selected');
-		previewArea.html('<div class="loader"></div>');
-		markupArea.hide();
-		previewArea.show();
-		saveMarkup();
-		updatePreview();
-	});
-
-	btnMarkup.click(function() {
-		state = 0;
-		$("#switchMarkup").addClass('selected');
-		$("#switchPreview").removeClass('selected');
-		textAreaAdjust(markupArea);
-		markupArea.show();
-		previewArea.hide();
-		saveMarkup();
-	});
-
-	// Скопировать текст в буфер обмена
-	btnFilename.click(async function() {
-		await navigator.clipboard.writeText(filename);
-		btnFilename.text("Название скопировано");
-		btnFilename.blur();
-	});
-
-	btnFilename.mouseleave(function () {
-		btnFilename.text("Получить название файла");
-	});
-
-	btnPrint.click(function() {
-		saveMarkup();
-		updatePreview(true);
-	});
-});
-
-// Заставляет textarea расширяться так, чтобы был текст в ней был полностью
-// виден
-function textAreaAdjust(element) {
-	if (element.scrollHeight > element.clientHeight) {
+// Обновление поля разметки
+function markupUpdate(forceLineNumbersUpdate=false) {
+	if (tareaMarkup.scrollHeight > tareaMarkup.clientHeight) {
 		// Содержимое полностью не вмещается
-		element.style.height = "calc(1lh + " + element.scrollHeight +"px)";
+		tareaMarkup.style.height = "calc(2lh + " + tareaMarkup.scrollHeight +"px)";
 	}
+
+	let numberOfLines = getMarkupLineCount();
+	if (forceLineNumbersUpdate || numberOfLines != lastMarkupLineCount) {
+		lineNums.innerHTML = (Array(numberOfLines).fill('<span></span>').join(''));
+		lastMarkupLineCount = numberOfLines;
+	}
+	unsavedChanges = true;
 }
 
-// Обновляет #preview на странице, отсылая запрос на получение HTML
-function updatePreview(thenPrint=false) {
-	$.ajax({
-		url: "/autogost/gethtml",
-		type: "post",
-		data: {
-			report_id: reportId
-		},
-		success: function (data, textStatus, xhr) {
-			previewArea.html(data);
-			if (thenPrint) {
-				if (state == 0) {
-					previewArea.show();
-				}
-				window.print();
-				if (state == 0) {
-					previewArea.hide();
-				}
-			}
-		}
-	});
-}
-
-// Сохраняет разметку для данного отчёта
-function saveMarkup() {
+// Сохранение разметки
+function saveMarkup(updateButtonText=false) {
 	$.ajax({
 		url: "/reports/update",
 		type: "post",
 		data: {
-			id: reportId,
-			markup: markupArea.val()
+			id: globalReportId,
+			markup: tareaMarkup.value
 		},
 		success: function() {
-			isDirty = false;
+			unsavedChanges = false;
+			if (updateButtonText) {
+				btnSave.textContent = "Сохранено";
+			}
 			btnSave.blur();
 		}
 	});
@@ -170,13 +56,143 @@ function insertAtCursor(myField, myValue) {
     } else {
         myField.value += myValue;
     }
-    textAreaAdjust(myField);
-    isDirty = true;
+    markupUpdate();
 }
 
+// Показывает превью и отключает редактор
+function toPreview() {
+	editor.classList.add("hidden");
+	preview.classList.remove("hidden");
+}
+
+// Показывает редактор и отключает превью
+function toMarkup() {
+	editor.classList.remove("hidden");
+	preview.classList.add("hidden");
+}
+
+// Обновляет #preview на странице, отсылая запрос на получение HTML
+function updatePreview(asyncronous=true) {
+	//~ errorsArea.hide();
+
+	$.ajax({
+		async: asyncronous,
+		url: "/autogost/gethtml",
+		type: "post",
+		data: {
+			report_id: globalReportId
+		},
+		success: function (data, textStatus, xhr) {
+			// HTML сгенерирован успешно
+			previewOut.innerHTML = data;
+		},
+		error: function(xhr, status, error) {
+			
+			//~ let errors = JSON.parse(xhr.responseText);
+			//~ let list = $("<ol></ol>");
+
+			//~ for (let i = 0; i < errors.length; i++) {
+				//~ addErrorMessage(errors[i][0], errors[i][1], list);
+			//~ }
+
+			//~ $("#loader").remove();
+			//~ errorsArea.html("<h3 class='text-center'>Ошибки разметки</h3>");
+			//~ errorsArea.append(list);
+			//~ errorsArea.show();
+		}
+	});
+}
+
+// Последнее число строк разметки
+var lastMarkupLineCount;
+
+// Есть ли несохранённые изменения
+var unsavedChanges = false;
+
+// Состояние страницы. 0 - разметка, 1 - превью
+var state = 0;
+
+// DOM
+var tareaMarkup = document.getElementById("agstMarkup");
+var lineNums = document.getElementById("agstLineNumbers");
+var btnSave = document.getElementById("saveMarkupButton");
+var btnFilename = document.getElementById("getFilename");
+var btnToMarkup = document.getElementById("switchMarkup");
+var btnToPreview = document.getElementById("switchPreview");
+var btnPrint = document.getElementById("printReport");
+var preview = document.getElementById("agstPreview");
+var editor = document.getElementById("agstEditor");
+var previewOut = document.getElementById("agstOutput");
+markupUpdate(true);
+
+tareaMarkup.onkeyup = function() {
+	markupUpdate();
+}
+
+// Сохранение разметки
+btnSave.onclick = function() {
+	saveMarkup(true);
+}
+
+btnSave.onmouseleave = function() {
+	btnSave.textContent = "Сохранить";
+}
+
+// Ctrl+S
+document.addEventListener("keydown", function(e) {
+	if (e.keyCode === 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+		e.preventDefault();
+		saveMarkup();
+	}
+}, false);
+
+// Получение названия файла для сохранения
+btnFilename.onclick = async function() {
+	await navigator.clipboard.writeText(globalFilename);
+	this.textContent = "Название скопировано";
+	this.blur();
+}
+
+btnFilename.onmouseleave = function() {
+	this.textContent = "Получить название файла";
+}
+
+// Вставка картинок на Ctrl+V
+// https://stackoverflow.com/a/6338207
+tareaMarkup.onpaste = function (e) {
+	let items = (e.clipboardData || e.originalEvent.clipboardData).items;
+	for (let index in items) {
+		let item = items[index];
+		if (item.kind === 'file') {
+			// Загрузка файла через jQuery AJAX
+			// https://stackoverflow.com/a/13333478
+			var fd = new FormData();
+			fd.append('file', item.getAsFile());
+
+			$.ajax({
+				url: "/autogost/upload-image",
+				type: "post",
+				data: fd,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					response = JSON.parse(response);
+					if (response.ok) {
+						insertAtCursor(
+							tareaMarkup,
+							"\n@img:"+response.filename+":Изображение"
+						);
+					}
+				}
+			});
+		}
+	}
+};
+
+// Предотвращение случайной потери данных
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
 const beforeUnloadHandler = (event) => {
-	if (isDirty == false) {
+	if (unsavedChanges == false) {
 		return true;
 	}
 
@@ -188,3 +204,34 @@ const beforeUnloadHandler = (event) => {
 };
 
 window.addEventListener("beforeunload", beforeUnloadHandler);
+
+// Переключение между разметкой и превью
+btnToPreview.onclick = function() {
+	state = 1;
+	btnToMarkup.classList.remove('border-accent');
+	this.classList.add('border-accent');
+	this.blur();
+
+	previewOut.innerHTML = "<div class='loader'></div>";
+	toPreview();
+	saveMarkup();
+
+	updatePreview(false);
+}
+
+btnToMarkup.onclick = function() {
+	state = 0;
+	btnToPreview.classList.remove('border-accent');
+	this.classList.add('border-accent');
+	this.blur();
+	toMarkup();
+}
+
+btnPrint.onclick = function() {
+	window.print();
+}
+
+window.addEventListener('beforeprint', function() {
+	updatePreview(false);
+}, false);
+

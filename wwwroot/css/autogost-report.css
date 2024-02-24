@@ -1,4 +1,48 @@
-#preview {
+/*===Редактор разметки===*/
+#agstMarkup {
+	border-radius: 0px;
+	border: 1px solid var(--card-border);
+	line-height: 21px;
+	overflow-y: hidden;
+	padding: 0;
+	border: 0;
+	background: var(--gray-4);
+	color: var(--gray-8);
+	width: 100%;
+	outline: none;
+	resize: vertical;
+	font-size: 1rem;
+}
+
+.editor {
+	display: inline-flex;
+	gap: 10px;
+	font-family: monospace;
+	line-height: 21px;
+	background: var(--gray-3);
+	border-radius: 2px;
+	padding: 20px 10px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+#agstLineNumbers {
+  width: 20px;
+  text-align: right;
+}
+
+#agstLineNumbers span {
+  counter-increment: linenumber;
+}
+
+#agstLineNumbers span::before {
+  content: counter(linenumber);
+  display: block;
+  color: var(--gray-6);
+}
+/*===/Редактор разметки===*/
+
+#agstOutput {
 	font-family: "Times New Roman";
 	background-color: var(--gray-3);
 	color: #aaaaaa;
@@ -45,6 +89,7 @@
 .page figure img {
 	max-height: 10cm;
 	border: 1px solid #252525;
+	max-width: 100%;
 }
 
 #titlepage .page {
@@ -129,14 +174,18 @@
 		visibility: hidden;
 	}
 
-	#preview {
+	#agstPreview {
+		display: block;
+	}
+
+	#agstOutput {
 		visibility: visible;
 		position: absolute;
 		top: 0;
 		left: 0;
 	}
 
-	#preview .page {
+	#agstOutput .page {
 		margin: 0;
 		border-radius: 0;
 		color: #000;

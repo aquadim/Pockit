@@ -9,13 +9,12 @@ class AutoGostReportsView extends LayoutView {
 	
 	public function content():void { ?>
 
-<div class='text-center'>
-	<h1>Архив отчётов по дисциплине:</h1>
-	<h2><?=$this->subject['name']?></h2>
-	<h3>Выбери отчёт</h3>
-</div>
+<div class='card m-1'>
+	<div class='text-center'>
+		<h1>Архив отчётов</h1>
+		<p>Дисциплина: <span class='fg-accent'><?= $this->subject['name'] ?></span></p>
+	</div>
 
-<div class='card'>
 	<div id='reportsList'>
 		<?php while ($report = $this->reports->fetchArray()) { ?>
 			<div id='report<?= $report['id'] ?>' class='crud-item'>
@@ -28,6 +27,8 @@ class AutoGostReportsView extends LayoutView {
 			</div>
 		<?php } ?>
 	</div>
+
+	<a href="/autogost/new/" class="btn success w-100">Добавить</a>
 </div>
 
 <script>

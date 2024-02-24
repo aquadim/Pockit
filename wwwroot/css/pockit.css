@@ -1,3 +1,7 @@
+* {
+	box-sizing: border-box;
+}
+
 :root {
 	--gray-9: #E6E6E6;
 	--gray-8: #CCCCCC;
@@ -17,8 +21,10 @@
 	--successfocus: #25401D;
 	--successborder: green;
 
-	--blue: #006DFF;
-	--accent: #396690;
+	--blue: #338AFF;
+	--accent: #7B68EE;
+
+	--sidebarWidth: 250px;
 }
 
 @font-face{font-family:'lato'; src: url('/fonts/Lato-Bold.ttf') format('truetype'); font-weight: bold; font-style: normal;}
@@ -159,36 +165,32 @@ a:hover {
 
 /* Breadcrumbs */
 .breadcrumb {
-	padding: 0 0.5em;
-	position: relative;
+	padding: 0;
+	background-color: var(--gray-0);
+	position: sticky;
+	top: 0;
 	z-index: 2;
 }
-
-.breadcrumb-item {
-	padding: 0.5em 0;
-}
-
-.breadcrumb ul {
-  display: flex;
-  flex-wrap: wrap;
+.breadcrumb > ul {
   list-style: none;
+  background-color: var(--gray-0);
   margin: 0;
-  padding: 0;
+  padding: 0.25em 1em;
 }
 
-.breadcrumb li:not(:last-child)::after {
-  display: inline-block;
-  margin: 0 .25rem;
-  content: "→";
-  color: var(--gray-7);
+.breadcrumb > ul li {
+  display: inline;
 }
 
-.breadcrumb-item a {
-	color: var(--accent);
+.breadcrumb > ul li+li:before {
+  padding: 8px;
+  color: var(--gray-6);
+  content: "/\00a0";
 }
 
-.breadcrumb-item.active {
-	color: var(--gray-7);
+.breadcrumb > ul li a {
+  color: var(--blue);
+  text-decoration: none;
 }
 
 /* End Breadcrumbs */
@@ -196,11 +198,11 @@ a:hover {
 /* Cards */
 .card {
 	background-color: var(--gray-3);
-	border: 1px solid var(--gray-4);
-	border-radius: 15px;
+	border: 1px solid #666666;
+	border-radius: 5px;
 	padding: 1em;
-	margin: 2em auto;
-	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
 	max-width: 866px;
 }
 
@@ -249,7 +251,7 @@ a:hover {
 	z-index: 1;
 }
 
-/* Colors */
+/*===Colors===*/
 .danger {
 	background-color: var(--error);
 }
@@ -266,39 +268,74 @@ a:hover {
 .success:focus {
 	background-color: var(--successfocus);
 }
-/* End Colors */
 
-#controls > textarea {
-	width: -moz-available;
-	resize: vertical;
-	background-color: var(--gray-4);
-	outline: none;
-	border: 1px solid var(--card-border);
-	color: var(--gray-8);
-	border-radius: 5px;
-	font-size: 1rem;
+.fg-accent {
+	color: var(--accent);
 }
 
-#control-sidebar {
-	margin: 0;
-	padding: 1em;
-	width: 215px;
-	position: fixed;
-	height: 100%;
-	overflow: auto;
-	border-radius: 0;
-	background-color: var(--gray-0);
-	border: none;
-	top: 0px;
-	left: 0px;
-	display: flex;
-	justify-content: end;
-	flex-flow: column;
-	z-index: 1;
-	box-sizing: border-box;
+.border-accent {
+	border-color: var(--accent);
 }
+/*===/Colors===*/
 
-#control-sidebar .btn {
+/*===Sizes===*/
+.w-100 {
 	width: 100%;
-	margin: 3px;
+}
+
+.w-50 {
+	width: 50%;
+}
+
+.w-75 {
+	width: 75%;
+}
+
+.w-25 {
+	width: 25%;
+}
+/*===/Sizes===*/
+
+/*===Margins for cards===*/
+.m-1 {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+.m-2 {
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+.m-3 {
+	margin-top: 3em;
+	margin-bottom: 3em;
+}
+/*===End Margins for cards===*/
+
+/*===Sidebar===*/
+.sidebar {
+	height: 100%;
+	width: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: var(--gray-0);
+	overflow-x: hidden;
+	padding: 0;
+	display: flex;
+	flex-flow: column-reverse;
+}
+
+.sidebarOpen {
+	width: var(--sidebarWidth);
+	padding: 0.5em;
+}
+
+.contentShifted {
+	margin-left: var(--sidebarWidth);
+}
+/*===End Sidebar===*/
+
+.editor.hidden,
+.hidden {
+	display: none;
 }

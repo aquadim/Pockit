@@ -32,7 +32,7 @@ class AutoGostController {
 
 		if (is_uploaded_file($_FILES['file']['tmp_name'])) {
 			$mime_type = mime_content_type($_FILES['file']['tmp_name']);
-			$filepath = index_dir."/wwwroot/img/autogost/rgnupload".uniqid();
+			$filepath = index_dir."/wwwroot/img/autogost/agstupload".uniqid();
 
 			if ($mime_type == "image/png") {
 				// Конвертирование png в gif
@@ -42,7 +42,6 @@ class AutoGostController {
 				imagegif($gif_image, $filepath);
 			} else {
 				// Просто перемещение файла
-				$filepath = tempnam(index_dir."/img/autogost", "rgnupload");
 				move_uploaded_file($_FILES['file']['tmp_name'], $filepath);
 			}
 
@@ -86,10 +85,12 @@ class AutoGostController {
 		$subject = SubjectModel::getById($report['subject_id']);
 		$filename = "Автогост - ".$subject['name']." #".$report['work_number']." - Королёв";
 
+		$markup = str_replace("\n", "&#13;", $report['markup']);
+
 		$view = new AutoGostEditView([
 			"page_title" => $filename,
 			"crumbs" => ["Главная"=>"/", "Автогост: дисциплины" => "/autogost/archive/", $subject['name'] => "/autogost/archive/".$subject['id'], "Редактирование"=>"/"],
-			"markup" => $report['markup'],
+			"markup" => $markup,
 			"filename" => $filename,
 			"report_id" => $report_id
 		]);
@@ -149,6 +150,7 @@ class AutoGostController {
 
 	// Получение HTML
 	public static function getHtml() {
+
 		$report 	= ReportModel::getById($_POST['report_id']);
 		$subject 	= SubjectModel::getById($report["subject_id"]);
 		$work_type	= WorkTypeModel::getById($report["work_type"]);
@@ -160,15 +162,23 @@ class AutoGostController {
 		$expr_is_raw_html = false; // Выражение - чистый HTML?
 
 		$lines = explode("\n", $report['markup']);
+		$line_num = 0;
 
 		foreach ($lines as $expr) {
+			$line_num++;
 			if (mb_strlen($expr) == 0) {
 				continue;
 			}
 
 			if ($expr[0] != "@") {
 				// Выражение - обычный текст
-				// FIXME: end($document) может быть false
+				if ($current_page == 1) {
+					// Страниц ещё не было!
+					http_response_code(400);
+					$error = [[$line_num, "Текст без страницы"]];
+					echo json_encode($error);
+					exit();
+				}
 				if ($expr_is_raw_html) {
 					end($document)->addHTML($expr);
 				} else {

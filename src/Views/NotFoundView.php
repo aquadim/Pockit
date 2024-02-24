@@ -7,10 +7,10 @@ class NotFoundView extends LayoutView {
 	protected $page_title = "Ничего не найдено";
 	public function content():void { ?>
 		
-<div style='text-align:center;margin-top: 5rem;'>
-	<h1>Ничего не найдено</h1>
-	<h2>404</h2>
-	<a style='display:block' href='/'>На главную</a>
+<div class="card text-center">
+	<h1 class="fg-accent">404</h1>
+	<p>Ничего не найдено</p>
+	<a href="/" class="btn">На главную</a>
 </div>
 
 <?php }}

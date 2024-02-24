@@ -25,8 +25,8 @@ class HomeController {
 
 		} else if ($now_hour < 16) {
 			$welcome_text = 'Добрый день';
-			$background_image = "day.png";
-			$background_color = "#e3b091";
+			$background_image = "day.jpg";
+			$background_color = "#3896fa";
 
 		} else {
 			$welcome_text = 'Добрый вечер';

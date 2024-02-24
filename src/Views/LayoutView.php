@@ -13,9 +13,9 @@ class LayoutView extends View {
 	<ul>
 	<?php foreach ($this->crumbs as $crumb => $url) {
 		if ($crumb === array_key_last($this->crumbs)) { ?>
-			<li class="breadcrumb-item active"><?= $crumb ?></li>
+			<li><?= $crumb ?></li>
 		<?php } else { ?>
-			<li class="breadcrumb-item"><a href="<?= $url ?>"><?= $crumb ?></a></li>
+			<li><a href="<?= $url ?>"><?= $crumb ?></a></li>
 		<?php } ?>
 	<?php } ?>
 	</ul>

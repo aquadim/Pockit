@@ -8,12 +8,8 @@ class AutoGostArchiveView extends LayoutView {
 	
 	public function content():void { ?>
 
-<div class='text-center'>
-	<h1>Архив отчётов</h1>
-	<h3>Выбери дисциплину</h3>
-</div>
-
-<div class='card'>
+<div class='card m-1'>
+	<h1 class='text-center'>Архив отчётов</h1>
 	<div id='subjectsList'>
 		<?php while ($subject = $this->subjects->fetchArray()) { ?>
 			<div id='subject<?= $subject['id'] ?>' class='crud-item'>
@@ -27,7 +23,7 @@ class AutoGostArchiveView extends LayoutView {
 		<?php } ?>
 	</div>
 
-	<button class='btn success' style='width:100%' onclick='crudCreateShowWindow("subjects", {"Название": {type: "plain", name: "name"}, "Шифр": {type: "plain", name: "code"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers"}}, "Добавление дисциплины", createSubject)' class='createbutton form-control'>Добавить</button>
+	<button class='btn success w-100' onclick='crudCreateShowWindow("subjects", {"Название": {type: "plain", name: "name"}, "Шифр": {type: "plain", name: "code"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers"}}, "Добавление дисциплины", createSubject)' class='createbutton form-control'>Добавить</button>
 </div>
 
 <script>

@@ -1,4 +1,6 @@
 <?php
+//TODO: заменить textarea в редактировании отчёта на CodeMirror
+
 namespace Pockit;
 
 // Файл, на который поступают запросы

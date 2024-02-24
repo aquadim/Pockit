@@ -10,16 +10,16 @@ class AutoGostNewReportView extends LayoutView {
 
 	protected function content():void { ?>
 
-<h1 class='text-center'>Создание отчёта</h1>
+<div class="card m-1">
+	<h1 class='text-center'>Создание отчёта</h1>
+	
+	<?php if (isset($this->error_text)) {?>
+		<div class='card error'>
+			<?= $this->error_text ?>
+		</div>
+	<?php } ?>
 
-<form action="/autogost/new" method="POST">
-	<div class="card">
-		<?php if (isset($this->error_text)) {?>
-			<div class='card error'>
-				<?= $this->error_text ?>
-			</div>
-		<?php } ?>
-
+	<form action="/autogost/new" method="POST">
 		<div class="form-control-container">
 			<label for="sel-subject_id">Предмет</label>
 			<select class="form-control" id="sel-subject_id" name="subject_id">
@@ -48,7 +48,8 @@ class AutoGostNewReportView extends LayoutView {
 			<input class="form-control" id="inp-notice" placeholder="Всё что угодно" type="text" name="notice"/>
 		</div>
 
-		<button type="submit" class="createbutton form-control">Создать</button>
-	</div>
-</form>
+		<button type="submit" class="btn success w-100 form-control" onclick="this.textContent='Создаём...'">Создать</button>
+	</form>
+</div>
+
 <?php }} ?>
