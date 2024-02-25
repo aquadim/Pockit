@@ -3,21 +3,6 @@ function getMarkupLineCount() {
 	return tareaMarkup.value.split('\n').length;
 }
 
-// Обновление поля разметки
-function markupUpdate(forceLineNumbersUpdate=false) {
-	if (tareaMarkup.scrollHeight > tareaMarkup.clientHeight) {
-		// Содержимое полностью не вмещается
-		tareaMarkup.style.height = "calc(2lh + " + tareaMarkup.scrollHeight +"px)";
-	}
-
-	let numberOfLines = getMarkupLineCount();
-	if (forceLineNumbersUpdate || numberOfLines != lastMarkupLineCount) {
-		lineNums.innerHTML = (Array(numberOfLines).fill('<span></span>').join(''));
-		lastMarkupLineCount = numberOfLines;
-	}
-	unsavedChanges = true;
-}
-
 // Сохранение разметки
 function saveMarkup(updateButtonText=false) {
 	$.ajax({
@@ -57,7 +42,6 @@ function insertAtCursor(myField, myValue) {
     } else {
         myField.value += myValue;
     }
-    markupUpdate();
 }
 
 // Показывает превью и отключает редактор
@@ -124,11 +108,6 @@ var btnPrint = document.getElementById("printReport");
 var previewSection = document.getElementById("agstPreview");
 var editorSection = document.getElementById("agstEditor");
 var previewOut = document.getElementById("agstOutput");
-markupUpdate(true);
-
-tareaMarkup.onkeyup = function() {
-	markupUpdate();
-}
 
 // Сохранение разметки
 btnSave.onclick = function() {
@@ -152,35 +131,35 @@ btnFilename.onmouseleave = function() {
 
 // Вставка картинок на Ctrl+V
 // https://stackoverflow.com/a/6338207
-tareaMarkup.onpaste = function (e) {
-	let items = (e.clipboardData || e.originalEvent.clipboardData).items;
-	for (let index in items) {
-		let item = items[index];
-		if (item.kind === 'file') {
-			// Загрузка файла через jQuery AJAX
-			// https://stackoverflow.com/a/13333478
-			var fd = new FormData();
-			fd.append('file', item.getAsFile());
+//~ tareaMarkup.onpaste = function (e) {
+	//~ let items = (e.clipboardData || e.originalEvent.clipboardData).items;
+	//~ for (let index in items) {
+		//~ let item = items[index];
+		//~ if (item.kind === 'file') {
+			//~ // Загрузка файла через jQuery AJAX
+			//~ // https://stackoverflow.com/a/13333478
+			//~ var fd = new FormData();
+			//~ fd.append('file', item.getAsFile());
 
-			$.ajax({
-				url: "/autogost/upload-image",
-				type: "post",
-				data: fd,
-				processData: false,
-				contentType: false,
-				success: function (response) {
-					response = JSON.parse(response);
-					if (response.ok) {
-						insertAtCursor(
-							tareaMarkup,
-							"\n@img:"+response.filename+":Изображение"
-						);
-					}
-				}
-			});
-		}
-	}
-};
+			//~ $.ajax({
+				//~ url: "/autogost/upload-image",
+				//~ type: "post",
+				//~ data: fd,
+				//~ processData: false,
+				//~ contentType: false,
+				//~ success: function (response) {
+					//~ response = JSON.parse(response);
+					//~ if (response.ok) {
+						//~ insertAtCursor(
+							//~ tareaMarkup,
+							//~ "\n@img:"+response.filename+":Изображение"
+						//~ );
+					//~ }
+				//~ }
+			//~ });
+		//~ }
+	//~ }
+//~ };
 
 // Предотвращение случайной потери данных
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event

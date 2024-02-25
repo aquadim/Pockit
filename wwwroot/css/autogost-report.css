@@ -26,20 +26,10 @@
 	width: 100%;
 }
 
-#agstLineNumbers {
-  width: 20px;
-  text-align: right;
+#agstEditor > .cm-editor {
+	width: 100%;
 }
 
-#agstLineNumbers span {
-  counter-increment: linenumber;
-}
-
-#agstLineNumbers span::before {
-  content: counter(linenumber);
-  display: block;
-  color: var(--gray-6);
-}
 /*===/Редактор разметки===*/
 
 #agstOutput {

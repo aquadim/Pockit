@@ -35,10 +35,7 @@ class AutoGostEditView extends LayoutView {
 	<div class='card m-1'>
 
 		<!--Редактор разметки-->
-		<div class="editor" id="agstEditor">
-			<div id="agstLineNumbers"></div>
-			<textarea id="agstMarkup" autocomplete="off"><?= $this->markup ?></textarea>
-		</div>
+		<div class="editor" id="agstEditor"></div>
 
 		<!--Превью-->
 		<div id="agstPreview" class='hidden'>
@@ -51,8 +48,6 @@ class AutoGostEditView extends LayoutView {
 		</div>
 		
 	</div>
-
-	<div class="card m-1" id="newEditor"></div>
 
 	<div class="text-center w-100">
 		<button id="btnToggleSidebar" class='btn' onclick="toggleSidebar()">❌ Закрыть панель инструментов</button>

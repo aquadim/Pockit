@@ -86,6 +86,7 @@ class AutoGostController {
 		$filename = "Автогост - ".$subject['name']." #".$report['work_number']." - Королёв";
 
 		$markup = str_replace("\n", '\n', $report['markup']);
+		$markup = str_replace('"', '\"', $markup);
 
 		$view = new AutoGostEditView([
 			"page_title" => $filename,
