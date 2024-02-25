@@ -13,6 +13,7 @@ class AutoGostEditView extends LayoutView {
 <?php }
 
 	public function customScripts():void { ?>
+<script src="/js/editor.bundle.js"></script>
 <script src="/js/autogostpreview.js"></script>
 <script type="text/javascript" src="/js/sidebar.js"></script>
 <?php }
@@ -51,6 +52,8 @@ class AutoGostEditView extends LayoutView {
 		
 	</div>
 
+	<div class="card m-1" id="newEditor"></div>
+
 	<div class="text-center w-100">
 		<button id="btnToggleSidebar" class='btn' onclick="toggleSidebar()">❌ Закрыть панель инструментов</button>
 	</div>
@@ -58,6 +61,7 @@ class AutoGostEditView extends LayoutView {
 
 <!--Связь с javascript-->
 <script type="text/javascript">
+	var globalReportMarkup = "<?= $this->markup ?>";
 	var globalReportId = <?= $this->report_id ?>;
 	var globalFilename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
 	var globalSidebarOpened = true;

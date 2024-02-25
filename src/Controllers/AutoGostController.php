@@ -85,7 +85,7 @@ class AutoGostController {
 		$subject = SubjectModel::getById($report['subject_id']);
 		$filename = "Автогост - ".$subject['name']." #".$report['work_number']." - Королёв";
 
-		$markup = str_replace("\n", "&#13;", $report['markup']);
+		$markup = str_replace("\n", '\n', $report['markup']);
 
 		$view = new AutoGostEditView([
 			"page_title" => $filename,

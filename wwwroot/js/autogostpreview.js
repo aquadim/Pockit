@@ -25,7 +25,7 @@ function saveMarkup(updateButtonText=false) {
 		type: "post",
 		data: {
 			id: globalReportId,
-			markup: tareaMarkup.value
+			markup: window.editor.state.doc.toString()
 		},
 		success: function() {
 			unsavedChanges = false;
@@ -33,6 +33,7 @@ function saveMarkup(updateButtonText=false) {
 				btnSave.textContent = "Сохранено";
 			}
 			btnSave.blur();
+			console.log("Markup saved");
 		}
 	});
 }
@@ -61,14 +62,14 @@ function insertAtCursor(myField, myValue) {
 
 // Показывает превью и отключает редактор
 function toPreview() {
-	editor.classList.add("hidden");
-	preview.classList.remove("hidden");
+	editorSection.classList.add("hidden");
+	previewSection.classList.remove("hidden");
 }
 
 // Показывает редактор и отключает превью
 function toMarkup() {
-	editor.classList.remove("hidden");
-	preview.classList.add("hidden");
+	editorSection.classList.remove("hidden");
+	previewSection.classList.add("hidden");
 }
 
 // Обновляет #preview на странице, отсылая запрос на получение HTML
@@ -120,8 +121,8 @@ var btnFilename = document.getElementById("getFilename");
 var btnToMarkup = document.getElementById("switchMarkup");
 var btnToPreview = document.getElementById("switchPreview");
 var btnPrint = document.getElementById("printReport");
-var preview = document.getElementById("agstPreview");
-var editor = document.getElementById("agstEditor");
+var previewSection = document.getElementById("agstPreview");
+var editorSection = document.getElementById("agstEditor");
 var previewOut = document.getElementById("agstOutput");
 markupUpdate(true);
 
@@ -137,14 +138,6 @@ btnSave.onclick = function() {
 btnSave.onmouseleave = function() {
 	btnSave.textContent = "Сохранить";
 }
-
-// Ctrl+S
-document.addEventListener("keydown", function(e) {
-	if (e.keyCode === 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-		e.preventDefault();
-		saveMarkup();
-	}
-}, false);
 
 // Получение названия файла для сохранения
 btnFilename.onclick = async function() {
