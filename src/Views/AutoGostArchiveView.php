@@ -41,9 +41,9 @@ class AutoGostArchiveView extends LayoutView {
 	    <div id='subject`+subject.id+`' class='crud-item'>
 		<p>`+subject.name+`</p>
 		<div class='crud-buttons'>
-		    <a href="/autogost/archive/`+subject.id+`">Отчёты</a>
-		    <button onclick='crudUpdateShowWindow("subjects", {"Название": {type: "plain", name: "name", default: "`+subject.name+`"}, "Шифр": {type: "plain", name: "code", default: "`+subject.code+`"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers", default:`+subject.teacher_id+`}, "ID": {type: "hidden", name: "id", default: `+subject.id+`}}, "Обновление дисциплины", updateSubject)'>Изменить</button>
-		    <button onclick='crudDelete("subjects", `+subject.id+`, "subject`+subject.id+`")' class='danger'>Удалить</button>
+		    <a class='btn' href="/autogost/archive/`+subject.id+`">Отчёты</a>
+		    <button class='btn' onclick='crudUpdateShowWindow("subjects", {"Название": {type: "plain", name: "name", default: "`+subject.name+`"}, "Шифр": {type: "plain", name: "code", default: "`+subject.code+`"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers", default:`+subject.teacher_id+`}, "ID": {type: "hidden", name: "id", default: `+subject.id+`}}, "Обновление дисциплины", updateSubject)'>Изменить</button>
+		    <button class='btn danger' onclick='crudDelete("subjects", `+subject.id+`, "subject`+subject.id+`")'>Удалить</button>
 		</div>
 	    </div>`;
 	}
