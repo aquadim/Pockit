@@ -26,8 +26,8 @@ class SubSection extends Section {
 
     public function pageBreak($current_page) {
         $this->pages[] = new SmallFramePage([
-            'current_page' => $current_page,
-            'framename' => $this->name]);
+            'current_page' => $current_page
+        ]);
     }
 
     protected function beforeOutput() {

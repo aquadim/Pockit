@@ -13,14 +13,14 @@ import {
 	HighlightStyle,
 	syntaxHighlighting
 } from "@codemirror/language";
-import { tags as t } from "@lezer/highlight";
+import { tags } from "@lezer/highlight";
 
 // Все ключевые слова
 const completions = [
 	{label: "@titlepage", type: "keyword", info: "Титульная страница"},
-	{label: "@section:название", type: "keyword", info: "Секция основной части"},
+	{label: "@section:Название", type: "keyword", info: "Секция основной части"},
 	{label: "@-", type: "keyword", info: "Разрыв страницы"},
-	{label: "@img:источник:подпись", type: "keyword", info: "Изображение"},
+	{label: "@img:Источник:Подпись", type: "keyword", info: "Изображение"},
 	{label: "@\\", type: "keyword", info: "Пустая строка"},
 	{label: "@raw", type: "keyword", info: "Начало чистого HTML"},
 	{label: "@endraw", type: "keyword", info: "Конец чистого HTML"},
@@ -41,9 +41,42 @@ function autogostCompletions(context) {
 
 // События DOM
 let handlers = {
+	// Вставка картинки
+	// https://stackoverflow.com/a/6338207
 	paste: function(e, ed) {
-		console.log("PASTED");
-		return true;
+		let items = (e.clipboardData || e.originalEvent.clipboardData).items;
+		for (let index in items) {
+			let item = items[index];
+
+			// Этот элемент вставки - не файл
+			if (item.kind !== 'file') {
+				continue;
+			}
+
+			// Загрузка файла через jQuery AJAX
+			// https://stackoverflow.com/a/13333478
+			var fd = new FormData();
+			fd.append('file', item.getAsFile());
+			$.ajax({
+				url: "/autogost/upload-image",
+				type: "post",
+				data: fd,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					response = JSON.parse(response);
+					if (response.ok) {
+						window.editor.dispatch({
+							changes: {
+								from: window.editor.state.selection.main.head,
+								insert: "\n@img:"+response.filename+":Изображение"
+							}
+						});
+					}
+				}
+			});
+		}
+		return false;
 	}
 }
 
@@ -61,17 +94,18 @@ let agstTheme = EditorView.theme({
         backgroundColor: "var(--gray-2)"
     },
     "& .cm-activeLine, & .cm-activeLineGutter": {
-        backgroundColor: "rgba(255,255,255,0.1)"
+        backgroundColor: "rgba(0,0,0,0.15)"
     },
     ".cm-selectionBackground, &.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground": {
-        background: "var(--accent)"
+        background: "rgba(255,255,255,0.10)"
     }
 }, {dark: true});
 
+// Тема синтаксиса
 let agstHighlightStyle = HighlightStyle.define([
-	{tag: t.keyword, color: "#9171E8"},
-	{tag: t.separator, color: "#FF813B"},
-	{tag: t.attributeValue, color: "#E8922A"}
+	{tag: tags.keyword, color: "#E9E564"},
+	{tag: tags.separator, color: "#F45F3B"},
+	{tag: tags.attributeValue, color: "#D25A68"}
 ]);
 
 // Подсветка синтаксиса
@@ -88,26 +122,31 @@ const AgstLanguage = StreamLanguage.define({
             return "keyword";
         }
 
-        if (stream.match(/^@(\w)*/)) {
+		// Ключевые слова после которых идут аргументы
+        if (stream.match(/^@(\w|-|\\)*/)) {
             state.lineKeyword = true;
             return "keyword";
         }
 
+		// Двоеточие в конце
         if (state.lineKeyword && stream.match(/^:$/)) {
 			state.lineKeyword = false;
 			return "separator";
 		}
 
-        if (state.lineKeyword && stream.match(":")) {
+		// Двоеточие
+        if (state.lineKeyword && stream.match(/^:/)) {
             return "separator";
         }
 
-        if (state.lineKeyword && stream.match(/^[а-я \w]+$/i, true, true)) {
+		// Последний аргумент
+        if (state.lineKeyword && stream.match(/^[^:]*$/, true, true)) {
             state.lineKeyword = false;
             return "attributeValue";
         }
 
-        if (state.lineKeyword && stream.match(/^[а-я \w]+/i, true, true)) {
+		// Не последний аргумент
+        if (state.lineKeyword && stream.match(/^[^:]*/, true, true)) {
             return "attributeValue";
         }
 

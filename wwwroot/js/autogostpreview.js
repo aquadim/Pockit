@@ -4,7 +4,7 @@ function getMarkupLineCount() {
 }
 
 // Сохранение разметки
-function saveMarkup(updateButtonText=false) {
+function saveMarkup(successCallback) {
 	$.ajax({
 		url: "/reports/update",
 		type: "post",
@@ -14,11 +14,11 @@ function saveMarkup(updateButtonText=false) {
 		},
 		success: function() {
 			unsavedChanges = false;
-			if (updateButtonText) {
-				btnSave.textContent = "Сохранено";
-			}
 			btnSave.blur();
 			console.log("Markup saved");
+			if (successCallback) {
+				successCallback();
+			}
 		}
 	});
 }
@@ -44,24 +44,9 @@ function insertAtCursor(myField, myValue) {
     }
 }
 
-// Показывает превью и отключает редактор
-function toPreview() {
-	editorSection.classList.add("hidden");
-	previewSection.classList.remove("hidden");
-}
-
-// Показывает редактор и отключает превью
-function toMarkup() {
-	editorSection.classList.remove("hidden");
-	previewSection.classList.add("hidden");
-}
-
 // Обновляет #preview на странице, отсылая запрос на получение HTML
-function updatePreview(asyncronous=true) {
-	//~ errorsArea.hide();
-
+function updatePreview(onSuccess) {
 	$.ajax({
-		async: asyncronous,
 		url: "/autogost/gethtml",
 		type: "post",
 		data: {
@@ -70,26 +55,14 @@ function updatePreview(asyncronous=true) {
 		success: function (data, textStatus, xhr) {
 			// HTML сгенерирован успешно
 			previewOut.innerHTML = data;
+			onSuccess();
+			console.log("Updating preview finished successfully");
 		},
 		error: function(xhr, status, error) {
-			
-			//~ let errors = JSON.parse(xhr.responseText);
-			//~ let list = $("<ol></ol>");
-
-			//~ for (let i = 0; i < errors.length; i++) {
-				//~ addErrorMessage(errors[i][0], errors[i][1], list);
-			//~ }
-
-			//~ $("#loader").remove();
-			//~ errorsArea.html("<h3 class='text-center'>Ошибки разметки</h3>");
-			//~ errorsArea.append(list);
-			//~ errorsArea.show();
+			console.error("Error in updating preview");
 		}
 	});
 }
-
-// Последнее число строк разметки
-var lastMarkupLineCount;
 
 // Есть ли несохранённые изменения
 var unsavedChanges = false;
@@ -111,7 +84,9 @@ var previewOut = document.getElementById("agstOutput");
 
 // Сохранение разметки
 btnSave.onclick = function() {
-	saveMarkup(true);
+	saveMarkup(function() {
+		btnSave.textContent = "Сохранено";
+	});
 }
 
 btnSave.onmouseleave = function() {
@@ -121,89 +96,59 @@ btnSave.onmouseleave = function() {
 // Получение названия файла для сохранения
 btnFilename.onclick = async function() {
 	await navigator.clipboard.writeText(globalFilename);
-	this.textContent = "Название скопировано";
-	this.blur();
 }
-
-btnFilename.onmouseleave = function() {
-	this.textContent = "Получить название файла";
-}
-
-// Вставка картинок на Ctrl+V
-// https://stackoverflow.com/a/6338207
-//~ tareaMarkup.onpaste = function (e) {
-	//~ let items = (e.clipboardData || e.originalEvent.clipboardData).items;
-	//~ for (let index in items) {
-		//~ let item = items[index];
-		//~ if (item.kind === 'file') {
-			//~ // Загрузка файла через jQuery AJAX
-			//~ // https://stackoverflow.com/a/13333478
-			//~ var fd = new FormData();
-			//~ fd.append('file', item.getAsFile());
-
-			//~ $.ajax({
-				//~ url: "/autogost/upload-image",
-				//~ type: "post",
-				//~ data: fd,
-				//~ processData: false,
-				//~ contentType: false,
-				//~ success: function (response) {
-					//~ response = JSON.parse(response);
-					//~ if (response.ok) {
-						//~ insertAtCursor(
-							//~ tareaMarkup,
-							//~ "\n@img:"+response.filename+":Изображение"
-						//~ );
-					//~ }
-				//~ }
-			//~ });
-		//~ }
-	//~ }
-//~ };
 
 // Предотвращение случайной потери данных
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
-const beforeUnloadHandler = (event) => {
-	if (unsavedChanges == false) {
-		return true;
-	}
+//~ const beforeUnloadHandler = (event) => {
+	//~ if (unsavedChanges == false) {
+		//~ return true;
+	//~ }
 
-	// Recommended
-	event.preventDefault();
+	//~ // Recommended
+	//~ event.preventDefault();
 
-	// Included for legacy support, e.g. Chrome/Edge < 119
-	event.returnValue = true;
-};
+	//~ // Included for legacy support, e.g. Chrome/Edge < 119
+	//~ event.returnValue = true;
+//~ };
 
-window.addEventListener("beforeunload", beforeUnloadHandler);
+//~ window.addEventListener("beforeunload", beforeUnloadHandler);
 
-// Переключение между разметкой и превью
+// Переключение на превью
 btnToPreview.onclick = function() {
-	state = 1;
-	btnToMarkup.classList.remove('border-accent');
-	this.classList.add('border-accent');
-	this.blur();
 
 	previewOut.innerHTML = "<div class='loader'></div>";
-	toPreview();
-	saveMarkup();
+	btnToPreview.blur();
 
-	updatePreview(false);
+	editorSection.classList.add("hidden");
+	previewSection.classList.remove("hidden");
+	btnToMarkup.classList.remove('border-accent');
+	btnToPreview.classList.add('border-accent');
+
+	// 1. Разметка сохраняется
+	// 2. Превью обновляется
+	// 3. state = 1
+	saveMarkup(function() {
+		updatePreview(function() {
+			state = 1;
+		});
+	});
+	
 }
 
+// Переключение на редактор
 btnToMarkup.onclick = function() {
-	state = 0;
+	btnToMarkup.blur();
 	btnToPreview.classList.remove('border-accent');
-	this.classList.add('border-accent');
-	this.blur();
-	toMarkup();
+	btnToMarkup.classList.add('border-accent');
+	editorSection.classList.remove("hidden");
+	previewSection.classList.add("hidden");
+	state = 0;
 }
 
+// Обработчик кнопки печати
 btnPrint.onclick = function() {
-	window.print();
+	updatePreview(function() {
+		window.print();
+	});
 }
-
-window.addEventListener('beforeprint', function() {
-	updatePreview(false);
-}, false);
-

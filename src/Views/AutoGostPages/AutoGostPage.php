@@ -8,20 +8,20 @@ use Pockit\Views\View;
 class AutoGostPage extends View {
 	
     #region Переменные для представлений
-	protected static $months_gen = [
-		1=>"января",
-		2=>"февраля",
-		3=>"марта",
-		4=>"апреля",
-		5=>"мая",
-		6=>"июня",
-		7=>"июля",
-		8=>"августа",
-		9=>"сентября",
-		10=>"октября",
-		11=>"ноября",
-		12=>"декабря"
-	];
+    protected static $months_gen = [
+	1=>"января",
+	2=>"февраля",
+	3=>"марта",
+	4=>"апреля",
+	5=>"мая",
+	6=>"июня",
+	7=>"июля",
+	8=>"августа",
+	9=>"сентября",
+	10=>"октября",
+	11=>"ноября",
+	12=>"декабря"
+    ];
     protected static $work_code;
     protected static $teacher_full;
     protected static $author_surname;
@@ -57,6 +57,6 @@ class AutoGostPage extends View {
         static::$teacher_surname = $teacher['surname'];
     }
 
-	// Номер страницы
-	protected $number;
+    // Номер страницы
+    protected $number;
 }

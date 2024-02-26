@@ -1,10 +1,8 @@
 <?php
-//TODO: заменить textarea в редактировании отчёта на CodeMirror
 
 namespace Pockit;
 
 // Файл, на который поступают запросы
-
 require_once "vendor/autoload.php";
 use Pockit\Common\Router;
 
