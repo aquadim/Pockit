@@ -1,95 +1,91 @@
-// TODO:
-// 2. Ctrl+V - вставка картинки (сделано наполовину)
-// 5. Подсветка синтаксиса
-
 import {EditorView, basicSetup} from "codemirror"
 import {EditorState} from "@codemirror/state"
 import {autocompletion} from "@codemirror/autocomplete"
 import {keymap} from "@codemirror/view"
 import {
-	LanguageSupport,
-	StreamLanguage,
-	StringStream,
-	HighlightStyle,
-	syntaxHighlighting
+    LanguageSupport,
+    StreamLanguage,
+    StringStream,
+    HighlightStyle,
+    syntaxHighlighting
 } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
 
 // Все ключевые слова
 const completions = [
-	{label: "@titlepage", type: "keyword", info: "Титульная страница"},
-	{label: "@section:Название", type: "keyword", info: "Секция основной части"},
-	{label: "@-", type: "keyword", info: "Разрыв страницы"},
-	{label: "@img:Источник:Подпись", type: "keyword", info: "Изображение"},
-	{label: "@\\", type: "keyword", info: "Пустая строка"},
-	{label: "@raw", type: "keyword", info: "Начало чистого HTML"},
-	{label: "@endraw", type: "keyword", info: "Конец чистого HTML"},
+    {label: "@titlepage", type: "keyword", info: "Титульная страница"},
+    {label: "@section:Название", type: "keyword", info: "Секция основной части"},
+    {label: "@-", type: "keyword", info: "Разрыв страницы"},
+    {label: "@img:Источник:Подпись", type: "keyword", info: "Изображение"},
+    {label: "@\\", type: "keyword", info: "Пустая строка"},
+    {label: "@raw", type: "keyword", info: "Начало чистого HTML"},
+    {label: "@endraw", type: "keyword", info: "Конец чистого HTML"},
 ];
 
 // Автодополнение
 function autogostCompletions(context) {
-	let before = context.matchBefore(/^@\w*/);
-	if (!context.explicit && !before) {
-		return null;
-	}
-	return {
-		from: before ? before.from : context.pos,
-		options: completions,
-		validFor: /^\w*$/
-	}
+    let before = context.matchBefore(/^@\w*/);
+    if (!context.explicit && !before) {
+        return null;
+    }
+    return {
+        from: before ? before.from : context.pos,
+        options: completions,
+        validFor: /^\w*$/
+    }
 }
 
 // События DOM
 let handlers = {
-	// Вставка картинки
-	// https://stackoverflow.com/a/6338207
-	paste: function(e, ed) {
-		let items = (e.clipboardData || e.originalEvent.clipboardData).items;
-		for (let index in items) {
-			let item = items[index];
+    // Вставка картинки
+    // https://stackoverflow.com/a/6338207
+    paste: function(e, ed) {
+        let items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let index in items) {
+            let item = items[index];
 
-			// Этот элемент вставки - не файл
-			if (item.kind !== 'file') {
-				continue;
-			}
+            // Этот элемент вставки - не файл
+            if (item.kind !== 'file') {
+                continue;
+            }
 
-			// Загрузка файла через jQuery AJAX
-			// https://stackoverflow.com/a/13333478
-			var fd = new FormData();
-			fd.append('file', item.getAsFile());
-			$.ajax({
-				url: "/autogost/upload-image",
-				type: "post",
-				data: fd,
-				processData: false,
-				contentType: false,
-				success: function (response) {
-					response = JSON.parse(response);
-					if (response.ok) {
-						window.editor.dispatch({
-							changes: {
-								from: window.editor.state.selection.main.head,
-								insert: "\n@img:"+response.filename+":Изображение"
-							}
-						});
-					}
-				}
-			});
-		}
-		return false;
-	}
+            // Загрузка файла через jQuery AJAX
+            // https://stackoverflow.com/a/13333478
+            var fd = new FormData();
+            fd.append('file', item.getAsFile());
+            $.ajax({
+                url: "/autogost/upload-image",
+                type: "post",
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.ok) {
+                        window.editor.dispatch({
+                            changes: {
+                                from: window.editor.state.selection.main.head,
+                                insert: "\n@img:"+response.filename+":Изображение"
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        return false;
+    }
 }
 
-// Тема
+// Тема редактора
 let agstTheme = EditorView.theme({
-   "&": {
+    "&": {
         color: "var(--gray-9)",
         backgroundColor: "var(--gray-4)"
-   },
-   ".cm-cursor": {
-       borderLeftColor: "white"
-   },
-   "& .cm-gutters": {
+    },
+    ".cm-cursor": {
+        borderLeftColor: "white"
+    },
+    "& .cm-gutters": {
         color: "var(--gray-7)",
         backgroundColor: "var(--gray-2)"
     },
@@ -103,18 +99,19 @@ let agstTheme = EditorView.theme({
 
 // Тема синтаксиса
 let agstHighlightStyle = HighlightStyle.define([
-	{tag: tags.keyword, color: "#E9E564"},
-	{tag: tags.separator, color: "#F45F3B"},
-	{tag: tags.attributeValue, color: "#D25A68"}
+    {tag: tags.keyword, color: "#DF9E6E"},
+    {tag: tags.separator, color: "#FFFFFF"},
+    {tag: tags.attributeValue, color: "#5A82D2"},
+    {tag: tags.labelName, color: "#5AD271"}
 ]);
 
 // Подсветка синтаксиса
 const AgstLanguage = StreamLanguage.define({
-   	name: "Autogost",
-   	startState: () => {
-   		return {lineKeyword: false, arg: false}
-   	},
-   	token: function(stream, state) {
+    name: "Autogost",
+    startState: () => {
+            return {lineKeyword: false, arg: false, argNum: 0}
+    },
+    token: function(stream, state) {
 
         // Ключевые слова:
         // @titlepage, @section, @- ...
@@ -122,61 +119,76 @@ const AgstLanguage = StreamLanguage.define({
             return "keyword";
         }
 
-		// Ключевые слова после которых идут аргументы
+        // Ключевые слова после которых идут аргументы
         if (stream.match(/^@(\w|-|\\)*/)) {
             state.lineKeyword = true;
             return "keyword";
         }
 
-		// Двоеточие в конце
+        // Двоеточие в конце
         if (state.lineKeyword && stream.match(/^:$/)) {
-			state.lineKeyword = false;
-			return "separator";
-		}
-
-		// Двоеточие
-        if (state.lineKeyword && stream.match(/^:/)) {
+            state.lineKeyword = false;
+            state.argNum = 0;
             return "separator";
         }
 
-		// Последний аргумент
-        if (state.lineKeyword && stream.match(/^[^:]*$/, true, true)) {
-            state.lineKeyword = false;
-            return "attributeValue";
+        // Двоеточие
+        if (state.lineKeyword && stream.match(/^:/)) {
+            state.argNum++;
+            return "separator";
         }
 
-		// Не последний аргумент
+        // Последний аргумент
+        if (state.lineKeyword && stream.match(/^[^:]*$/, true, true)) {
+            let output;
+
+            if (state.argNum == 1) {
+                output = "attributeValue";
+            } else {
+                output = "labelName";
+            }
+
+            state.lineKeyword = false;
+            state.argNum = 0;
+            
+            return output;
+        }
+
+        // Не последний аргумент
         if (state.lineKeyword && stream.match(/^[^:]*/, true, true)) {
-            return "attributeValue";
+            if (state.argNum == 1) {
+                return "attributeValue";
+            }
+            return "labelName";
         }
 
         stream.skipToEnd();
-   		return null;
-   	}
+        return null;
+    }
 });
 
 // Инициализация редактора
 let editorState = EditorState.create({
-	doc: globalReportMarkup,
-	extensions: [
-		basicSetup,
-		EditorView.lineWrapping,
-		autocompletion({override: [autogostCompletions]}),
-		keymap.of([{
-			key: "Ctrl-s",
-			run() { saveMarkup(false); return true }
-		}]),
-		EditorView.domEventHandlers(handlers),
-		agstTheme,
-		syntaxHighlighting(agstHighlightStyle),
-		new LanguageSupport(AgstLanguage)
-	],
+    doc: globalReportMarkup,
+    extensions: [
+        basicSetup,
+        EditorView.lineWrapping,
+        autocompletion({override: [autogostCompletions]}),
+        keymap.of([{
+                key: "Ctrl-s",
+                run() { saveMarkup(false); return true }
+        }]),
+        EditorView.domEventHandlers(handlers),
+        agstTheme,
+        syntaxHighlighting(agstHighlightStyle),
+        new LanguageSupport(AgstLanguage)
+    ],
 });
 
 let editor = new EditorView({
-	state: editorState,
-	lineWrapping: true,
-	parent: document.getElementById("agstEditor")
+    state: editorState,
+    lineWrapping: true,
+    parent: document.getElementById("agstEditor")
 });
 
 window.editor = editor;
