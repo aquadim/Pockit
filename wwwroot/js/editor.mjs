@@ -99,10 +99,10 @@ let agstTheme = EditorView.theme({
 
 // Тема синтаксиса
 let agstHighlightStyle = HighlightStyle.define([
-    {tag: tags.keyword, color: "#DF9E6E"},
+    {tag: tags.keyword, color: "#DFC543"},
     {tag: tags.separator, color: "#FFFFFF"},
     {tag: tags.attributeValue, color: "#5A82D2"},
-    {tag: tags.labelName, color: "#5AD271"}
+    {tag: tags.labelName, color: "#35D253"}
 ]);
 
 // Подсветка синтаксиса
