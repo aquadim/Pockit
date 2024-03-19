@@ -24,7 +24,7 @@ class GradesController {
 		curl_share_setopt($sh, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE); // Делимся куками
 
 		// Подаём запрос в электронный дневник на авторизацию
-		$auth = curl_init('http://vpmt.ru:8081/region_pou/region.cgi/login');
+		$auth = curl_init('http://avers.vpmt.ru:8081/region_pou/region.cgi/login');
 		curl_setopt($auth, CURLOPT_COOKIEFILE, "");
 		curl_setopt($auth, CURLOPT_SHARE, $sh);
 		curl_setopt($auth, CURLOPT_POST, 1);
@@ -34,14 +34,14 @@ class GradesController {
 		curl_exec($auth);
 
 		// Запрос на экспорт оценок
-		$grades = curl_init('http://vpmt.ru:8081/region_pou/region.cgi/journal_och?page=1&marks=1&period_id='.$_ENV['period_id'].'&export=1');
+		$grades = curl_init('http://avers.vpmt.ru:8081/region_pou/region.cgi/journal_och?page=1&marks=1&period_id='.$_ENV['period_id'].'&export=1');
 		curl_setopt($grades, CURLOPT_COOKIEFILE, "");
 		curl_setopt($grades, CURLOPT_SHARE, $sh);
 		curl_setopt($grades, CURLOPT_RETURNTRANSFER, 1);
 		$data = curl_exec($grades);
 
 		// Разрыв сессии с журналом
-		$logout = curl_init('http://vpmt.ru:8081/region_pou/region.cgi/logout');
+		$logout = curl_init('http://avers.vpmt.ru:8081/region_pou/region.cgi/logout');
 		curl_setopt($logout, CURLOPT_COOKIEFILE, "");
 		curl_setopt($logout, CURLOPT_SHARE, $sh);
 		curl_setopt($logout, CURLOPT_RETURNTRANSFER, 1);

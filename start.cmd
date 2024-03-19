@@ -1,1 +1,1 @@
-start ..\tools\php\php.exe -S 127.0.0.1:9000 -t ./src ./src/index.php
+start ..\tools\php\php.exe -S 127.0.0.1:9000 -t ./wwwroot index.php 
