@@ -8,6 +8,7 @@ use Pockit\Models\SubjectModel;
 use Pockit\Models\WorkTypeModel;
 use Pockit\Models\TeacherModel;
 use Pockit\Models\PasswordModel;
+use Pockit\Models\LinkModel;
 
 class ApiController {
 
@@ -16,6 +17,13 @@ class ApiController {
 		$id = SubjectModel::create($_POST['name'], $_POST['code'], $_POST['teacher_id']);
 		$subject = SubjectModel::getById($id);
 		echo json_encode($subject);
+	}
+	
+	// Добавление ссылки
+	public static function createLink() {
+		$id = LinkModel::create($_POST['name'], $_POST['href']);
+		$link = LinkModel::getById($id);
+		echo json_encode($link);
 	}
 	
 	// Добавление пароля
@@ -34,10 +42,24 @@ class ApiController {
 		SubjectModel::update($subject);
 		echo json_encode($subject);
 	}
+	
+	// Обновление ссылки
+	public static function updateLink() {
+		$link = LinkModel::getById($_POST['id']);
+		$link['name'] = $_POST['name'];
+		$link['href'] = $_POST['href'];
+		LinkModel::update($link);
+		echo json_encode($link);
+	}
 
 	// Удаление предмета
 	public static function deleteSubject() {
 		SubjectModel::deleteById($_GET['id']);
+	}
+	
+	// Удаление ссылки
+	public static function deleteLink() {
+		LinkModel::deleteById($_GET['id']);
 	}
 	
 	// Удаление пароля
