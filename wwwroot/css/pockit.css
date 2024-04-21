@@ -136,6 +136,7 @@ a:hover {
 	border-radius: 10px;
 	padding: 1em;
 	transition: 100ms;
+	align-items: center;
 }
 
 .action:hover {

@@ -41,6 +41,16 @@ class HomeView extends LayoutView {
 			<a href="/grades">Оценки<span class='stretched-link'></span></a>
 		</div>
 	</div>
+	<div class='actions-row'>
+		<div class='action'>
+			<img src="/img/actions/lock.png">
+			<a href="/passwords">Менеджер паролей<span class='stretched-link'></span></a>
+		</div>
+		<div class='action'>
+			<img src="/img/actions/search.png">
+			<a href="/links">Полезные ссылки<span class='stretched-link'></span></a>
+		</div>
+	</div>
 </div>
 		
 <?php }
