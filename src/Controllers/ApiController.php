@@ -7,6 +7,7 @@ use Pockit\Models\ReportModel;
 use Pockit\Models\SubjectModel;
 use Pockit\Models\WorkTypeModel;
 use Pockit\Models\TeacherModel;
+use Pockit\Models\PasswordModel;
 
 class ApiController {
 
@@ -15,6 +16,13 @@ class ApiController {
 		$id = SubjectModel::create($_POST['name'], $_POST['code'], $_POST['teacher_id']);
 		$subject = SubjectModel::getById($id);
 		echo json_encode($subject);
+	}
+	
+	// Добавление пароля
+	public static function createPassword() {
+		$id = PasswordModel::create($_POST['name'], $_POST['password'], $_POST['key']);
+		$password = PasswordModel::getById($id);
+		echo json_encode($password);
 	}
 
 	// Обновление предмета
@@ -30,6 +38,11 @@ class ApiController {
 	// Удаление предмета
 	public static function deleteSubject() {
 		SubjectModel::deleteById($_GET['id']);
+	}
+	
+	// Удаление пароля
+	public static function deletePassword() {
+		PasswordModel::deleteById($_GET['id']);
 	}
 
 	// Обновление отчёта

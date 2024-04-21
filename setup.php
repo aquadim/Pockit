@@ -42,6 +42,12 @@ function databaseUp($file_path) {
 	"name_gen" TEXT,
 	"name_titlepage" INTEGER)');
 
+	$db->query('CREATE TABLE "passwords" (
+		"id"	INTEGER PRIMARY KEY,
+		"name"	TEXT NOT NULL,
+		"value"	TEXT NOT NULL,
+		"iv"	BLOB NOT NULL)');
+
 	$db->query("INSERT INTO 'regen_teachers' VALUES (1,'Пивоваров','Сергей','Александрович')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (2,'Ильина','Светлана','Анатольевна')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (3,'Галимова','Екатерина','Валерьевна')");

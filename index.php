@@ -29,6 +29,10 @@ $router->register("/autogost/gethtml", 'Pockit\Controllers\AutoGostController::g
 $router->register("/autogost/archive", 'Pockit\Controllers\AutoGostController::archive');
 $router->register("/autogost/archive/{subject_id}", 'Pockit\Controllers\AutoGostController::listReports');
 
+// Пароли
+$router->register("/passwords", "Pockit\Controllers\PasswordController::index");
+$router->register("/passwords/decrypt", "Pockit\Controllers\PasswordController::getPassword");
+
 // API
 $router->register('/subjects/create', 'Pockit\Controllers\ApiController::createSubject');
 $router->register('/subjects/update', 'Pockit\Controllers\ApiController::updateSubject');
@@ -37,6 +41,8 @@ $router->register('/reports/update', 'Pockit\Controllers\ApiController::updateRe
 $router->register('/reports/delete', 'Pockit\Controllers\ApiController::deleteReport');
 $router->register('/teachers/read', 'Pockit\Controllers\ApiController::getTeachers');
 $router->register('/work_types/read', 'Pockit\Controllers\ApiController::getWorkTypes');
+$router->register('/passwords/create', 'Pockit\Controllers\ApiController::createPassword');
+$router->register('/passwords/delete', 'Pockit\Controllers\ApiController::deletePassword');
 
 $router->register404('Pockit\Controllers\NotFoundController::index');
 

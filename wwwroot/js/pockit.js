@@ -11,7 +11,7 @@ async function crudRead(route, limit = 999) {
 // После удаления на странице удаляется элемент с ID контейнера
 function crudDelete(route, id, containerID=null) {
 	if (!confirm("Точно удалить?")) {
-		return;
+		return false;
 	}
 	const url = '/'+route+'/delete?id='+id;
 	$.ajax({
@@ -20,6 +20,7 @@ function crudDelete(route, id, containerID=null) {
 			document.getElementById(containerID).remove();
 		}
 	});
+	return true;
 }
 
 // Показывает форму обновления элемента
@@ -95,6 +96,11 @@ async function createWindow(route, action, name, options, afterCallback) {
 				}
 			}
 			control_container.append(selectInput);
+
+		} else if (value.type == 'password') {
+			// Пароль
+			const input = $('<input class="form-control" id="'+key+'" type="password" name="'+value.name+'"/>');
+			control_container.append(input);
 
 		} else {
 			console.log("Неизвестный тип: " + value.type);
