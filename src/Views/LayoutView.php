@@ -39,8 +39,8 @@ class LayoutView extends View {
 		<link rel='icon' type='image/png' href='/img/favicon.png'>
 		<link rel="stylesheet" href="/css/pockit.css">
 		<link rel="stylesheet" href="/css/spinner.css">
-		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>		
-		<script src="https://www.jsviews.com/download/jsviews.min.js"></script>
+		<script src="/js/jquery-3.7.1.min.js"></script>		
+		<script src="/js/jsviews.min.js"></script>
 		<?php $this->customHead() ?>
 	</head>
 	<body>

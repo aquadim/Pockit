@@ -9,6 +9,8 @@
     "@codemirror/view": "^6.24.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "codemirror": "^6.0.1",
+    "jquery": "^3.7.1",
+    "jsviews": "^1.0.14",
     "terser": "^5.28.1"
   }
 }
