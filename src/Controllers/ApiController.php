@@ -14,7 +14,7 @@ class ApiController {
 
 	// Добавление предмета
 	public static function createSubject() {
-		$id = SubjectModel::create($_POST['name'], $_POST['code'], $_POST['teacher_id']);
+		$id = SubjectModel::create($_POST['name'], $_POST['code'], $_POST['teacher_id'], $_POST['my_name']);
 		$subject = SubjectModel::getById($id);
 		echo json_encode($subject);
 	}
@@ -39,6 +39,7 @@ class ApiController {
 		$subject['name'] = $_POST['name'];
 		$subject['code'] = $_POST['code'];
 		$subject['teacher_id'] = $_POST['teacher_id'];
+		$subject['my_name'] = $_POST['my_name'];
 		SubjectModel::update($subject);
 		echo json_encode($subject);
 	}

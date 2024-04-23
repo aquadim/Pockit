@@ -24,11 +24,14 @@ function databaseUp($file_path) {
 	"markup"	TEXT,
 	PRIMARY KEY("id"))');
 
-	$db->query('CREATE TABLE "regen_subjects"(
-	"id" INTEGER PRIMARY KEY,
-	"name" TEXT,
-	"code" TEXT,
-	"teacher_id" INTEGER)');
+	$db->query('CREATE TABLE "regen_subjects" (
+		"id"	INTEGER,
+		"name"	TEXT,
+		"code"	TEXT,
+		"teacher_id"	INTEGER,
+		"my_name"	TEXT,
+		PRIMARY KEY("id")
+	)');
 
 	$db->query('CREATE TABLE "regen_teachers" (
 	"id" INTEGER PRIMARY KEY,
