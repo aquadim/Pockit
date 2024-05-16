@@ -13,25 +13,34 @@ class HomeController {
 		date_default_timezone_set('Europe/Kirov');
 		$now_hour = localtime(time(), true)['tm_hour'];
 
+		$background_image = intval($now_hour / 2).'.jpg';
+		$colors = [
+			"#14282b",
+			"#904147",
+			"#d0645f",
+			"#d7553f",
+			"#b2e5fa",
+			"#4e9a3a",
+			"#8bbde2",
+			"#e9af6b",
+			"#1e1c2a",
+			"#2175e9",
+			"#223c55",
+			"#051f36"
+		];
+		$background_color = $colors[intval($now_hour / 2)];
+
 		if ($now_hour < 6 || $now_hour >= 21) {
 			$welcome_text = 'С возвращением';
-			$background_image = 'night.jpg';
-			$background_color = '#152848';
 
 		} else if ($now_hour < 9) {
 			$welcome_text = 'Доброе утро';
-			$background_image = "morning.jpg";
-			$background_color = "#b6665a";
 
 		} else if ($now_hour < 16) {
 			$welcome_text = 'Добрый день';
-			$background_image = "day.jpg";
-			$background_color = "#3896fa";
 
 		} else {
 			$welcome_text = 'Добрый вечер';
-			$background_image = "evening.jpg";
-			$background_color = "#6690c0";
 		}
 		$welcome_text .= ", ".$_ENV['user_name'];
 

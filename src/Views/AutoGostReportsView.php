@@ -10,7 +10,7 @@ class AutoGostReportsView extends LayoutView {
 	public function content():void { ?>
 
 <div class='card m-1'>
-	<div class='text-center'>
+	<div class='text-center card-title'>
 		<h1>Архив отчётов</h1>
 		<p>Дисциплина: <span class='fg-accent'><?= $this->subject['name'] ?></span></p>
 	</div>

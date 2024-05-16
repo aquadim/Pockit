@@ -32,19 +32,19 @@
 @font-face{font-family:'lato'; src: url('/fonts/Lato-Regular.ttf') format('truetype'); font-weight:normal; font-style: normal;}
 
 body {
-	background-color: var(--gray-1);
+	background-color: var(--gray-2);
 	color: var(--gray-8);
 	font-family: 'lato';
 	font-size: 18px;
 	margin: 0;
 }
 
-h1 {
+h1,p {
 	margin: 0;
 }
 
-nav {
-	background-color: var(--gray-0);
+.card-title {
+	margin: 0.5em;
 }
 
 a {
@@ -174,7 +174,6 @@ a:hover {
 }
 .breadcrumb > ul {
   list-style: none;
-  background-color: var(--gray-0);
   margin: 0;
   padding: 0.25em 1em;
 }

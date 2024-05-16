@@ -7,8 +7,10 @@ class LayoutView extends View {
 	protected $page_title;
 	protected $crumbs = array();
 
-	protected function breadcrumbs() { ?>
-
+	protected function breadcrumbs() {
+		if (empty($this->crumbs)) {
+			return;
+		} ?>
 <nav class="breadcrumb">
 	<ul>
 	<?php foreach ($this->crumbs as $crumb => $url) {

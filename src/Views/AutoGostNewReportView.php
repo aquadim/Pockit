@@ -11,7 +11,7 @@ class AutoGostNewReportView extends LayoutView {
 	protected function content():void { ?>
 
 <div class="card m-1">
-	<h1 class='text-center'>Создание отчёта</h1>
+	<h1 class='text-center card-title'>Создание отчёта</h1>
 	
 	<?php if (isset($this->error_text)) {?>
 		<div class='card error'>

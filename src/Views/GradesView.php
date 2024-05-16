@@ -13,7 +13,7 @@ class GradesView extends LayoutView {
 	public function content():void { ?>
 
 <div class="card m-1" id="gradesCard">
-	<h1 class='text-center'>Оценки</h1>
+	<h1 class='text-center card-title'>Оценки</h1>
 	<div class="loader" id="loading"></div>
 </div>
 

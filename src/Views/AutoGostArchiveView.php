@@ -9,7 +9,7 @@ class AutoGostArchiveView extends LayoutView {
 	public function content():void { ?>
 
 <div class='card m-1'>
-	<h1 class='text-center'>Архив отчётов</h1>
+	<h1 class='text-center card-title'>Архив отчётов</h1>
 	<div id='subjectsList'>
 		<?php while ($subject = $this->subjects->fetchArray()) { ?>
 			<div id='subject<?= $subject['id'] ?>' class='crud-item'>
