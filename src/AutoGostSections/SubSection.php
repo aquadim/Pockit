@@ -20,7 +20,7 @@ class SubSection extends Section {
     protected function addFirstPage($current_page) {
         $this->pages[] = new BigFramePage([
             'current_page' => $current_page,
-            'framename' => 'Основная часть<br>'.$this->name
+            'framename' => $this->name
         ]);
     }
 
