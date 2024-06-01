@@ -83,7 +83,7 @@ class AutoGostController {
 	public static function edit($report_id) {
 		$report = ReportModel::getById($report_id);
 		$subject = SubjectModel::getById($report['subject_id']);
-		$filename = "Автогост - ".$subject['name']." #".$report['work_number']." - Королёв";
+		$filename = "Автогост - ".$subject['name']." #".$report['work_number']." - ".$_ENV['autogost_surname'];
 
 		$markup = str_replace("\n", '\n', $report['markup']);
 		$markup = str_replace('"', '\"', $markup);

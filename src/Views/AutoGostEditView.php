@@ -25,7 +25,7 @@ class AutoGostEditView extends LayoutView {
 	<button class='btn border-accent' id='switchMarkup'>Разметка</button>
 	<button class='btn' id='switchPreview'>Превью</button>
 	<button class='btn' id="printReport">Печать</button>
-	<button class='btn' id="getFilename">Получить название файла</button>
+	<button class='btn' id="getFilename">Скопировать название файла</button>
 	<button class='btn success' id='saveMarkupButton'>Сохранить</button>
 </div>
 

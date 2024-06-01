@@ -24,7 +24,7 @@ class AutoGostNewReportView extends LayoutView {
 			<label for="sel-subject_id">Предмет</label>
 			<select class="form-control" id="sel-subject_id" name="subject_id">
 				<?php while ($row = $this->subjects->fetchArray()) { ?>
-					<option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+					<option value="<?= $row['id'] ?>"><?= $row['my_name'] ?></option>
 				<?php } ?>
 			</select>
 		</div>
