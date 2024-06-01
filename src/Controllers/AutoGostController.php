@@ -237,6 +237,10 @@ class AutoGostController {
 					$expr_is_raw_html = false;
 					break;
 
+				case "@@":
+					// Комментарий
+					break;
+
 				case "@/":
 				case "@-":
 					// Разрыв страницы
