@@ -13,9 +13,7 @@ class AutoGostEditView extends LayoutView {
 <?php }
 
 	public function customScripts():void { ?>
-<script src="/js/editor.bundle.js"></script>
-<script src="/js/autogostpreview.js"></script>
-<script type="text/javascript" src="/js/sidebar.js"></script>
+<script src="/js/autogost.bundle.js"></script>
 <?php }
 
 	public function content():void { ?>
@@ -24,6 +22,7 @@ class AutoGostEditView extends LayoutView {
 <div id='agstControls' class='sidebar sidebarOpen'>
 	<button class='btn border-accent' id='switchMarkup'>Разметка</button>
 	<button class='btn' id='switchPreview'>Превью</button>
+	<button class='btn' id='btnAddImage'>Добавить изображение</button>
 	<button class='btn' id="printReport">Печать</button>
 	<button class='btn' id="getFilename">Скопировать название файла</button>
 	<button class='btn success' id='saveMarkupButton'>Сохранить</button>
@@ -33,6 +32,8 @@ class AutoGostEditView extends LayoutView {
 <div id="agstMain" class="contentShifted">
 	
 	<div class='card m-1'>
+
+		<div class='loader hidden' id='agstLoader'></div>
 
 		<!--Редактор разметки-->
 		<div class="editor" id="agstEditor"></div>
@@ -56,10 +57,8 @@ class AutoGostEditView extends LayoutView {
 
 <!--Связь с javascript-->
 <script type="text/javascript">
-	var globalReportMarkup = "<?= $this->markup ?>";
-	var globalReportId = <?= $this->report_id ?>;
-	var globalFilename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
-	var globalSidebarOpened = true;
+	var PHP_report_id = <?= $this->report_id ?>;
+	var PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
 </script>
 
 <?php }

@@ -82,6 +82,13 @@ class ApiController {
 		echo json_encode($report);
 	}
 
+	// Получение отчёта
+	public static function getReport() {
+		$data = json_decode(file_get_contents("php://input"), true);
+		$report = ReportModel::getById($data['id']);
+		echo json_encode($report);
+	}
+
 	// Удаление отчёта
 	public static function deleteReport() {
 		ReportModel::deleteById($_GET['id']);

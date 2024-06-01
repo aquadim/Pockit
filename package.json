@@ -12,5 +12,6 @@
     "jquery": "^3.7.1",
     "jsviews": "^1.0.14",
     "terser": "^5.28.1"
-  }
+  },
+  "type": "module"
 }
