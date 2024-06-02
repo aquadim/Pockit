@@ -2,4 +2,4 @@ vendor
 .env
 db.sqlite3
 node_modules
-wwwroot/js/editor.bundle*
+wwwroot/js/*.bundle.js

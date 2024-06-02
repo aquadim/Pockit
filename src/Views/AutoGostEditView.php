@@ -22,7 +22,13 @@ class AutoGostEditView extends LayoutView {
 <div id='agstControls' class='sidebar sidebarOpen'>
 	<button class='btn border-accent' id='switchMarkup'>Разметка</button>
 	<button class='btn' id='switchPreview'>Превью</button>
-	<button class='btn' id='btnAddImage'>Добавить изображение</button>
+
+	<label class='btn' id='lblAddImage'>
+		<input type='file' multiple="multiple" id='btnAddImage'/>
+		Добавить изображения
+		<div class='loader hidden' id='loaderAddImage'></div>
+	</label>
+
 	<button class='btn' id="printReport">Печать</button>
 	<button class='btn' id="getFilename">Скопировать название файла</button>
 	<button class='btn success' id='saveMarkupButton'>Сохранить</button>
@@ -45,13 +51,14 @@ class AutoGostEditView extends LayoutView {
 				<h3 class='text-center'></h3>
 				<ol id="agstErrorsList"></ol>
 			</div>
+			<!--Вывод HTML-->
 			<div id="agstOutput"></div>
 		</div>
 		
 	</div>
 
 	<div class="text-center w-100">
-		<button id="btnToggleSidebar" class='btn' onclick="toggleSidebar()">❌ Закрыть панель инструментов</button>
+		<button id="btnToggleSidebar" class='btn m-1' onclick="toggleSidebar()">❌ Закрыть панель инструментов</button>
 	</div>
 </div>
 

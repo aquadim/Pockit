@@ -70,12 +70,13 @@ class ApiController {
 
 	// Обновление отчёта
 	public static function updateReport() {
-		$report = ReportModel::getById($_POST['id']);
+		$input = json_decode(file_get_contents("php://input"), true);
+		$report = ReportModel::getById($input['id']);
 
 		$fields = ['work_number', 'work_type', 'notice', 'markup'];
 		foreach ($fields as $field) {
-			if (isset($_POST[$field])) {
-				$report[$field] = $_POST[$field];
+			if (isset($input[$field])) {
+				$report[$field] = $input[$field];
 			}
 		}
 		ReportModel::update($report);

@@ -1,4 +1,12 @@
 /*===Редактор разметки===*/
+
+/* Главная карточка */
+#agstMain > .card {
+	max-width: 100%;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
 #agstMarkup {
 	border-radius: 0px;
 	border: 1px solid var(--card-border);
@@ -28,6 +36,20 @@
 
 #agstEditor > .cm-editor {
 	width: 100%;
+}
+
+#btnAddImage {
+    display: none;
+}
+
+#lblAddImage {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#lblAddImage > .loader {
+	margin: 0.1em;
 }
 
 /*===/Редактор разметки===*/
@@ -169,6 +191,12 @@
 
 	#agstOutput {
 		visibility: visible;
+
+		/* При переключении из превью в редактор добавляется .hidden
+		 * Если попробовать распечатать, то ничего не будет видно
+		 * Здесь .hidden переписывается */
+		display: block;
+
 		position: absolute;
 		top: 0;
 		left: 0;

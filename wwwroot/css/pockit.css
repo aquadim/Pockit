@@ -5,7 +5,7 @@
 :root {
 	--gray-9: #E6E6E6;
 	--gray-8: #CCCCCC;
-	--gray-7: #B3B3B3;
+	--gray-7: #737373;
 	--gray-6: #4D4D4D;
 	--gray-5: #404040;
 	--gray-4: #333333;
@@ -114,6 +114,11 @@ a:hover {
 .btn:focus,
 .btn.selected {
 	background-color: var(--gray-3);
+}
+
+.btn:disabled {
+	background-color: var(--gray-7);
+	cursor: auto;
 }
 
 .text-center {

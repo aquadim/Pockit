@@ -1,7 +1,8 @@
 import {EditorView, basicSetup} from "codemirror"
-import {EditorState} from "@codemirror/state"
+import {EditorState, EditorSelection} from "@codemirror/state"
 import {autocompletion} from "@codemirror/autocomplete"
 import {keymap} from "@codemirror/view"
+import {tags} from "@lezer/highlight";
 import {
     LanguageSupport,
     StreamLanguage,
@@ -9,16 +10,84 @@ import {
     HighlightStyle,
     syntaxHighlighting
 } from "@codemirror/language";
-import { tags } from "@lezer/highlight";
+
+// Загружает изображение на сервер, возвращает ответ сервера
+async function uploadImage(file) {
+    const fd = new FormData();
+    fd.append('file', file);
+
+    const response = await fetch("http://localhost:9000/autogost/upload-image", {
+        method: 'post',
+        body: fd
+    });
+    return response;
+}
+
+// caretAt маркер изображения на данную позицию
+// start - позиция курсора вставки
+// filename - название файла
+// label - подпись
+function pasteImageMarker(caretAt, filename, label='Изображение') {
+    // Текст строки с курсором
+    const lineText = editor.state.doc.lineAt(caretAt).text;
+
+    console.log(lineText);
+
+    let prefix;
+    if (lineText.length == 0) {
+        // Это пустая строка, можно не переносить курсор на новую строку
+        prefix = '';
+    } else {
+        prefix = '\n';
+    }
+
+    const line = prefix+"@img:"+filename+":"+label;
+    
+    editor.dispatch({
+        changes: {
+            from: caretAt,
+            insert: line
+        }
+    });
+
+    // Перенос курсора
+    const newPos = caretAt + line.length;
+    editor.dispatch({
+        selection: EditorSelection.single(newPos)
+    });
+}
+
+// Отправляет запрос на получение HTML
+async function getHTML(report_id) {
+    const response = await fetch("http://localhost:9000/autogost/gethtml", {
+        method: "post",
+        body: JSON.stringify({report_id: report_id})
+    });
+    return response;
+}
 
 // Возвращает разметку для отчёта
-function getMarkup(report_id) {
-    return fetch("http://localhost:9000/reports/get", {
+async function getMarkup(report_id) {
+    const response = await fetch("http://localhost:9000/reports/get", {
         method: "post",
-        body: JSON.stringify(
-            {id: report_id}
-        )
+        body: JSON.stringify({id: report_id})
     });
+    return response;
+}
+
+// Обновляет #preview на странице, отсылая запрос на получение HTML
+// НЕ СОХРАНЯЕТ РАЗМЕТКУ
+async function updatePreview(onSuccess) {
+    const response = await getHTML(PHP_report_id);
+
+    if (response.ok) {
+        const data = await response.text();
+        previewOut.innerHTML = data;
+        onSuccess();
+        console.log("Updating preview finished successfully");
+    } else {
+        console.error("Error when generating preview");
+    }
 }
 
 // Переключает состояние боковой панели
@@ -52,9 +121,17 @@ function editorToLoader() {
 
 // Переключает редактор в режим "Превью"
 async function editorToPreview() {
-    editorToLoader();
-	btnToPreview.blur();
+    // Отжать кнопку
+    btnToPreview.blur();
 
+    // Анимация загрузки
+    previewOut.classList.add('hidden');
+    editorToLoader();
+
+    // Некоторые кнопки недоступны
+    lblAddImage.setAttribute("disabled", "disabled");	
+
+    // Переключение видимости секций
 	editorSection.classList.add("hidden");
 	previewSection.classList.remove("hidden");
 	btnToMarkup.classList.remove('border-accent');
@@ -63,13 +140,25 @@ async function editorToPreview() {
 	// 1. Разметка сохраняется
 	// 2. Превью обновляется
     // 3.1 Скрываем загрузку
-	// 3.2 state = 1
-	await saveMarkup(function() {
-		updatePreview(function() {
+    // 3.2 Открываем превью
+	await saveMarkup(async function() {
+		await updatePreview(function() {
             editorLoader.classList.add('hidden');
-			editorState = 1;
+            previewOut.classList.remove('hidden');
 		});
 	});
+}
+
+// Переключает редактор в режим "Разметка"
+async function editorToMarkup() {
+    btnToMarkup.blur();
+	btnToPreview.classList.remove('border-accent');
+	btnToMarkup.classList.add('border-accent');
+	editorSection.classList.remove("hidden");
+	previewSection.classList.add("hidden");
+	lblAddImage.removeAttribute("disabled");
+    previewOut.classList.add('hidden');
+    editorLoader.classList.add('hidden');
 }
 
 // Сохранение разметки
@@ -109,28 +198,95 @@ function autogostCompletions(context) {
 
 // Боковая панель
 let sidebarOpened       = true;
-let sidebar             = document.getElementById('agstControls');
-let content             = document.getElementById('agstMain');
-let btnSidebarToggle    = document.getElementById('btnToggleSidebar');
+const sidebar           = document.getElementById('agstControls');
+const content           = document.getElementById('agstMain');
+const btnSidebarToggle  = document.getElementById('btnToggleSidebar');
 
 // Кнопки боковой панели
-let btnToPreview 	= document.getElementById("switchPreview");
-let btnToMarkup 	= document.getElementById("switchMarkup");
-let btnAddImage 	= document.getElementById("btnAddImage");
-let btnPrint 		= document.getElementById("printReport");
-let btnFilename 	= document.getElementById("getFilename");
-let btnSave 		= document.getElementById("saveMarkupButton");
+const btnToPreview 	= document.getElementById("switchPreview");
+const btnToMarkup 	= document.getElementById("switchMarkup");
+const btnAddImage 	= document.getElementById("btnAddImage");
+const lblAddImage 	= document.getElementById("lblAddImage");
+const loaderAddImage= document.getElementById("loaderAddImage");
+const btnPrint 		= document.getElementById("printReport");
+const btnFilename 	= document.getElementById("getFilename");
+const btnSave 		= document.getElementById("saveMarkupButton");
 
 // Редактор
-// Состояние редактора. 0 - разметка, 1 - превью
-let editorState = 0;
-let previewSection 	= document.getElementById("agstPreview");
-let editorSection	= document.getElementById("agstEditor");
-let previewOut 		= document.getElementById("agstOutput");
-let editorLoader    = document.getElementById('agstLoader');
+const previewSection= document.getElementById("agstPreview");
+const editorSection	= document.getElementById("agstEditor");
+const previewOut 	= document.getElementById("agstOutput");
+const editorLoader  = document.getElementById('agstLoader');
 let unsavedChanges  = false;
 
-// -- CodeMirror --
+// -- Привязка событий --
+btnSidebarToggle.onclick = async function(e) {
+    toggleSidebar();
+    btnSidebarToggle.blur();
+}
+btnToPreview.onclick = async function(e) {
+    await editorToPreview();
+}
+btnSave.onclick = async function(e) {
+    saveMarkup(function() {
+        btnSave.blur();
+    });
+}
+btnToMarkup.onclick = async function(e) {
+    await editorToMarkup();
+}
+btnAddImage.onchange = async function(e) {
+    if (!e.target.files[0]) {
+        return;
+    }
+    loaderAddImage.classList.remove('hidden');
+
+    let response;           // Ответ от сервера после загрузки
+    let data;               // Данные JSON ответа
+    let currentImageNum = 1;// Номер изображения
+
+    for (const f of e.target.files) {
+        // Файл - изображение?
+        if (f.type.split('/')[0] !== 'image') {
+            // Нет -- пропускаем
+            continue;
+        }
+
+        response = await uploadImage(f);
+        data = await response.json();
+
+        if (!data.ok) {
+            console.error('Failed to upload image!');
+            continue;
+        }
+        
+        pasteImageMarker(
+            editor.state.selection.main.head,
+            data.filename,
+            "изображение"+currentImageNum
+        );
+        currentImageNum++;
+    }
+    loaderAddImage.classList.add('hidden');
+}
+btnPrint.onclick = function() {
+    // При печати сохраняем разметку, затем обновляем превью, а потом вызываем
+    // window.print
+    saveMarkup(function() {
+        updatePreview(function() {
+            window.print();
+        });
+    });
+}
+// Получение названия файла для сохранения
+btnFilename.onclick = async function() {
+	await navigator.clipboard.writeText(PHP_filename);
+}
+
+// ===CODEMIRROR===
+let editor;
+editorToLoader();
+
 // Все ключевые слова
 const completions = [
     {label: "@titlepage", type: "keyword", info: "Титульная страница"},
@@ -140,20 +296,8 @@ const completions = [
     {label: "@\\", type: "keyword", info: "Пустая строка"},
     {label: "@raw", type: "keyword", info: "Начало чистого HTML"},
     {label: "@endraw", type: "keyword", info: "Конец чистого HTML"},
-    {label: "@@:Комментарий", type: "comment", info: "Комментарий"},
+    {label: "@@:Комментарий", type: "keyword", info: "Комментарий"},
 ];
-
-// -- Привязка событий --
-btnSidebarToggle.onclick = e => toggleSidebar();
-btnToPreview.onclick = async function(e) {
-    await editorToPreview();
-}
-btnSave.onclick = e => saveMarkup();
-
-// -- Инициализация редактора CodeMirror --
-
-let editor;
-editorToLoader();
 
 // События DOM редактора разметки
 let editorEventHandlers = {
@@ -169,28 +313,7 @@ let editorEventHandlers = {
                 continue;
             }
 
-            // Загрузка файла через jQuery AJAX
-            // https://stackoverflow.com/a/13333478
-            var fd = new FormData();
-            fd.append('file', item.getAsFile());
-            $.ajax({
-                url: "/autogost/upload-image",
-                type: "post",
-                data: fd,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    response = JSON.parse(response);
-                    if (response.ok) {
-                        window.editor.dispatch({
-                            changes: {
-                                from: window.editor.state.selection.main.head,
-                                insert: "\n@img:"+response.filename+":Изображение"
-                            }
-                        });
-                    }
-                }
-            });
+            uploadImage(item.getAsFile());
         }
         return false;
     }

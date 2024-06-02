@@ -29,7 +29,6 @@ class AutoGostController {
 
 	// Загрузка изображений
 	public static function uploadImage() {
-
 		if (is_uploaded_file($_FILES['file']['tmp_name'])) {
 			$mime_type = mime_content_type($_FILES['file']['tmp_name']);
 			$filepath = index_dir."/wwwroot/img/autogost/agstupload".uniqid();
@@ -152,7 +151,8 @@ class AutoGostController {
 	// Получение HTML
 	public static function getHtml() {
 
-		$report 	= ReportModel::getById($_POST['report_id']);
+		$input		= json_decode(file_get_contents("php://input"), true);
+		$report 	= ReportModel::getById($input['report_id']);
 		$subject 	= SubjectModel::getById($report["subject_id"]);
 		$work_type	= WorkTypeModel::getById($report["work_type"]);
 		$teacher	= TeacherModel::getById($subject["teacher_id"]);
@@ -261,7 +261,6 @@ class AutoGostController {
 			$current_page - 1,
 			$report
 		);
-
 		foreach ($document as $section) {
 			$section->output();
 		}
