@@ -303,33 +303,33 @@ const completions = [
 
 // События DOM редактора разметки
 let editorEventHandlers = {
-    // Вставка картинки
+    // Вставка картинки (функция должна быть синхронной почему-то, иначе
+    // обычный текст не вставляется ну никак)
     // https://stackoverflow.com/a/6338207
-    paste: async function(e) {
+    paste: function(e, ed) {
         let items = (e.clipboardData || e.originalEvent.clipboardData).items;
-        for (let index in items) {
-            let item = items[index];
-
+        
+        for (const item of items) {
             // Этот элемент вставки - не файл
             if (item.kind !== 'file') continue;
             const file = item.getAsFile();
             if (!isImage(file)) continue;
 
             // Загружаем изображение
-            const uploadData = await uploadImage(file);
-            if (!uploadData.ok) {
-                console.error('Failed to upload image!');
-                continue;
-            }
+            uploadImage(file).then(function(uploadData) {
+                if (!uploadData.ok) {
+                    console.error('Failed to upload image!');
+                    return;
+                }
 
-            // Вставляем текст
-            pasteImageMarker(
-                editor.state.selection.main.head,
-                uploadData.filename,
-                uploadData.clientName
-            );
+                // Вставляем текст
+                pasteImageMarker(
+                    editor.state.selection.main.head,
+                    uploadData.filename,
+                    uploadData.clientName
+                );
+            });
         }
-        return false;
     },
 
     // Обработчик события дропа на редактор
