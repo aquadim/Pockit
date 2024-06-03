@@ -344,3 +344,8 @@ a:hover {
 .hidden {
 	display: none;
 }
+
+/* Это зона, в которую можно опустить файлы */
+.dragzone {
+	border: 2px dashed var(--accent);
+}

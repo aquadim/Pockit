@@ -11,6 +11,11 @@ import {
     syntaxHighlighting
 } from "@codemirror/language";
 
+// Возвращает вывод: файл - изображение?
+function isImage(file) {
+    return file.type.split('/')[0] === 'image'
+}
+
 // Загружает изображение на сервер, возвращает ответ сервера
 async function uploadImage(file) {
     const fd = new FormData();
@@ -20,7 +25,8 @@ async function uploadImage(file) {
         method: 'post',
         body: fd
     });
-    return response;
+    const data = await response.json();
+    return data;
 }
 
 // caretAt маркер изображения на данную позицию
@@ -30,8 +36,6 @@ async function uploadImage(file) {
 function pasteImageMarker(caretAt, filename, label='Изображение') {
     // Текст строки с курсором
     const lineText = editor.state.doc.lineAt(caretAt).text;
-
-    console.log(lineText);
 
     let prefix;
     if (lineText.length == 0) {
@@ -224,51 +228,48 @@ btnSidebarToggle.onclick = async function(e) {
     toggleSidebar();
     btnSidebarToggle.blur();
 }
+
 btnToPreview.onclick = async function(e) {
     await editorToPreview();
 }
+
 btnSave.onclick = async function(e) {
     saveMarkup(function() {
         btnSave.blur();
     });
 }
+
 btnToMarkup.onclick = async function(e) {
     await editorToMarkup();
 }
+
 btnAddImage.onchange = async function(e) {
-    if (!e.target.files[0]) {
-        return;
-    }
+    if (!e.target.files[0]) return; // Файлы не были выбраны
+
+    let uploadData;
+    
     loaderAddImage.classList.remove('hidden');
-
-    let response;           // Ответ от сервера после загрузки
-    let data;               // Данные JSON ответа
-    let currentImageNum = 1;// Номер изображения
-
     for (const f of e.target.files) {
-        // Файл - изображение?
-        if (f.type.split('/')[0] !== 'image') {
-            // Нет -- пропускаем
-            continue;
-        }
+        // Если файл не изображение, пропускаем
+        if (!isImage(f)) continue;
 
-        response = await uploadImage(f);
-        data = await response.json();
-
-        if (!data.ok) {
+        // Загружаем изображение
+        uploadData = await uploadImage(f);
+        if (!uploadData.ok) {
             console.error('Failed to upload image!');
             continue;
         }
-        
+
+        // Вставляем текст
         pasteImageMarker(
             editor.state.selection.main.head,
-            data.filename,
-            "изображение"+currentImageNum
+            uploadData.filename,
+            uploadData.clientName
         );
-        currentImageNum++;
     }
     loaderAddImage.classList.add('hidden');
 }
+
 btnPrint.onclick = function() {
     // При печати сохраняем разметку, затем обновляем превью, а потом вызываем
     // window.print
@@ -278,8 +279,9 @@ btnPrint.onclick = function() {
         });
     });
 }
-// Получение названия файла для сохранения
+
 btnFilename.onclick = async function() {
+    // Получение названия файла для сохранения
 	await navigator.clipboard.writeText(PHP_filename);
 }
 
@@ -303,19 +305,60 @@ const completions = [
 let editorEventHandlers = {
     // Вставка картинки
     // https://stackoverflow.com/a/6338207
-    paste: function(e, ed) {
+    paste: async function(e) {
         let items = (e.clipboardData || e.originalEvent.clipboardData).items;
         for (let index in items) {
             let item = items[index];
 
             // Этот элемент вставки - не файл
-            if (item.kind !== 'file') {
+            if (item.kind !== 'file') continue;
+            const file = item.getAsFile();
+            if (!isImage(file)) continue;
+
+            // Загружаем изображение
+            const uploadData = await uploadImage(file);
+            if (!uploadData.ok) {
+                console.error('Failed to upload image!');
                 continue;
             }
 
-            uploadImage(item.getAsFile());
+            // Вставляем текст
+            pasteImageMarker(
+                editor.state.selection.main.head,
+                uploadData.filename,
+                uploadData.clientName
+            );
         }
         return false;
+    },
+
+    // Обработчик события дропа на редактор
+    // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
+    drop: async function(e) {
+        if (!e.dataTransfer.items) return;
+
+        let uploadData;
+        
+        for (const item of e.dataTransfer.items) {
+            // Если файл - не файл и не изображение - пропускаем
+            if (!item.kind === "file") continue;
+            const file = item.getAsFile();
+            if (!isImage(file)) continue;
+
+            // Загружаем изображение
+            uploadData = await uploadImage(file);
+            if (!uploadData.ok) {
+                console.error('Failed to upload image!');
+                continue;
+            }
+
+            // Вставляем текст
+            pasteImageMarker(
+                editor.state.selection.main.head,
+                uploadData.filename,
+                uploadData.clientName
+            );
+        }
     }
 }
 
@@ -327,7 +370,6 @@ const
     selection = "#2f5692",
     darkBackground = "#303030",
     stone = "#7d8799";
-    
     
 let agstTheme = EditorView.theme({
     "&": {

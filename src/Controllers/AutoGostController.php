@@ -44,7 +44,11 @@ class AutoGostController {
 				move_uploaded_file($_FILES['file']['tmp_name'], $filepath);
 			}
 
-			$output = ["ok"=>true, "filename"=>basename($filepath)];
+			$output = [
+				"ok" => true,
+				"filename"=> basename($filepath),
+				"clientName" => pathinfo($_FILES['file']['name'], PATHINFO_FILENAME)
+			];
 		} else {
 			$output = ["ok"=>false];
 		}
