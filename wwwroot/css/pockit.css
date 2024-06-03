@@ -96,7 +96,6 @@ a:hover {
 	border: 1px solid var(--gray-5);
 	padding: 0.5em;
 	color: var(--gray-9);
-	font-size: 1rem;
 	border-radius: 5px;
 	text-align: center;
 	text-decoration: none;
@@ -114,11 +113,6 @@ a:hover {
 .btn:focus,
 .btn.selected {
 	background-color: var(--gray-3);
-}
-
-.btn:disabled {
-	background-color: var(--gray-7);
-	cursor: auto;
 }
 
 .text-center {
@@ -327,7 +321,6 @@ a:hover {
 	overflow-x: hidden;
 	padding: 0;
 	display: flex;
-	flex-flow: column-reverse;
 }
 
 .sidebarOpen {

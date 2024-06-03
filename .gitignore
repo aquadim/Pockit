@@ -1,3 +1,4 @@
+*.geany
 vendor
 .env
 db.sqlite3

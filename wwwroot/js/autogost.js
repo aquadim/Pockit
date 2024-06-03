@@ -133,7 +133,8 @@ async function editorToPreview() {
     editorToLoader();
 
     // Некоторые кнопки недоступны
-    lblAddImage.setAttribute("disabled", "disabled");	
+    lblAddImage.setAttribute("disabled", "disabled");
+    btnAddImage.setAttribute("disabled", "disabled");
 
     // Переключение видимости секций
 	editorSection.classList.add("hidden");
@@ -161,6 +162,7 @@ async function editorToMarkup() {
 	editorSection.classList.remove("hidden");
 	previewSection.classList.add("hidden");
 	lblAddImage.removeAttribute("disabled");
+    btnAddImage.removeAttribute("disabled");
     previewOut.classList.add('hidden');
     editorLoader.classList.add('hidden');
 }
@@ -202,7 +204,7 @@ function autogostCompletions(context) {
 
 // Боковая панель
 let sidebarOpened       = true;
-const sidebar           = document.getElementById('agstControls');
+const sidebar           = document.getElementById('agstSidebar');
 const content           = document.getElementById('agstMain');
 const btnSidebarToggle  = document.getElementById('btnToggleSidebar');
 
@@ -215,6 +217,7 @@ const loaderAddImage= document.getElementById("loaderAddImage");
 const btnPrint 		= document.getElementById("printReport");
 const btnFilename 	= document.getElementById("getFilename");
 const btnSave 		= document.getElementById("saveMarkupButton");
+const btnGetHTML    = document.getElementById("btnGetHTML");
 
 // Редактор
 const previewSection= document.getElementById("agstPreview");
@@ -334,8 +337,8 @@ let editorEventHandlers = {
 
     // Обработчик события дропа на редактор
     // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
-    drop: async function(e) {
-        if (!e.dataTransfer.items) return;
+    drop: function(e) {
+        if (!e.dataTransfer.items) return true;
 
         let uploadData;
         
@@ -346,18 +349,19 @@ let editorEventHandlers = {
             if (!isImage(file)) continue;
 
             // Загружаем изображение
-            uploadData = await uploadImage(file);
-            if (!uploadData.ok) {
-                console.error('Failed to upload image!');
-                continue;
-            }
+            uploadImage(file).then(function(uploadData) {
+                if (!uploadData.ok) {
+                    console.error('Failed to upload image!');
+                    return;
+                }
 
-            // Вставляем текст
-            pasteImageMarker(
-                editor.state.selection.main.head,
-                uploadData.filename,
-                uploadData.clientName
-            );
+                // Вставляем текст
+                pasteImageMarker(
+                    editor.state.selection.main.head,
+                    uploadData.filename,
+                    uploadData.clientName
+                );
+            });
         }
     }
 }

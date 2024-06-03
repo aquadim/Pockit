@@ -19,19 +19,25 @@ class AutoGostEditView extends LayoutView {
 	public function content():void { ?>
 
 <!--Панель управления-->
-<div id='agstControls' class='sidebar sidebarOpen'>
-	<button class='btn border-accent' id='switchMarkup'>Разметка</button>
-	<button class='btn' id='switchPreview'>Превью</button>
+<div id='agstSidebar' class='sidebar sidebarOpen'>
+	<div id='agstControls'>
 
-	<label class='btn' id='lblAddImage'>
-		<input type='file' multiple="multiple" id='btnAddImage'/>
-		Добавить изображения
-		<div class='loader hidden' id='loaderAddImage'></div>
-	</label>
+		<button class='btn success' id='saveMarkupButton'>Сохранить</button>
 
-	<button class='btn' id="printReport">Печать</button>
-	<button class='btn' id="getFilename">Скопировать название файла</button>
-	<button class='btn success' id='saveMarkupButton'>Сохранить</button>
+		<button class='btn' id="printReport">Печать</button>
+		<button class='btn' id="getFilename">Скопировать название файла</button>
+		<a href="/autogost/jshtml/<?= $this->report_id ?>" class='btn' id='btnGetHTML'>Скачать HTML</a>
+
+		<label class='btn' id='lblAddImage'>
+			<input type='file' multiple="multiple" id='btnAddImage'/>
+			Добавить изображения
+			<div class='loader hidden' id='loaderAddImage'></div>
+		</label>
+
+		<button class='btn' id='switchPreview'>Превью</button>
+		<button class='btn border-accent' id='switchMarkup'>Разметка</button>
+		
+	</div>
 </div>
 
 <!--Основной раздел-->

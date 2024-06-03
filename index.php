@@ -28,6 +28,7 @@ $router->register('/autogost/edit/{report_id}', 'Pockit\Controllers\AutoGostCont
 $router->register("/autogost/gethtml", 'Pockit\Controllers\AutoGostController::getHtml');
 $router->register("/autogost/archive", 'Pockit\Controllers\AutoGostController::archive');
 $router->register("/autogost/archive/{subject_id}", 'Pockit\Controllers\AutoGostController::listReports');
+$router->register("/autogost/jshtml/{report_id}", 'Pockit\Controllers\AutoGostController::jsHTML');
 
 // Пароли
 $router->register("/passwords", "Pockit\Controllers\PasswordController::index");

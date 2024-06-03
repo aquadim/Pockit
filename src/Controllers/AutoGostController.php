@@ -161,13 +161,52 @@ class AutoGostController {
 		$work_type	= WorkTypeModel::getById($report["work_type"]);
 		$teacher	= TeacherModel::getById($subject["teacher_id"]);
 
-		$document = [];
-		$current_page = 1;
-		$current_img = 1; // Номер текущего рисунка
-		$expr_is_raw_html = false; // Выражение - чистый HTML?
+		self::echoReportHTML($report, $subject, $work_type, $teacher);
+	}
 
-		$lines = explode("\n", $report['markup']);
-		$line_num = 0;
+	// Возвращает файл HTML для скачивания
+	public static function jsHTML($report_id) {
+
+		$report 	= ReportModel::getById($report_id);
+		$subject 	= SubjectModel::getById($report["subject_id"]);
+		$work_type	= WorkTypeModel::getById($report["work_type"]);
+		$teacher	= TeacherModel::getById($subject["teacher_id"]);
+		$filename 	= "Автогост - ".$subject['name']." #".$report['work_number']." - ".$_ENV['autogost_surname'];
+
+		header('Content-Type: text/html');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+		// Читаем стили
+		$styles = file_get_contents(index_dir.'/wwwroot/css/portable.css');
+
+		// Добавляем структуру чтобы был нормальный HTML
+		echo '
+		<html>
+			<head>
+				<style>'.
+				// Стили
+				$styles
+				.'</style>
+			</head>
+		<body>';
+
+		self::echoReportHTML($report, $subject, $work_type, $teacher, true);
+
+		echo '</body></html>';
+	}
+
+	// Печатает HTML отчёта
+	// $img_as_b64 -- кодировать ли изображения в base64
+	private static function echoReportHTML(
+		$report, $subject, $work_type, $teacher, $img_as_b64=false)
+	{
+		$document 			= [];		// Секции документа
+		$current_page 		= 1;		// Текущая страница
+		$current_img 		= 1; 		// Номер текущего рисунка
+		$expr_is_raw_html 	= false; 	// Выражение - чистый HTML?
+
+		$lines 		= explode("\n", $report['markup']);
+		$line_num 	= 0;
 
 		foreach ($lines as $expr) {
 			$line_num++;
@@ -180,8 +219,10 @@ class AutoGostController {
 				if ($current_page == 1) {
 					// Страниц ещё не было!
 					http_response_code(400);
-					$error = [[$line_num, "Текст без страницы"]];
-					echo json_encode($error);
+					echo json_encode([
+						"line"=>$line_num,
+						"Обычный текст перед маркерами страниц"
+					]);
 					exit();
 				}
 				if ($expr_is_raw_html) {
@@ -221,10 +262,19 @@ class AutoGostController {
 					}
 
 					$pictitle = self::makeValidPictureTitle($command[2]);
+
+					if ($img_as_b64) {
+						$path = index_dir.'/wwwroot/img/autogost/'.$command[1];
+						$type = pathinfo($path, PATHINFO_EXTENSION);
+						$data = file_get_contents($path);
+						$src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+					} else {
+						$src = '/img/autogost/'.$command[1];
+					}
 					
 					end($document)->addHTML(
 						"<figure>
-							<img ".$imgwidth." src='/img/autogost/".$command[1]."'>
+							<img ".$imgwidth." src='".$src."'>
 							<figcaption>Рисунок ".$current_img." - ".$pictitle."</figcaption>
 						</figure>"
 					);
