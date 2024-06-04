@@ -218,6 +218,7 @@ class AutoGostController {
 	{
 		$document 			= [];		// Секции документа
 		$current_page 		= 1;		// Текущая страница
+		$page_count			= 1;		// 
 		$current_img 		= 1; 		// Номер текущего рисунка
 		$expr_is_raw_html 	= false; 	// Выражение - чистый HTML?
 
@@ -266,8 +267,8 @@ class AutoGostController {
 
 				case "@section":
 					// Секция основной части
-					$document[] = new SubSection($current_page, $command[1]);
-					$current_page++;
+					$document[] = new SubSection($command[1]);
+					$current_page = 1;
 					break;
 
 				case "@\\":

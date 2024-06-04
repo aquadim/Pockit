@@ -191,7 +191,7 @@ async function saveMarkup(successCallback) {
 
 // Автодополнение
 function autogostCompletions(context) {
-    let before = context.matchBefore(/^@\w*/);
+    let before = context.matchBefore(/^@@*\w*/);
     if (!context.explicit && !before) {
         return null;
     }
@@ -409,7 +409,8 @@ let agstHighlightStyle = HighlightStyle.define([
     {tag: tags.keyword, color: "#d58a4a"},
     {tag: tags.separator, color: "#b6c3cf"},
     {tag: tags.attributeValue, color: "#edc881"},
-    {tag: tags.labelName, color: "#a88ab6"}
+    {tag: tags.labelName, color: "#a88ab6"},
+    {tag: tags.comment, color: "#919191"}
 ]);
 
 // Язык
@@ -419,6 +420,11 @@ const AgstLanguage = StreamLanguage.define({
             return {lineKeyword: false, arg: false, argNum: 0}
     },
     token: function(stream, state) {
+
+        // Комментарий
+        if (stream.match(/^@@\:.*/)) {
+            return "comment";
+        }
 
         // Ключевые слова:
         // @titlepage, @section, @- ...

@@ -11,10 +11,10 @@ class SubSection extends Section {
     private string $name;
     private string $id;
 
-    public function __construct($current_page, $name) {
+    public function __construct($name) {
         $this->name = $name;
         $this->id = uniqid();
-        $this->addFirstPage($current_page);
+        $this->addFirstPage(1);
     }
 
     protected function addFirstPage($current_page) {
