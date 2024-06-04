@@ -20,7 +20,7 @@ class TitleSection extends Section {
     }
 
     protected function beforeOutput() {
-        echo "<section id='titlepage'>";
+        echo "<section class='titlepage'>";
     }
     
 }

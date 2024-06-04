@@ -102,6 +102,14 @@ async function createWindow(route, action, name, options, afterCallback) {
 			const input = $('<input class="form-control" id="'+key+'" type="password" name="'+value.name+'"/>');
 			control_container.append(input);
 
+		} else if (value.type == 'date') {
+			// Дата
+			const input = $('<input class="form-control" id="'+key+'" type="date" name="'+value.name+'"/>');
+			if (value.default != undefined) {
+				input.attr("value", value.default);
+			}
+			control_container.append(input);
+
 		} else {
 			console.log("Неизвестный тип: " + value.type);
 		}

@@ -14,24 +14,27 @@ function displayMessage($string, $color = COLOR_DEFAULT) : void {
 // Создаёт БД
 function databaseUp($file_path) {
 	$db = new SQLite3($file_path);
+
 	$db->query('CREATE TABLE "regen_reports" (
-	"id"	INTEGER,
+	"id"			INTEGER,
 	"subject_id"	INTEGER,
-	"work_type"	INTEGER,
+	"work_type"		INTEGER,
 	"work_number"	TEXT,
-	"notice"	TEXT,
-	"date_create"	DATETIME,
-	"markup"	TEXT,
+	"notice"		TEXT,
+	"date_create"	DATETIME DEFAULT CURRENT_TIMESTAMP,
+	"markup"		TEXT,
+	"date_for" 		DATETIME,
+	"hidden"		INTEGER DEFAULT 0,
 	PRIMARY KEY("id"))');
 
 	$db->query('CREATE TABLE "regen_subjects" (
-		"id"	INTEGER,
-		"name"	TEXT,
-		"code"	TEXT,
-		"teacher_id"	INTEGER,
-		"my_name"	TEXT,
-		PRIMARY KEY("id")
-	)');
+	"id"			INTEGER,
+	"name"			TEXT,
+	"code"			TEXT,
+	"teacher_id"	INTEGER,
+	"my_name"		TEXT,
+	"hidden"		INTEGER DEFAULT 0,
+	PRIMARY KEY("id"))');
 
 	$db->query('CREATE TABLE "regen_teachers" (
 	"id" INTEGER PRIMARY KEY,
@@ -43,26 +46,31 @@ function databaseUp($file_path) {
 	"id" INTEGER PRIMARY KEY,
 	"name_nom" TEXT,
 	"name_gen" TEXT,
-	"name_titlepage" INTEGER)');
+	"name_titlepage" TEXT)');
 
 	$db->query('CREATE TABLE "passwords" (
-	"id"	INTEGER PRIMARY KEY,
-	"name"	TEXT NOT NULL,
-	"value"	TEXT NOT NULL,
-	"iv"	BLOB NOT NULL)');
+	"id"		INTEGER PRIMARY KEY,
+	"name"		TEXT NOT NULL,
+	"value"		TEXT NOT NULL,
+	"iv"		BLOB NOT NULL,
+	"hidden"	INTEGER DEFAULT 0)');
 	
 	$db->query('CREATE TABLE "links" (
-	"id"	INTEGER,
-	"name"	TEXT NOT NULL,
-	"href"	TEXT NOT NULL,
+	"id"		INTEGER,
+	"name"		TEXT NOT NULL,
+	"href"		TEXT NOT NULL,
+	"hidden"	INTEGER DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT))');
 
 	$db->query("INSERT INTO 'regen_teachers' VALUES (1,'Пивоваров','Сергей','Александрович')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (2,'Ильина','Светлана','Анатольевна')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (3,'Галимова','Екатерина','Валерьевна')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (4,'Немтинова','Елена','Александровна')");
+
 	$db->query("INSERT INTO 'regen_worktypes' VALUES (1,'ЛАБОРАТОРНАЯ РАБОТА','ЛАБОРАТОРНОЙ РАБОТЫ','лабораторной работе')");
 	$db->query("INSERT INTO 'regen_worktypes' VALUES (2,'ПРАКТИЧЕСКАЯ РАБОТА','ПРАКТИЧЕСКОЙ РАБОТЫ','практической работе')");
+
+	$db->query("INSERT INTO 'regen_subjects' VALUES (1,'Тестовый предмет','МДК.00.01',1,'Тест',0)");
 }
 
 // Возвращает ввод пользователя

@@ -16,6 +16,7 @@ use Pockit\Views\AutoGostNewReportView;
 use Pockit\Views\AutoGostPages\AutoGostPage;
 
 use Pockit\AutoGostSections\TitleSection;
+use Pockit\AutoGostSections\PracticeTitleSection;
 use Pockit\AutoGostSections\SubSection;
 
 class AutoGostController {
@@ -58,7 +59,7 @@ class AutoGostController {
 	// Список отчётов по дисциплине
 	public static function listReports($subject_id) {
 		
-		$reports = ReportModel::where("subject_id", $subject_id);
+		$reports = ReportModel::where("subject_id", $subject_id, true);
 		$subject = SubjectModel::getById($subject_id);
 
 		$view = new AutoGostReportsView([
@@ -72,7 +73,7 @@ class AutoGostController {
 
 	// Архив отчётов
 	public static function archive() {
-		$subjects = SubjectModel::all();
+		$subjects = SubjectModel::all(true);
 
 		$view = new AutoGostArchiveView([
 			"page_title" => "Автогост: архив",
@@ -103,17 +104,20 @@ class AutoGostController {
 
 	// Валидация создания отчёта
 	private static function validateCreation() {
-		if (empty($_POST["number"])) {
-			// Запрос на создание
+		if (mb_strlen($_POST["number"]) == 0) {
 			return 'Не указан номер работы';
 		}
+		
+		if (SubjectModel::countAll() == 0 || TeacherModel::countAll() == 0) {
+			return 'В базе данных нет либо предметов, либо преподавателей. '.
+			'Выполните стартовую настройку карманного сервера';
+		}
+		
 		return true;
 	}
 
 	// Создание отчёта
 	public static function newReport() {
-		$subjects = SubjectModel::all();
-		$worktypes = WorkTypeModel::all();
 
 		if (!empty($_POST)) {
 			$response = self::validateCreation();
@@ -128,7 +132,8 @@ class AutoGostController {
 					$_POST['work_type'],
 					$_POST['number'],
 					$_POST['notice'],
-					"@titlepage\n@section:{$work_type['name_nom']} №{$_POST['number']}\n@section:Ответы на контрольные вопросы"
+					"@titlepage\n@section:{$work_type['name_nom']} №{$_POST['number']}\n@section:Ответы на контрольные вопросы",
+					$_POST['date_for']
 				);
 
 				// Перенаправляем на предпросмотр этого отчёта
@@ -142,6 +147,8 @@ class AutoGostController {
 			$error_text = null;
 		}
 		
+		$subjects = SubjectModel::all(true);
+		$worktypes = WorkTypeModel::all();
 		$view = new AutoGostNewReportView([
 			"page_title" => "Автогост: создание отчёта",
 			'subjects' => $subjects,
@@ -239,6 +246,12 @@ class AutoGostController {
 				case "@titlepage":
 					// Титульный лист
 					$document[] = new TitleSection($current_page);
+					$current_page++;
+					break;
+
+				case "@practicetitle":
+					// Титульный лист практики
+					$document[] = new PracticeTitleSection($current_page);
 					$current_page++;
 					break;
 

@@ -10,7 +10,7 @@ class LinksController {
 
 	// Главная домашняя страница
 	public static function index() {
-		$links = LinkModel::all();
+		$links = LinkModel::all(true);
 		$json_links = [];
 		while ($row = $links->fetchArray()) {
 			$json_links[] = [

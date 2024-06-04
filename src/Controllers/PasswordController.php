@@ -10,7 +10,7 @@ class PasswordController {
 
 	// Главная домашняя страница
 	public static function index() {
-		$passwords = PasswordModel::all();
+		$passwords = PasswordModel::all(true);
 		$json_passwords = [];
 		while ($row = $passwords->fetchArray()) {
 			$json_passwords[] = [

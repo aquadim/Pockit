@@ -42,6 +42,16 @@ class AutoGostNewReportView extends LayoutView {
 			<label for="inp-number">Номер работы</label>
 			<input class="form-control" id="inp-number" placeholder="Номер работы" type="text" name="number"/>
 		</div>
+
+		<div class='form-control-container'>
+			<label for='inp-date'>Дата отчёта (ставится в рамки и титульный лист)</label>
+			<input
+				class='form-control'
+				id='inp-date'
+				type='date'
+				name='date_for'
+				value='<?= date('Y-m-d') ?>'/>
+		</div>
 		
 		<div class="form-control-container">
 			<label for="inp-notice">Комментарий</label>

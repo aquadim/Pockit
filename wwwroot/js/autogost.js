@@ -169,7 +169,7 @@ async function editorToMarkup() {
 
 // Сохранение разметки
 async function saveMarkup(successCallback) {
-    const response = await fetch("http://localhost:9000/reports/update", {
+    const response = await fetch("http://localhost:9000/reports/updateMarkup", {
         method: "post",
         body: JSON.stringify(
             {id: PHP_report_id, markup: editor.state.doc.toString()}
@@ -295,6 +295,7 @@ editorToLoader();
 // Все ключевые слова
 const completions = [
     {label: "@titlepage", type: "keyword", info: "Титульная страница"},
+    {label: "@practicetitle", type: "keyword", info: "Титульная страница для практики"},
     {label: "@section:Название", type: "keyword", info: "Секция основной части"},
     {label: "@-", type: "keyword", info: "Разрыв страницы"},
     {label: "@img:Источник:Подпись", type: "keyword", info: "Изображение"},

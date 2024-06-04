@@ -41,9 +41,12 @@ $router->register("/links", "Pockit\Controllers\LinksController::index");
 $router->register('/subjects/create', 'Pockit\Controllers\ApiController::createSubject');
 $router->register('/subjects/update', 'Pockit\Controllers\ApiController::updateSubject');
 $router->register('/subjects/delete', 'Pockit\Controllers\ApiController::deleteSubject');
+
 $router->register('/reports/get', 'Pockit\Controllers\ApiController::getReport');
 $router->register('/reports/update', 'Pockit\Controllers\ApiController::updateReport');
 $router->register('/reports/delete', 'Pockit\Controllers\ApiController::deleteReport');
+$router->register('/reports/updateMarkup', 'Pockit\Controllers\ApiController::updateReportMarkup');
+
 $router->register('/teachers/read', 'Pockit\Controllers\ApiController::getTeachers');
 $router->register('/work_types/read', 'Pockit\Controllers\ApiController::getWorkTypes');
 $router->register('/passwords/create', 'Pockit\Controllers\ApiController::createPassword');

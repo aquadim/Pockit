@@ -34,5 +34,4 @@ class AutoGostTitlePage extends AutoGostPage {
 </div>
 
     <?php }
-
 }
