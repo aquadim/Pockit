@@ -96,12 +96,14 @@ a:hover {
 	padding: 0.5em;
 	color: var(--gray-9);
 	border-radius: 5px;
-	text-align: center;
 	text-decoration: none;
-	display: inline-block;
 	margin: 0.1em;
 	font-size: 14px;
 	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
 }
 
 .btn:hover {
@@ -340,4 +342,20 @@ a:hover {
 /* Это зона, в которую можно опустить файлы */
 .dragzone {
 	border: 2px dashed var(--accent);
+}
+
+/* Ключевое слово в помощи автогоста */
+.keyword {
+	font-family: 'monospace';
+	color: #D48A4A;
+}
+
+/* Избежание стены текста */
+.textwall {
+	margin: 0.5em 2em;
+	text-align: justify;
+}
+
+p.textwall {
+	text-indent: 2em;
 }

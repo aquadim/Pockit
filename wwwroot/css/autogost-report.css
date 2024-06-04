@@ -68,6 +68,10 @@
 	margin: 0.1em;
 }
 
+#btnToggleSidebar {
+	margin: 0 auto;
+}
+
 /*===/Редактор разметки===*/
 
 #agstOutput {

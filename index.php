@@ -5,6 +5,7 @@ namespace Pockit;
 // Файл, на который поступают запросы
 require_once "vendor/autoload.php";
 use Pockit\Common\Router;
+use Pockit\Controllers;
 
 define('index_dir', __DIR__);
 
@@ -29,6 +30,7 @@ $router->register("/autogost/gethtml", 'Pockit\Controllers\AutoGostController::g
 $router->register("/autogost/archive", 'Pockit\Controllers\AutoGostController::archive');
 $router->register("/autogost/archive/{subject_id}", 'Pockit\Controllers\AutoGostController::listReports');
 $router->register("/autogost/jshtml/{report_id}", 'Pockit\Controllers\AutoGostController::jsHTML');
+$router->register("/autogost/help", "Pockit\Controllers\AutoGostController::help");
 
 // Пароли
 $router->register("/passwords", "Pockit\Controllers\PasswordController::index");

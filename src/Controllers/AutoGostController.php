@@ -12,6 +12,7 @@ use Pockit\Views\AutoGostArchiveView;
 use Pockit\Views\AutoGostReportsView;
 use Pockit\Views\AutoGostEditView;
 use Pockit\Views\AutoGostNewReportView;
+use Pockit\Views\AutoGostHelpView;
 
 use Pockit\Views\AutoGostPages\AutoGostPage;
 
@@ -26,6 +27,14 @@ class AutoGostController {
 	private static function makeValidPictureTitle(string $title) : string {
 		return mb_strtoupper(mb_substr($title, 0, 1)) .
 			mb_strtolower(mb_substr($title, 1));
+	}
+
+	// Помощь
+	public static function help() {
+		$view = new AutoGostHelpView([
+			"crumbs" => ["Главная" => "/", "Автогост: помощь" => ""]
+		]);
+		$view->view();
 	}
 
 	// Загрузка изображений
