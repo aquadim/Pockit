@@ -53,9 +53,8 @@ class AutoGostEditView extends LayoutView {
 		<!--Превью-->
 		<div id="agstPreview" class='hidden'>
 			<!--Ошибки-->
-			<div class='card danger hidden' id="agstErrors">
-				<h3 class='text-center'></h3>
-				<ol id="agstErrorsList"></ol>
+			<div class='card danger hidden' id="agstErrorsContainer">
+				<p id="agstErrors"></p>
 			</div>
 			<!--Вывод HTML-->
 			<div id="agstOutput"></div>

@@ -218,7 +218,6 @@ class AutoGostController {
 	{
 		$document 				= [];		// Секции документа
 		$current_img 			= 1; 		// Номер текущего рисунка
-		$expr_is_raw_html 		= false; 	// Выражение - чистый HTML?
 		$current_section_index 	= -1;		// Индекс текущей секции в документе
 		$lines 					= explode("\n", $report['markup']);
 		$line_num 				= 0;		// Номер обрабатываемой строки
@@ -234,19 +233,13 @@ class AutoGostController {
 				// Выражение - обычный текст
 				if ($page_added == false) {
 					// Страниц ещё не было!
-					http_response_code(400);
-					echo json_encode([
-						"line"=>$line_num,
-						"Обычный текст перед маркерами страниц"
-					]);
-					exit();
+					self::agstError(
+						$line_num,
+						"Обычный текст перед маркерами страниц запрещён"
+					);
 				}
-				if ($expr_is_raw_html) {
-					$document[$current_section_index]->addHTML($expr);
-				} else {
-					$document[$current_section_index]->addHTML(
-						"<p class='report-text'>".$expr."</p>");
-				}
+				$document[$current_section_index]->addHTML(
+					"<p class='report-text'>".$expr."</p>");
 				continue;
 			}
 
@@ -284,8 +277,15 @@ class AutoGostController {
 
 					$pictitle = self::makeValidPictureTitle($command[2]);
 
+					$path = index_dir.'/wwwroot/img/autogost/'.$command[1];
+					if (!file_exists($path)) {
+						self::agstError(
+							$line_num,
+							"Изображение по пути \"".$path."\" не найдено"
+						);
+					}
+
 					if ($img_as_b64) {
-						$path = index_dir.'/wwwroot/img/autogost/'.$command[1];
 						$type = pathinfo($path, PATHINFO_EXTENSION);
 						$data = file_get_contents($path);
 						$src = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -300,16 +300,6 @@ class AutoGostController {
 						</figure>"
 					);
 					$current_img++;
-					break;
-
-				case "@raw":
-					// Чистый HTML
-					$expr_is_raw_html = true;
-					break;
-
-				case "@endraw":
-					// /Чистый HTML
-					$expr_is_raw_html = false;
 					break;
 
 				case "@@":
@@ -338,5 +328,12 @@ class AutoGostController {
 		foreach ($document as $section) {
 			$section->output();
 		}
+	}
+
+	// Выводит ошибку
+	private static function agstError($line, $text) {
+		http_response_code(400);
+		echo json_encode(["line"=>$line, "text"=>$text]);
+		exit();
 	}
 }

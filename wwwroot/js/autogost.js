@@ -91,6 +91,15 @@ async function updatePreview(onSuccess) {
         console.log("Updating preview finished successfully");
     } else {
         console.error("Error when generating preview");
+
+        const data = await response.json();
+        agstErrors.textContent =
+            'Произошла ошибка на строке: '+
+            data.line + ': ' + data.text;
+
+        editorLoader.classList.add('hidden');
+        agstErrorsContainer.classList.remove('hidden');
+        
     }
 }
 
@@ -165,6 +174,7 @@ async function editorToMarkup() {
     btnAddImage.removeAttribute("disabled");
     previewOut.classList.add('hidden');
     editorLoader.classList.add('hidden');
+    agstErrorsContainer.classList.add('hidden');
 }
 
 // Сохранение разметки
@@ -220,10 +230,12 @@ const btnSave 		= document.getElementById("saveMarkupButton");
 const btnGetHTML    = document.getElementById("btnGetHTML");
 
 // Редактор
-const previewSection= document.getElementById("agstPreview");
-const editorSection	= document.getElementById("agstEditor");
-const previewOut 	= document.getElementById("agstOutput");
-const editorLoader  = document.getElementById('agstLoader');
+const previewSection        = document.getElementById("agstPreview");
+const editorSection	        = document.getElementById("agstEditor");
+const previewOut 	        = document.getElementById("agstOutput");
+const editorLoader          = document.getElementById('agstLoader');
+const agstErrors            = document.getElementById('agstErrors');
+const agstErrorsContainer   = document.getElementById('agstErrorsContainer');
 let unsavedChanges  = false;
 
 // -- Привязка событий --
@@ -296,13 +308,10 @@ editorToLoader();
 const completions = [
     {label: "@titlepage", type: "keyword", info: "Титульная страница"},
     {label: "@practicetitle", type: "keyword", info: "Титульная страница для практики"},
-    {label: "@section:Название", type: "keyword", info: "Секция основной части"},
+    {label: "@section:название", type: "keyword", info: "Секция основной части"},
     {label: "@-", type: "keyword", info: "Разрыв страницы"},
-    {label: "@img:Источник:Подпись", type: "keyword", info: "Изображение"},
-    {label: "@\\", type: "keyword", info: "Пустая строка"},
-    {label: "@raw", type: "keyword", info: "Начало чистого HTML"},
-    {label: "@endraw", type: "keyword", info: "Конец чистого HTML"},
-    {label: "@@:Комментарий", type: "keyword", info: "Комментарий"},
+    {label: "@img:источник:подпись", type: "keyword", info: "Изображение"},
+    {label: "@@:комментарий", type: "keyword", info: "Комментарий"},
 ];
 
 // События DOM редактора разметки
