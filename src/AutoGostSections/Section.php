@@ -7,13 +7,9 @@ abstract class Section {
     // Страницы секции
     protected $pages;
 
-    public function __construct($current_page) {
-        $this->addFirstPage($current_page);
-    }
+    protected function addFirstPage() {}
 
-    protected function addFirstPage($current_page) {}
-
-    public function pageBreak($current_page) {}
+    public function pageBreak() {}
 
     public function addHTML($HTML) {
         end($this->pages)->addComponent($HTML);

@@ -28,7 +28,6 @@ class AutoGostPage extends View {
     protected static $author_full;
     protected static $subject;
     protected static $work_type;
-    protected static $pages_count;
     protected static $author_group;
     protected static $work_number;
     protected static $teacher_surname;
@@ -41,7 +40,6 @@ class AutoGostPage extends View {
         $subject,
         $teacher,
         $work_type,
-        $pages_count,
         $report
     )
     {
@@ -51,7 +49,6 @@ class AutoGostPage extends View {
         static::$author_full = $_ENV['autogost_full'];
         static::$subject = $subject;
         static::$work_type = $work_type;
-        static::$pages_count = $pages_count;
         static::$author_group = $_ENV['autogost_group'];
         static::$work_number = $report['work_number'];
         static::$teacher_surname = $teacher['surname'];

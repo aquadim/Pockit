@@ -7,7 +7,7 @@ use Pockit\Views\AutoGostPages\AutoGostPracticeTitlePage;
 
 class PracticeTitleSection extends TitleSection {
 
-    protected function addFirstPage($current_page) {
+    public function __construct() {
         $this->pages[] = new AutoGostPracticeTitlePage();
     }
 

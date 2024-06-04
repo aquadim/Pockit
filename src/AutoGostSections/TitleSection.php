@@ -7,11 +7,11 @@ use Pockit\Views\AutoGostPages\AutoGostTitlePage;
 
 class TitleSection extends Section {
 
-    protected function addFirstPage($current_page) {
+    public function __construct() {
         $this->pages[] = new AutoGostTitlePage();
     }
 
-    public function pageBreak($current_page) {
+    public function pageBreak() {
         throw new \Exception("Page breaks in TitleSection are not allowed.");
     }
 

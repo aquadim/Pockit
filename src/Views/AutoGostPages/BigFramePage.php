@@ -6,8 +6,12 @@ namespace Pockit\Views\AutoGostPages;
 class BigFramePage extends AutoGostPage {
 
     protected $components;
-    protected $current_page;
     protected $framename;
+    protected $page_count; // Количество страниц в разделе
+
+    public function setPageCount($page_count) {
+        $this->page_count = $page_count;
+    }
 
     public function addComponent($HTML) {
         $this->components .= $HTML;
@@ -30,8 +34,8 @@ class BigFramePage extends AutoGostPage {
     <span class="al">Листов</span>
     <span class="pr">Провер.</span>
     <span class="st"><?= static::$teacher_surname ?></span>
-    <span class="cp"><?= $this->current_page ?></span>
-    <span class="pc"><?= static::$pages_count ?></span>
+    <span class="cp">1</span>
+    <span class="pc"><?= $this->page_count ?></span>
     <div class='nm'>
         <div><?= $this->framename ?></div>
     </div>

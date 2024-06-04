@@ -216,14 +216,13 @@ class AutoGostController {
 	private static function echoReportHTML(
 		$report, $subject, $work_type, $teacher, $img_as_b64=false)
 	{
-		$document 			= [];		// Секции документа
-		$current_page 		= 1;		// Текущая страница
-		$page_count			= 1;		// 
-		$current_img 		= 1; 		// Номер текущего рисунка
-		$expr_is_raw_html 	= false; 	// Выражение - чистый HTML?
-
-		$lines 		= explode("\n", $report['markup']);
-		$line_num 	= 0;
+		$document 				= [];		// Секции документа
+		$current_img 			= 1; 		// Номер текущего рисунка
+		$expr_is_raw_html 		= false; 	// Выражение - чистый HTML?
+		$current_section_index 	= -1;		// Индекс текущей секции в документе
+		$lines 					= explode("\n", $report['markup']);
+		$line_num 				= 0;		// Номер обрабатываемой строки
+		$page_added				= false;	// Добавлена ли какая-либо страница?
 
 		foreach ($lines as $expr) {
 			$line_num++;
@@ -233,7 +232,7 @@ class AutoGostController {
 
 			if ($expr[0] != "@") {
 				// Выражение - обычный текст
-				if ($current_page == 1) {
+				if ($page_added == false) {
 					// Страниц ещё не было!
 					http_response_code(400);
 					echo json_encode([
@@ -243,9 +242,10 @@ class AutoGostController {
 					exit();
 				}
 				if ($expr_is_raw_html) {
-					end($document)->addHTML($expr);
+					$document[$current_section_index]->addHTML($expr);
 				} else {
-					end($document)->addHTML("<p class='report-text'>".$expr."</p>");
+					$document[$current_section_index]->addHTML(
+						"<p class='report-text'>".$expr."</p>");
 				}
 				continue;
 			}
@@ -255,25 +255,23 @@ class AutoGostController {
 			switch ($command_name) {
 				case "@titlepage":
 					// Титульный лист
-					$document[] = new TitleSection($current_page);
-					$current_page++;
+					$document[] = new TitleSection();
+					$current_section_index++;
+					$page_added = true;
 					break;
 
 				case "@practicetitle":
 					// Титульный лист практики
-					$document[] = new PracticeTitleSection($current_page);
-					$current_page++;
+					$document[] = new PracticeTitleSection();
+					$current_section_index++;
+					$page_added = true;
 					break;
 
 				case "@section":
 					// Секция основной части
 					$document[] = new SubSection($command[1]);
-					$current_page = 1;
-					break;
-
-				case "@\\":
-					// Перенос строки
-					end($document)->addHTML("<br/>");
+					$current_section_index++;
+					$page_added = true;
 					break;
 
 				case "@img":
@@ -295,7 +293,7 @@ class AutoGostController {
 						$src = '/img/autogost/'.$command[1];
 					}
 					
-					end($document)->addHTML(
+					$document[$current_section_index]->addHTML(
 						"<figure>
 							<img ".$imgwidth." src='".$src."'>
 							<figcaption>Рисунок ".$current_img." - ".$pictitle."</figcaption>
@@ -321,8 +319,8 @@ class AutoGostController {
 				case "@/":
 				case "@-":
 					// Разрыв страницы
-					end($document)->pageBreak($current_page);
-					$current_page++;
+					$document[$current_section_index]->pageBreak();
+					$page_added = true;
 					break;
 				
 				default:
@@ -335,7 +333,6 @@ class AutoGostController {
 			$subject,
 			$teacher,
 			$work_type,
-			$current_page - 1,
 			$report
 		);
 		foreach ($document as $section) {
