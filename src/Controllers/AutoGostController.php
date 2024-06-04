@@ -149,12 +149,21 @@ class AutoGostController {
 		
 		$subjects = SubjectModel::all(true);
 		$worktypes = WorkTypeModel::all();
+
+		// Дисциплина по умолчанию
+		if (isset($_GET['selected'])) {
+			$selected = $_GET['selected'];
+		} else {
+			$selected = -1;
+		}
+		
 		$view = new AutoGostNewReportView([
 			"page_title" => "Автогост: создание отчёта",
 			'subjects' => $subjects,
 			'worktypes' => $worktypes,
 			'error_text' => $error_text,
-			"crumbs" => ["Главная"=>"/", "Автогост: создание отчёта" => "/"]
+			"crumbs" => ["Главная"=>"/", "Автогост: создание отчёта" => "/"],
+			"selected" => $selected
 		]);
 		$view->view();
 	}

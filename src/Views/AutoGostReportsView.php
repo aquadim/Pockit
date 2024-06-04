@@ -17,7 +17,7 @@ class AutoGostReportsView extends LayoutView {
 
 	<div id='reportsList'></div>
 
-	<a href="/autogost/new/" class="btn success w-100 m-1">Добавить</a>
+	<a href="/autogost/new?selected=<?= $this->subject['id'] ?>" class="btn success w-100 m-1">Добавить</a>
 </div>
 
 <script>
