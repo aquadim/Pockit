@@ -9,9 +9,9 @@ abstract class Section {
 
     protected function addFirstPage() {}
 
-    public function pageBreak() {}
+    public function pageBreak($current_line) {}
 
-    public function addHTML($HTML) {
+    public function addHTML($HTML, $current_line) {
         end($this->pages)->addComponent($HTML);
     }
 

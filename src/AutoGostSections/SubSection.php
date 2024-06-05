@@ -25,7 +25,7 @@ class SubSection extends Section {
         ]);
     }
 
-    public function pageBreak() {
+    public function pageBreak($current_line) {
         $this->page_count++;
         $this->pages[] = new SmallFramePage([
             'current_page' => $this->page_count

@@ -16,9 +16,12 @@ use Pockit\Views\AutoGostHelpView;
 
 use Pockit\Views\AutoGostPages\AutoGostPage;
 
+use Pockit\AutoGostSections\Section;
 use Pockit\AutoGostSections\TitleSection;
 use Pockit\AutoGostSections\PracticeTitleSection;
 use Pockit\AutoGostSections\SubSection;
+
+use Pockit\Common\AgstException;
 
 class AutoGostController {
 
@@ -186,7 +189,15 @@ class AutoGostController {
 		$work_type	= WorkTypeModel::getById($report["work_type"]);
 		$teacher	= TeacherModel::getById($subject["teacher_id"]);
 
-		self::echoReportHTML($report, $subject, $work_type, $teacher);
+		try {
+			self::echoReportHTML($report, $subject, $work_type, $teacher);
+		} catch (AgstException $ex) {
+			http_response_code(400);
+			echo json_encode([
+				"line"=>$ex->getErrorLine(),
+				"text"=>$ex->getUserMessage()
+			]);
+		}
 	}
 
 	// Возвращает файл HTML для скачивания
@@ -232,28 +243,51 @@ class AutoGostController {
 		$line_num 				= 0;		// Номер обрабатываемой строки
 		$page_added				= false;	// Добавлена ли какая-либо страница?
 
+		// Является ли текущее выражение строкой таблицы?
+		$expr_is_table			= false;
+		// Номер текущей таблицы
+		$current_table			= 1;
+		// Разделитель данных текущей таблицы
+		$current_table_delim	= '';
+
 		foreach ($lines as $expr) {
 			$line_num++;
 			if (mb_strlen($expr) == 0) {
 				continue;
 			}
 
+			if (!$page_added && !self::isSectionCommand($expr)) {
+				// Ни одной страницы не было добавлено
+				// Сейчас добавляется НЕ страница
+				// Это ошибка
+				throw new AgstException(
+					"Необходимо добавить секции прежде чем писать разметку",
+					$line_num);
+			}
+
 			if ($expr[0] != "@") {
 				// Выражение - обычный текст
-				if ($page_added == false) {
-					// Страниц ещё не было!
-					self::agstError(
-						$line_num,
-						"Обычный текст перед маркерами страниц запрещён"
-					);
+				if ($expr_is_table) {
+					// Текущая строка - данные колонок таблиц
+					$HTML = "<p>HERE IS TABLE</p>";
+				} else {
+					// Текущая строка - абзац текста
+					$HTML = "<p class='report-text'>".$expr."</p>";
 				}
+
 				$document[$current_section_index]->addHTML(
-					"<p class='report-text'>".$expr."</p>");
+					$HTML,
+					$current_line
+				);
+				
 				continue;
 			}
 
 			$command = explode(":", $expr);
 			$command_name = $command[0];
+
+			
+
 			switch ($command_name) {
 				case "@titlepage":
 					// Титульный лист
@@ -288,9 +322,9 @@ class AutoGostController {
 
 					$path = index_dir.'/wwwroot/img/autogost/'.$command[1];
 					if (!file_exists($path)) {
-						self::agstError(
-							$line_num,
-							"Изображение по пути \"".$path."\" не найдено"
+						throw new AgstException(
+							"Изображение по пути \"".$path."\" не найдено",
+							$line_num
 						);
 					}
 
@@ -301,12 +335,13 @@ class AutoGostController {
 					} else {
 						$src = '/img/autogost/'.$command[1];
 					}
-					
+
 					$document[$current_section_index]->addHTML(
 						"<figure>
 							<img ".$imgwidth." src='".$src."'>
 							<figcaption>Рисунок ".$current_img." - ".$pictitle."</figcaption>
-						</figure>"
+						</figure>",
+						$line_num
 					);
 					$current_img++;
 					break;
@@ -318,12 +353,40 @@ class AutoGostController {
 				case "@/":
 				case "@-":
 					// Разрыв страницы
-					$document[$current_section_index]->pageBreak();
+					$document[$current_section_index]->pageBreak($line_num);
 					$page_added = true;
+					break;
+
+				case "@table":
+					// Начало таблицы
+
+					// Проверить количество аргументов - должно быть минимум 2
+					if (count($command) < 3) {
+						throw new AgstException(
+							"Недостаточно параметров для создания таблицы. ".
+							"Укажите как минимум название и разделитель ".
+							"данных. Например: @table:подпись:,",
+							$line_num
+						);
+					}
+					
+					$expr_is_table = true;
+					$document[$current_section_index]->addHTML(
+						"<p>Таблица ".$current_table." - ".$command[1]."</p>",
+						$line_num
+					);
+					break;
+
+				case "@endtable";
+					// Конец таблицы
+					$expr_is_table = false;
 					break;
 				
 				default:
-					throw new \Exception("Unknown command: ".$command_name);
+					throw new AgstException(
+						"Неизвестная команда: ".$command_name,
+						$line_num
+					);
 					break;
 			}
 		}
@@ -337,12 +400,12 @@ class AutoGostController {
 		foreach ($document as $section) {
 			$section->output();
 		}
+
+		return ['ok' => true];
 	}
 
-	// Выводит ошибку
-	private static function agstError($line, $text) {
-		http_response_code(400);
-		echo json_encode(["line"=>$line, "text"=>$text]);
-		exit();
+	// Проверка: является ли строка командой добавления секции
+	private static function isSectionCommand(string $expr) : bool {
+		return preg_match('/^@(titlepage|practicetitle|section)/', $expr) === 1;
 	}
 }

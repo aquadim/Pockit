@@ -4,6 +4,7 @@ namespace Pockit\AutoGostSections;
 // Секция титульного листа
 
 use Pockit\Views\AutoGostPages\AutoGostTitlePage;
+use Pockit\Common\AgstException;
 
 class TitleSection extends Section {
 
@@ -11,12 +12,17 @@ class TitleSection extends Section {
         $this->pages[] = new AutoGostTitlePage();
     }
 
-    public function pageBreak() {
-        throw new \Exception("Page breaks in TitleSection are not allowed.");
+    public function pageBreak($current_line) {
+        throw new AgstException(
+            "Разрывы страниц в титульных листах запрещены",
+            $current_line);
     }
 
-    public function addHTML($HTML) {
-        throw new \Exception("Adding HTML in TitleSection is not allowed.");
+    public function addHTML($HTML, $current_line) {
+        throw new AgstException(
+            "Добавлять что-либо кроме маркеров секций в титульных листах ".
+            "запрещено",
+            $current_line);
     }
 
     protected function beforeOutput() {

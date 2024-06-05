@@ -139,7 +139,7 @@ a:hover {
 	padding: 1em;
 	transition: 100ms;
 	align-items: center;
-	border: 2px solid transparent;
+	border: 1px solid transparent;
 }
 
 .action:hover {
