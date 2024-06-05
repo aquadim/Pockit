@@ -139,10 +139,12 @@ a:hover {
 	padding: 1em;
 	transition: 100ms;
 	align-items: center;
+	border: 2px solid transparent;
 }
 
 .action:hover {
 	background-color: rgba(255, 255, 255, 0.3);
+	border-color: white;
 }
 
 .action > img {
