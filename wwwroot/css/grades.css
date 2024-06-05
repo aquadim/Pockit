@@ -32,9 +32,9 @@
 }
 
 #gradesCard .perfect:nth-child(even) {
-  background: linear-gradient(to right, #2B2B2B, #3EB428);
+  background: linear-gradient(to right, #2B2B2B, #1ba53b);
 }
 
 #gradesCard .perfect:nth-child(odd) {
-  background: linear-gradient(to right, #303030, #2AC828);
+  background: linear-gradient(to right, #303030, #05B92F);
 }

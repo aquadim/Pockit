@@ -60,6 +60,11 @@ class AutoGostHelpView extends LayoutView {
     <p class='textwall'>
         // TODO
     </p>
+
+    <h3 class='textwall'>Отчёт в PDF</h3>
+    <p class='textwall'>
+        // TODO
+    </p>
     
 </div>
         

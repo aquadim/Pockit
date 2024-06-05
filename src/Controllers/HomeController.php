@@ -4,6 +4,7 @@ namespace Pockit\Controllers;
 // Контроллер домашней страницы
 
 use Pockit\Views\HomeView;
+use Pockit\Views\AboutView;
 
 class HomeController {
 
@@ -18,10 +19,10 @@ class HomeController {
 			"#14282b",
 			"#904147",
 			"#d0645f",
-			"#d7553f",
+			"#3b4049",
 			"#b2e5fa",
 			"#4e9a3a",
-			"#8bbde2",
+			"#787c80",
 			"#e9af6b",
 			"#1e1c2a",
 			"#2175e9",
@@ -48,6 +49,14 @@ class HomeController {
 			"welcome_text" => $welcome_text,
 			"background_image" => "/img/home/".$background_image,
 			"background_color"=> $background_color
+		]);
+		$view->view();
+	}
+
+	// "О программе"
+	public static function about() {
+		$view = new AboutView([
+			"crumbs" => ["Главная" => "/", "О карманном сервере" => ""]
 		]);
 		$view->view();
 	}

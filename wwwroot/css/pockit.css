@@ -120,11 +120,13 @@ a:hover {
 	text-align: center;
 }
 
-.actions-row {
-	display: flex;
-	flex-flow: row;
-	width: 100%;
+.actions {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
 	justify-content: center;
+	margin: 0 auto;
+	width: 50%;
+	max-width: 768px;
 }
 
 .action {
@@ -145,6 +147,7 @@ a:hover {
 
 .action > img {
 	max-width: 128px;
+	min-height: 128px;
 	margin-top: 1em;
 }
 

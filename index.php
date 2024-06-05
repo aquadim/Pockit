@@ -17,6 +17,7 @@ $router = new Router();
 
 // Главная
 $router->register('', 'Pockit\Controllers\HomeController::index');
+$router->register('/about', 'Pockit\Controllers\HomeController::about');
 
 // Оценки
 $router->register('/grades', 'Pockit\Controllers\GradesController::index');
