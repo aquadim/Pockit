@@ -249,6 +249,8 @@ class AutoGostController {
 		$current_table			= 1;
 		// Разделитель данных текущей таблицы
 		$current_table_delim	= '';
+		// Номер строки, на которой объявлена текущая таблица
+		$current_table_line_num	= 0;
 
 		foreach ($lines as $expr) {
 			$line_num++;
@@ -269,7 +271,14 @@ class AutoGostController {
 				// Выражение - обычный текст
 				if ($expr_is_table) {
 					// Текущая строка - данные колонок таблиц
-					$HTML = "<p>HERE IS TABLE</p>";
+					// Разделить текст на колонки в соответствии с
+					// current_table_delim
+					$columns = str_getcsv($expr, $current_table_delim);
+					$HTML = "<tr>";
+					foreach ($columns as $col) {
+						$HTML .= "<td>".$col."</td>";
+					}
+					$HTML .= "</tr>";
 				} else {
 					// Текущая строка - абзац текста
 					$HTML = "<p class='report-text'>".$expr."</p>";
@@ -277,17 +286,24 @@ class AutoGostController {
 
 				$document[$current_section_index]->addHTML(
 					$HTML,
-					$current_line
+					$line_num
 				);
 				
 				continue;
+			} else {
+				// Выражение - ключевое слово
+
+				if ($expr_is_table && $expr != "@endtable") {
+					// Ключевое слово в таблице - нельзя
+					throw new AgstException(
+						"В разметке таблицы запрещены ключевые слова",
+						$line_num
+					);
+				}
 			}
 
 			$command = explode(":", $expr);
 			$command_name = $command[0];
-
-			
-
 			switch ($command_name) {
 				case "@titlepage":
 					// Титульный лист
@@ -312,6 +328,17 @@ class AutoGostController {
 
 				case "@img":
 					// Изображение
+
+					// Проверить количество аргументов - должно быть минимум 2
+					if (count($command) < 3) {
+						throw new AgstException(
+							"Недостаточно параметров для создания изображения. ".
+							"Укажите как минимум источник и подпись ".
+							"данных. Например: @img:источник:подпись",
+							$line_num
+						);
+					}
+					
 					if (count($command) >= 4) {
 						$imgwidth = "width='".$command[3]."'";
 					} else {
@@ -371,8 +398,13 @@ class AutoGostController {
 					}
 					
 					$expr_is_table = true;
+					$current_table_delim = $command[2];
+					$current_table_line_num = $line_num;
+
 					$document[$current_section_index]->addHTML(
-						"<p>Таблица ".$current_table." - ".$command[1]."</p>",
+						"<p>Таблица ".$current_table." - ".$command[1]."</p>".
+						"<table>"
+						,
 						$line_num
 					);
 					break;
@@ -380,6 +412,11 @@ class AutoGostController {
 				case "@endtable";
 					// Конец таблицы
 					$expr_is_table = false;
+
+					$document[$current_section_index]->addHTML(
+						"</table>",
+						$line_num
+					);
 					break;
 				
 				default:
@@ -391,6 +428,15 @@ class AutoGostController {
 			}
 		}
 
+		if ($expr_is_table) {
+			// Отчёт закончился, а таблица не закрыта!
+			throw new AgstException(
+				"Таблица, объявленная на строке ".$current_table_line_num.
+				" не закрыта",
+				$line_num
+			);
+		}
+
 		AutoGostPage::init(
 			$subject,
 			$teacher,
@@ -400,8 +446,6 @@ class AutoGostController {
 		foreach ($document as $section) {
 			$section->output();
 		}
-
-		return ['ok' => true];
 	}
 
 	// Проверка: является ли строка командой добавления секции

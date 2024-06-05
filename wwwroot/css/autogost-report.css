@@ -106,6 +106,17 @@
 	width: 100%;
 }
 
+.page table {
+	width: 100%;
+}
+
+.page table,
+.page table tr,
+.page table tr td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
 .page .report-text {
 	text-indent: 15mm;
 	text-align: justify;
