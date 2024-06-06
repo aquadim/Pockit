@@ -251,6 +251,8 @@ class AutoGostController {
 		$current_table_delim	= '';
 		// Номер строки, на которой объявлена текущая таблица
 		$current_table_line_num	= 0;
+		// Идентификатор текущей таблицы
+		$current_table_class	= '';
 
 		foreach ($lines as $expr) {
 			$line_num++;
@@ -293,10 +295,12 @@ class AutoGostController {
 			} else {
 				// Выражение - ключевое слово
 
-				if ($expr_is_table && $expr != "@endtable") {
+				if ($expr_is_table && $expr != "@endtable" && $expr != "@-") {
 					// Ключевое слово в таблице - нельзя
+					// Кроме: разрыв страницы (@-)
 					throw new AgstException(
-						"В разметке таблицы запрещены ключевые слова",
+						"В разметке таблицы запрещены ключевые слова кроме ".
+						"разрыва таблицы (@-)",
 						$line_num
 					);
 				}
@@ -380,8 +384,26 @@ class AutoGostController {
 				case "@/":
 				case "@-":
 					// Разрыв страницы
+
+					if ($expr_is_table) {
+						// Разрыв страницы в таблице
+						// Надо закрыть тэг таблицы, а после добавления страницы
+						// Добавить абзац с текстом продолжения
+						$document[$current_section_index]->addHTML(
+							"</table>",
+							$line_num);
+					}
+
 					$document[$current_section_index]->pageBreak($line_num);
 					$page_added = true;
+
+					if ($expr_is_table) {
+						// Продолжение таблицы
+						$document[$current_section_index]->addHTML(
+							'<p>Продолжение таблицы '.$current_table.'</p>'.
+							'<table class="'.$current_table_class.'">',
+							$line_num);
+					}
 					break;
 
 				case "@table":
@@ -400,11 +422,11 @@ class AutoGostController {
 					$expr_is_table = true;
 					$current_table_delim = $command[2];
 					$current_table_line_num = $line_num;
+					$current_table_class = uniqid('table');
 
 					$document[$current_section_index]->addHTML(
 						"<p>Таблица ".$current_table." - ".$command[1]."</p>".
-						"<table>"
-						,
+						"<table class=".$current_table_class.">",
 						$line_num
 					);
 					break;
