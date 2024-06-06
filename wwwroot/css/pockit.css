@@ -90,7 +90,8 @@ a:hover {
 /* End Forms */
 
 /* Buttons */
-.btn {
+.btn,
+input[type=file]::file-selector-button {
 	background-color: var(--gray-4);
 	border: 1px solid var(--gray-5);
 	padding: 0.5em;
@@ -104,6 +105,18 @@ a:hover {
 	justify-content: center;
 	align-items: center;
 	text-align: center;
+}
+
+/* В полях выбора файла выравнивать всё по левому краю */
+input[type=file].btn {
+	text-align: left;
+}
+
+/* Починка кнопок выбора файла */
+input[type=file]::file-selector-button {
+	background-color: var(--gray-3);
+	display: inline;
+	margin-right: 1em;
 }
 
 .btn:hover {
@@ -351,7 +364,7 @@ a:hover {
 
 /* Ключевое слово в помощи автогоста */
 .keyword {
-	font-family: 'monospace';
+	font-family: monospace;
 	color: #D48A4A;
 }
 
@@ -363,4 +376,13 @@ a:hover {
 
 p.textwall {
 	text-indent: 2em;
+}
+
+/* Ряд кнопок "Да" и "Нет" */
+.succesCancelRow {
+	display: grid;
+	grid-template-columns: auto 25%;
+	grid-gap: 1em;
+	width: 100%;
+	margin-top: 1em;
 }

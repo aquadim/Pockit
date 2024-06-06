@@ -16,6 +16,11 @@ function isImage(file) {
     return file.type.split('/')[0] === 'image'
 }
 
+// Возвращает вывод: файл - текст?
+function isText(file) {
+    return file.type.split('/')[0] === 'text'
+}
+
 // Загружает изображение на сервер, возвращает ответ сервера
 async function uploadImage(file) {
     const fd = new FormData();
@@ -27,6 +32,51 @@ async function uploadImage(file) {
     });
     const data = await response.json();
     return data;
+}
+
+// caretAt - текущая позицияя курсора
+// name - название таблицы
+// delimeter - разделитель
+// content - содержание таблицы
+function insertTable(caretAt, name, delimeter, content) {
+    // Текст строки с курсором
+    const lineText = editor.state.doc.lineAt(caretAt).text;
+
+    let prefix;
+    if (lineText.length == 0) {
+        // Это пустая строка, можно не переносить курсор на новую строку
+        prefix = '';
+    } else {
+        prefix = '\n';
+    }
+
+    // Если файл имеет в конце перенос строки, то в разметку добавлять ещё один
+    // ни к чему
+    let postfix;
+    if (content.endsWith('\n')) {
+        postfix = '';
+    } else {
+        postfix = '\n';
+    }
+
+    const toInsert =
+        prefix+
+        "@table:" + name + ":" + delimeter + '\n' +
+        content + postfix +
+        '@endtable';
+    
+    editor.dispatch({
+        changes: {
+            from: caretAt,
+            insert: toInsert
+        }
+    });
+
+    // Перенос курсора
+    const newPos = caretAt + toInsert.length;
+    editor.dispatch({
+        selection: EditorSelection.single(newPos)
+    });
 }
 
 // caretAt маркер изображения на данную позицию
@@ -227,7 +277,7 @@ const loaderAddImage= document.getElementById("loaderAddImage");
 const btnPrint 		= document.getElementById("printReport");
 const btnFilename 	= document.getElementById("getFilename");
 const btnSave 		= document.getElementById("saveMarkupButton");
-const btnGetHTML    = document.getElementById("btnGetHTML");
+const btnAddTable   = document.getElementById("btnAddTable");
 
 // Редактор
 const previewSection        = document.getElementById("agstPreview");
@@ -300,6 +350,120 @@ btnFilename.onclick = async function() {
 	await navigator.clipboard.writeText(PHP_filename);
 }
 
+btnAddTable.onclick = async function() {
+    // Создать окно добавления таблицы
+    const win = document.createElement('div');
+    win.classList.add('card', 'modal');
+
+    // Заголовок
+    const heading = document.createElement('h1');
+    heading.textContent = 'Добавление таблицы';
+
+    // CSV файл
+    const csvFileContainer = document.createElement('div');
+    csvFileContainer.classList.add('form-control-container');
+    const csvFileLabel = document.createElement('label');
+    csvFileLabel.for = 'inpSelectCSV';
+    csvFileLabel.textContent = 'CSV файл';
+    const csvFileInput = document.createElement('input');
+    csvFileInput.id = 'inpSelectCSV';
+    csvFileInput.classList.add('form-control', 'btn');
+    csvFileInput.type = 'file';
+    csvFileInput.accept = '.csv,.txt';
+
+    // Разделитель
+    const delimContainer = document.createElement('div');
+    delimContainer.classList.add('form-control-container');
+    const delimLabel = document.createElement('label');
+    delimLabel.for = 'inpDelimeter';
+    delimLabel.textContent = 'Разделитель колонок';
+    const delimInput = document.createElement('input');
+    delimInput.id = 'inpDelimeter';
+    delimInput.classList.add('form-control');
+    delimInput.type = 'text';
+    delimInput.value = ',';
+    delimInput.placeholder = 'Каким символом отделяются колонки';
+
+    // Подпись
+    const labelContainer = document.createElement('div');
+    labelContainer.classList.add('form-control-container');
+    const labelLabel = document.createElement('label');
+    labelLabel.for = 'inpLabel';
+    labelLabel.textContent = 'Подпись таблицы';
+    const labelInput = document.createElement('input');
+    labelInput.id = 'inpLabel';
+    labelInput.classList.add('form-control');
+    labelInput.type = 'text';
+    labelInput.placeholder = 'Как назвать таблицу';
+
+    // Ряд кнопок
+    const buttonRow = document.createElement('div');
+    buttonRow.classList.add('succesCancelRow');
+
+    // Кнопка "Готово"
+    const btnDone = document.createElement('button');
+    btnDone.classList.add('btn', 'success');
+    btnDone.textContent = 'Готово';
+    btnDone.onclick = async function() {
+        // 1. Читаем файл
+        const selectedFile = csvFileInput.files[0];
+        if (selectedFile !== undefined && isText(selectedFile)) {
+            // Файл - текст и был выбран
+            const text = await selectedFile.text();
+
+            // 2. Добавляем текст
+            insertTable(
+                editor.state.selection.main.head,
+                labelInput.value,
+                delimInput.value,
+                text);
+        }
+
+        // 3. Скрываем все окна
+        const toDelete = document.querySelectorAll('.modal, .dark-overlay');
+        for (const item of toDelete) {
+            item.remove();
+        }
+    }
+
+    // Кнопка "Отмена"
+    const btnCancel = document.createElement('button');
+    btnCancel.classList.add('btn');
+    btnCancel.textContent = 'Отмена';
+    btnCancel.onclick = async function() {
+        const toDelete = document.querySelectorAll('.modal, .dark-overlay');
+        for (const item of toDelete) {
+            item.remove();
+        }
+    }
+
+    // Тёмный фон
+    const overlay = document.createElement('div');
+    overlay.classList.add('dark-overlay');
+
+    // Упаковка
+    csvFileContainer.append(csvFileLabel);
+    csvFileContainer.append(csvFileInput);
+
+    delimContainer.append(delimLabel);
+    delimContainer.append(delimInput);
+
+    labelContainer.append(labelLabel);
+    labelContainer.append(labelInput);
+
+    buttonRow.append(btnDone);
+    buttonRow.append(btnCancel);
+
+    win.append(heading);
+    win.append(csvFileContainer);
+    win.append(delimContainer);
+    win.append(labelContainer);
+    win.append(buttonRow);
+    
+    document.body.append(win);
+    document.body.append(overlay);
+}
+
 // ===CODEMIRROR===
 let editor;
 editorToLoader();
@@ -312,6 +476,8 @@ const completions = [
     {label: "@-", type: "keyword", info: "Разрыв страницы"},
     {label: "@img:источник:подпись", type: "keyword", info: "Изображение"},
     {label: "@@:комментарий", type: "keyword", info: "Комментарий"},
+    {label: "@table:название:разделитель", type: "keyword", info: "Таблица"},
+    {label: "@endtable", type: "keyword", info: "Конец таблицы"},
 ];
 
 // События DOM редактора разметки

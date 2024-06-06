@@ -119,7 +119,7 @@ async function createWindow(route, action, name, options, afterCallback) {
 
 	// Кнопки добавления и отмены
 	form.append($(`
-	<div style='display: grid;grid-template-columns: auto 25%;grid-gap: 1em;width: 100%;'>
+	<div class='succesCancelRow'>
 		<button type="submit" class="crudcreate success form-control">Сохранить</button>
 		<button type="submit" onclick='removeModalWindows()' class="crudcancel form-control">Отмена</button>
 	</div>`));

@@ -23,7 +23,6 @@ class AutoGostEditView extends LayoutView {
 	<div id='agstControls'>
 
 		<button class='btn success' id='saveMarkupButton'>Сохранить</button>
-
 		<button class='btn' id="printReport">Печать</button>
 		<button class='btn' id="getFilename">Скопировать название файла</button>
 		<a href="/autogost/jshtml/<?= $this->report_id ?>" class='btn' id='btnGetHTML'>Скачать HTML</a>
@@ -33,6 +32,8 @@ class AutoGostEditView extends LayoutView {
 			Добавить изображения
 			<div class='loader hidden' id='loaderAddImage'></div>
 		</label>
+
+		<button class='btn' id='btnAddTable'>Добавить таблицу</button>
 
 		<a class='btn' href="/autogost/help">
 			Помощь
@@ -79,6 +80,46 @@ class AutoGostEditView extends LayoutView {
 		<button id="btnToggleSidebar" class='btn m-1' onclick="toggleSidebar()">❌ Закрыть панель инструментов</button>
 	</div>
 </div>
+
+<!--
+<div class='card modal'>
+	<h1>Добавление таблицы</h1>
+
+	<div class="form-control-container">
+		<label for='inpSelectCSV'>CSV файл</label>
+		<input
+			id='inpSelectCSV'
+			class='form-control btn'
+			type='file'
+			accept='.csv,.txt'/>
+	</div>
+
+	<div class="form-control-container">
+		<label for='inpDelimeter'>Разделитель колонок</label>
+		<input
+			id='inpDelimeter'
+			class='form-control'
+			type='text'
+			value=','
+			placeholder="Каким символом отделяются колонки"/>
+	</div>
+
+	<div class="form-control-container">
+		<label for='inpLabel'>Подпись таблицы</label>
+		<input
+			id='inpLabel'
+			class='form-control'
+			type='text'
+			placeholder="Как назвать таблицу"/>
+	</div>
+
+	<div class='succesCancelRow'>
+		<button type='button' class='btn success'>Готово</button>
+		<button type='button' class='btn'>Отмена</button>
+	</div>
+</div>
+<div class='dark-overlay'></div>
+-->
 
 <!--Связь с javascript-->
 <script type="text/javascript">
