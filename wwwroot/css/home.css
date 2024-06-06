@@ -6,7 +6,7 @@
   width: 100%;
   background-position: center center;
   background-size: cover;
-  animation: fade-in 0.5s;
+  animation: fade-in 1s;
 }
 
 .breadcrumb {

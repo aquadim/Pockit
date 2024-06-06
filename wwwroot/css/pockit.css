@@ -137,7 +137,7 @@ a:hover {
 	background-color: transparent;
 	border-radius: 10px;
 	padding: 1em;
-	transition: 100ms;
+	transition: 300ms;
 	align-items: center;
 	border: 1px solid transparent;
 }
