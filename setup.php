@@ -2,6 +2,15 @@
 // Скрипт первоначальной установки
 
 namespace Pockit;
+
+// env файл надо создать до загрузки bootstrap.php
+$env_path = __DIR__ . "/.env";
+$env_exists = file_exists($env_path);
+if (!$env_exists) {
+	// Создать пустой .env файл чтобы не было ошибок
+	file_put_contents($env_path, '');
+}
+
 require_once "bootstrap.php";
 
 use Pockit\Common\Database;
@@ -87,8 +96,7 @@ if (file_exists($db_path)) {
 }
 
 // 2. Заполнение .env файла
-$env_path = index_dir."/.env";
-if (file_exists($env_path)) {
+if ($env_exists) {
 	displayMessage("Файл env уже существует -- пропускаем создание\n", COLOR_YELLOW);
 } else {
 	$user_name = userInput("Введи твоё имя\n");
