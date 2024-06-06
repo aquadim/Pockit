@@ -3,14 +3,11 @@
 namespace Pockit;
 
 // Файл, на который поступают запросы
-require_once "vendor/autoload.php";
+
 use Pockit\Common\Router;
 use Pockit\Controllers;
 
-define('index_dir', __DIR__);
-
-$dotenv = \Dotenv\Dotenv::createImmutable(index_dir);
-$dotenv->load();
+require_once "bootstrap.php";
 
 // Определение маршрутов
 $router = new Router();

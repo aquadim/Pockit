@@ -1,35 +1,37 @@
 <?php
-// Скрипт первоначальной установки
 
-namespace Pockit;
-require_once "bootstrap.php";
+define("COLOR_DEFAULT", "");
+define("COLOR_YELLOW", "\033[93m");
+define("COLOR_RED", "\033[91m");
+define("COLOR_GREEN", "\033[92m");
+define("COLOR_TERMINATOR", "\033[0m");
 
-use Pockit\Common\Database;
+// Выводит строку информации и окрашивает её в определённый цвет
+function displayMessage($string, $color = COLOR_DEFAULT) : void {
+	echo $color.$string.COLOR_TERMINATOR;
+}
 
 // Создаёт БД
-function databaseUp() {
-	$db = Database::getConnection();
-
+function databaseUp($file_path) {
+	$db = new SQLite3($file_path);
 	$db->query('CREATE TABLE "regen_reports" (
-	"id"			INTEGER,
+	"id"	INTEGER,
 	"subject_id"	INTEGER,
-	"work_type"		INTEGER,
+	"work_type"	INTEGER,
 	"work_number"	TEXT,
-	"notice"		TEXT,
-	"date_create"	DATETIME DEFAULT CURRENT_TIMESTAMP,
-	"markup"		TEXT,
-	"date_for" 		DATETIME,
-	"hidden"		INTEGER DEFAULT 0,
+	"notice"	TEXT,
+	"date_create"	DATETIME,
+	"markup"	TEXT,
 	PRIMARY KEY("id"))');
 
 	$db->query('CREATE TABLE "regen_subjects" (
-	"id"			INTEGER,
-	"name"			TEXT,
-	"code"			TEXT,
-	"teacher_id"	INTEGER,
-	"my_name"		TEXT,
-	"hidden"		INTEGER DEFAULT 0,
-	PRIMARY KEY("id"))');
+		"id"	INTEGER,
+		"name"	TEXT,
+		"code"	TEXT,
+		"teacher_id"	INTEGER,
+		"my_name"	TEXT,
+		PRIMARY KEY("id")
+	)');
 
 	$db->query('CREATE TABLE "regen_teachers" (
 	"id" INTEGER PRIMARY KEY,
@@ -41,43 +43,36 @@ function databaseUp() {
 	"id" INTEGER PRIMARY KEY,
 	"name_nom" TEXT,
 	"name_gen" TEXT,
-	"name_titlepage" TEXT)');
+	"name_titlepage" INTEGER)');
 
 	$db->query('CREATE TABLE "passwords" (
-	"id"		INTEGER PRIMARY KEY,
-	"name"		TEXT NOT NULL,
-	"value"		TEXT NOT NULL,
-	"iv"		BLOB NOT NULL,
-	"hidden"	INTEGER DEFAULT 0)');
+	"id"	INTEGER PRIMARY KEY,
+	"name"	TEXT NOT NULL,
+	"value"	TEXT NOT NULL,
+	"iv"	BLOB NOT NULL)');
 	
 	$db->query('CREATE TABLE "links" (
-	"id"		INTEGER,
-	"name"		TEXT NOT NULL,
-	"href"		TEXT NOT NULL,
-	"hidden"	INTEGER DEFAULT 0,
-	PRIMARY KEY("id" AUTOINCREMENT))');
-
-	$db->query('CREATE TABLE "pockit" (
 	"id"	INTEGER,
-	"value"	TEXT,
-	PRIMARY KEY("id"))');
+	"name"	TEXT NOT NULL,
+	"href"	TEXT NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT))');
 
 	$db->query("INSERT INTO 'regen_teachers' VALUES (1,'Пивоваров','Сергей','Александрович')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (2,'Ильина','Светлана','Анатольевна')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (3,'Галимова','Екатерина','Валерьевна')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (4,'Немтинова','Елена','Александровна')");
-
 	$db->query("INSERT INTO 'regen_worktypes' VALUES (1,'ЛАБОРАТОРНАЯ РАБОТА','ЛАБОРАТОРНОЙ РАБОТЫ','лабораторной работе')");
 	$db->query("INSERT INTO 'regen_worktypes' VALUES (2,'ПРАКТИЧЕСКАЯ РАБОТА','ПРАКТИЧЕСКОЙ РАБОТЫ','практической работе')");
+}
 
-	$db->query("INSERT INTO 'regen_subjects' VALUES (1,'Тестовый предмет','МДК.00.01',1,'Тест',0)");
-
-	// Версия схемы базы данных
-	$db->query("INSERT INTO 'pockit' VALUES(1, '".pockit_version."')");
+// Возвращает ввод пользователя
+function userInput($prompt) : string {
+	displayMessage($prompt, COLOR_DEFAULT);
+	return rtrim(fgets(STDIN));
 }
 
 // 1. Создание БД
-$db_path = index_dir."/db.sqlite3";
+$db_path = __DIR__."/db.sqlite3";
 if (file_exists($db_path)) {
 	displayMessage("Файл базы данных уже существует -- пропускаем создание\n", COLOR_YELLOW);
 } else {
@@ -87,10 +82,13 @@ if (file_exists($db_path)) {
 }
 
 // 2. Заполнение .env файла
-$env_path = index_dir."/.env";
+$env_path = __DIR__."/.env";
 if (file_exists($env_path)) {
+
 	displayMessage("Файл env уже существует -- пропускаем создание\n", COLOR_YELLOW);
+
 } else {
+
 	$user_name = userInput("Введи твоё имя\n");
 	$user_surname = userInput("Введи твою фамилию\n");
 	$user_patronymic = userInput("Введи твоё отчество\n");
@@ -111,7 +109,9 @@ if (file_exists($env_path)) {
 	fwrite($fp, "autogost_full=".$full."\n");
 	fwrite($fp, "autogost_group=".$user_group."\n");
 	fwrite($fp, "autogost_code=".$user_code."\n");
+	
 	fclose($fp);
 
 	displayMessage("Файл настроек успешно создан!\n", COLOR_GREEN);
+
 }
