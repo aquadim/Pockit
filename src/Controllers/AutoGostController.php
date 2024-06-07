@@ -342,6 +342,18 @@ class AutoGostController {
 							$line_num
 						);
 					}
+
+					if (mb_strlen($command[1]) == 0) {
+						throw new AgstException(
+							"Не указан источник изображения",
+							$line_num);
+					}
+
+					if (mb_strlen($command[2]) == 0) {
+						throw new AgstException(
+							"Не указана подпись изображения",
+							$line_num);
+					}
 					
 					if (count($command) >= 4) {
 						$imgwidth = "width='".$command[3]."'";
@@ -418,6 +430,18 @@ class AutoGostController {
 							$line_num
 						);
 					}
+
+					if (mb_strlen($command[1]) == 0) {
+						throw new AgstException(
+							"Не указана подпись таблицы",
+							$line_num);
+					}
+
+					if (mb_strlen($command[2]) == 0) {
+						throw new AgstException(
+							"Не указан разделитель данных в таблице",
+							$line_num);
+					}
 					
 					$expr_is_table = true;
 					$current_table_delim = $command[2];
@@ -425,7 +449,8 @@ class AutoGostController {
 					$current_table_class = uniqid('table');
 
 					$document[$current_section_index]->addHTML(
-						"<p>Таблица ".$current_table." - ".$command[1]."</p>".
+						"<p>Таблица ".$current_table.' - '.
+						self::makeValidPictureTitle($command[1])."</p>".
 						"<table class=".$current_table_class.">",
 						$line_num
 					);

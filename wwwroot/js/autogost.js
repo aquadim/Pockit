@@ -143,9 +143,9 @@ async function updatePreview(onSuccess) {
         console.error("Error when generating preview");
 
         const data = await response.json();
-        agstErrors.textContent =
-            'Произошла ошибка на строке: '+
-            data.line + ': ' + data.text;
+        agstErrors.innerHTML =
+            'Произошла ошибка на строке <strong>'+
+            data.line + '</strong>: <strong>' + data.text + '</strong>';
 
         editorLoader.classList.add('hidden');
         agstErrorsContainer.classList.remove('hidden');
