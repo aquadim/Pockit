@@ -2,7 +2,7 @@
 
 require_once "vendor/autoload.php";
 
-define("pockit_version", 1);
+define("pockit_version", 2);
 define('index_dir', __DIR__);
 
 define("COLOR_DEFAULT", "");

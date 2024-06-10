@@ -16,6 +16,10 @@ $router = new Router();
 $router->register('', 'Pockit\Controllers\HomeController::index');
 $router->register('/about', 'Pockit\Controllers\HomeController::about');
 
+// Настройка
+$router->register('/settings', 'Pockit\Controllers\SettingsController::index');
+$router->register('/settings/themes', 'Pockit\Controllers\SettingsController::themes');
+
 // Оценки
 $router->register('/grades', 'Pockit\Controllers\GradesController::index');
 $router->register('/grades/get', 'Pockit\Controllers\GradesController::collect');

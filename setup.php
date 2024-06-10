@@ -71,6 +71,24 @@ function databaseUp() {
 	"value"	TEXT,
 	PRIMARY KEY("id"))');
 
+	$db->query('CREATE TABLE "themes" (
+	"id"	INTEGER,
+	"name"	TEXT,
+	"author"	TEXT,
+	"col_bg"	TEXT,
+	"col_fg"	TEXT,
+	"col_accent"	TEXT,
+	PRIMARY KEY("id")');
+
+	$db->query('CREATE TABLE "home_images" (
+	"id"	INTEGER,
+	"theme_id"	INTEGER,
+	"ord_num"	INTEGER,
+	"image_b64"	BLOB,
+	"color"	TEXT,
+	FOREIGN KEY("theme_id") REFERENCES "themes"("id"),
+	PRIMARY KEY("id"))');
+
 	$db->query("INSERT INTO 'regen_teachers' VALUES (1,'Пивоваров','Сергей','Александрович')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (2,'Ильина','Светлана','Анатольевна')");
 	$db->query("INSERT INTO 'regen_teachers' VALUES (3,'Галимова','Екатерина','Валерьевна')");

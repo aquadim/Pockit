@@ -43,6 +43,32 @@ for ($version = $existing + 1; $version <= pockit_version; $version++) {
 	    $db->query('ALTER TABLE links ADD COLUMN "hidden" INTEGER DEFAULT 0');
 	    $db->query('ALTER TABLE regen_subjects ADD COLUMN "hidden" INTEGER DEFAULT 0');
 	    break;
+
+	case 2:
+	    // Добавлены таблицы тем
+	    $db->query('
+	    CREATE TABLE "themes" (
+	    "id"	INTEGER,
+	    "name"	TEXT,
+	    "author"	TEXT,
+	    "col_bg"	TEXT,
+	    "col_fg"	TEXT,
+	    "col_accent"	TEXT,
+	    PRIMARY KEY("id")');
+
+	    $db->query('
+	    CREATE TABLE "home_images" (
+	    "id"	INTEGER,
+	    "theme_id"	INTEGER,
+	    "ord_num"	INTEGER,
+	    "image_b64"	BLOB,
+	    "color"	TEXT,
+	    FOREIGN KEY("theme_id") REFERENCES "themes"("id"),
+	    PRIMARY KEY("id"))');
+
+	    // Тема по умолчанию
+	    // TODO
+	    break;
 	    
 	default:
 	    displayMessage('Неизвестная версия: '.$version, COLOR_YELLOW);
