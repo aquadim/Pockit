@@ -85,12 +85,9 @@ class AutoGostController {
 
 	// Архив отчётов
 	public static function archive() {
-		$subjects = SubjectModel::all(true);
-
 		$view = new AutoGostArchiveView([
 			"page_title" => "Автогост: архив",
-			"crumbs" => ["Главная" => "/", "Автогост: дисциплины" => "/"],
-			"subjects" => $subjects
+			"crumbs" => ["Главная" => "/", "Автогост: дисциплины" => "/"]
 		]);
 		$view->view();
 	}

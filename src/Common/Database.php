@@ -1,24 +1,50 @@
 <?php
-namespace Pockit\Common;
-
 // Класс работы с БД
 
+namespace Pockit\Common;
+
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Tools\DsnParser;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+
 class Database {
-	private static $db;
-	private $connection;
-	
-	private function __construct() {
-		$this->connection = new \SQLite3(index_dir.'/db.sqlite3');
-	}
+    private static $db;
+    private $connection;
+    private $entity_manager;
+    
+    private function __construct($dsn) {
+        // Подключение к БД
+        $dsnParser = new DsnParser();
+        $connection_params = $dsnParser->parse($_ENV['dsn']);
+        $this->connection = DriverManager::getConnection($connection_params);
 
-	function __destruct() {
-		$this->connection->close();
-	}
+        // Получение менеджера сущностей
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            paths: array(index_dir . '/src/Models'),
+            isDevMode: true,
+        );
+        $this->entity_manager = new EntityManager($this->connection, $config);
+    }
 
-	public static function getConnection() {
-		if (self::$db == null) {
-			self::$db = new Database();
-		}
-		return self::$db->connection;
-	}
+    // Инициализирует БД
+    public static function init($dsn): void {
+        self::$db = new Database($dsn);
+    }
+
+    // Возвращает ссылку на $connection
+    public static function getConnection() {
+        if (self::$db == null) {
+            self::init($_ENV['dsn']);
+        }
+        return self::$db->connection;
+    }
+
+    // Возвращает ссылку на $entity_manager
+    public static function getEM() {
+        if (self::$db == null) {
+            self::init($_ENV['dsn']);
+        }
+        return self::$db->entity_manager;
+    }
 }

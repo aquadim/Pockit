@@ -41,6 +41,7 @@ $router->register("/links", "Pockit\Controllers\LinksController::index");
 
 // API
 $router->register('/subjects/create', 'Pockit\Controllers\ApiController::createSubject');
+$router->register('/subjects/read', 'Pockit\Controllers\ApiController::readSubject');
 $router->register('/subjects/update', 'Pockit\Controllers\ApiController::updateSubject');
 $router->register('/subjects/delete', 'Pockit\Controllers\ApiController::deleteSubject');
 

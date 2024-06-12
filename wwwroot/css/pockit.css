@@ -33,6 +33,10 @@ body {
 	text-align: center;
 }
 
+.mono {
+    font-family: monospace;
+}
+
 .stretched-link {
 	position: absolute;
 	width: 100%;
@@ -117,6 +121,7 @@ input[type=file]::file-selector-button {
 	justify-content: center;
 	align-items: center;
 	text-align: center;
+    font-family: 'lato';
 }
 /* В полях выбора файла выравнивать всё по левому краю */
 input[type=file].btn {
@@ -244,12 +249,12 @@ input[type=file]::file-selector-button {
 	border-color: var(--destructiveBorder);
 	color: var(--destructiveFg);
 }
-.danger:hover {
+.btn.danger:hover {
 	background-color: var(--destructiveHoverBg);
 	color: var(--destructiveHoverFg);
 }
-.danger:active,
-.danger:focus {
+.btn.danger:active,
+.btn.danger:focus {
 	background-color: var(--destructiveFocusBg);
 	color: var(--destructiveFocusFg);
 }
@@ -259,12 +264,12 @@ input[type=file]::file-selector-button {
 	border-color: var(--suggestedBorder);
 	color: var(--suggestedFg);
 }
-.success:hover {
+.btn.success:hover {
 	background-color: var(--suggestedHoverBg);
 	color: var(--suggestedHoverFg);
 }
-.success:active,
-.success:focus {
+.btn.success:active,
+.btn.success:focus {
 	background-color: var(--suggestedFocusBg);
 	color: var(--suggestedFocusFg);
 }
@@ -362,4 +367,55 @@ p.textwall {
 	grid-gap: 1em;
 	width: 100%;
 	margin-top: 1em;
+}
+
+@keyframes slideToLeft {
+    0% {
+        transform: translateX(100%);
+        opacity: 0%;
+    }
+    100% {
+        transform: translateX(0%);
+        opacity: 100%;
+    }
+}
+
+@keyframes slideToRight {
+    0% {
+        transform: translateX(0%);
+        opacity: 100%;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0%;
+    }
+}
+
+/* Уведомления */
+#notifyArea {
+    position: fixed;
+    top: 16px;
+    z-index: 3;
+    width: 33%;
+    min-width: 300px;
+    right: 16px;
+}
+
+.notification {
+    position: relative;
+    padding: 1em;
+    color: white;
+    margin-bottom: 16px;
+    transition: 300ms;
+    border-radius: 5px;
+    border-width: 2px;
+    border-style: dashed;
+}
+
+.notifSlideLeft {
+    animation: slideToLeft 0.25s forwards;
+}
+
+.notifSlideRight {
+    animation: slideToRight 0.5s forwards;
 }

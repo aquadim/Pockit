@@ -5,49 +5,21 @@ namespace Pockit\Views;
 
 class AutoGostArchiveView extends LayoutView {
 	protected $subjects;
+
+    public function customScripts() { ?>
+<script src="/js/archiveView.js"></script>
 	
-	public function content():void { ?>
+	<?php } public function content() : void { ?>
 
 <div class='card m-1'>
 	<h1 class='text-center card-title'>Архив отчётов</h1>
-	<div id='subjectsList'>
-		<?php while ($subject = $this->subjects->fetchArray()) { ?>
-			<div id='subject<?= $subject['id'] ?>' class='crud-item'>
-				<p><?= $subject['my_name'] ?></p>
-				<div class='crud-buttons'>
-					<a class='btn' href='/autogost/archive/<?=$subject['id']?>'>Отчёты</a>
-					<button class='btn' onclick='crudUpdateShowWindow("subjects", {"Название": {type: "plain", name: "name", default: "<?=$subject['name']?>"}, "Название для программы": {type: "plain", name: "my_name", default: "<?=$subject['my_name']?>"}, "Шифр": {type: "plain", name: "code", default: "<?=$subject['code']?>"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers", default:<?=$subject['teacher_id']?>}, "ID": {type: "hidden", name: "id", default: <?=$subject['id']?>}}, "Обновление дисциплины", updateSubject)'>Изменить</button>
-					<button class='btn danger' onclick='crudDelete("subjects", <?= $subject['id'] ?>, "subject<?= $subject['id'] ?>")'>Удалить</button>
-				</div>
-			</div>
-		<?php } ?>
-	</div>
+    <div id='loading' class='text-center'>
+        <p class='mono'>Загрузка...</p>
+        <div class='loader'></div>
+    </div>
+	<div id='lvSubjects'></div>
 
-	<button class='btn success w-100' onclick='crudCreateShowWindow("subjects", {"Название": {type: "plain", name: "name"}, "Название для программы": {type: "plain", name: "my_name"}, "Шифр": {type: "plain", name: "code"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers"}}, "Добавление дисциплины", createSubject)' class='createbutton form-control'>Добавить дисциплину</button>
+	<button id='btnAdd' class='btn success w-100'>Добавить дисциплину</button>
 </div>
 
-<script>
-	function updateSubject(subject) {
-		$("#subject"+subject.id).replaceWith(getSubject(subject));
-	}
-
-	function createSubject(subject) {
-		const new_item = getSubject(subject);
-		$("#subjectsList").append($(new_item));
-	}
-
-	function getSubject(subject) {
-		return `
-	    <div id='subject`+subject.id+`' class='crud-item'>
-		<p>`+subject.my_name+`</p>
-		<div class='crud-buttons'>
-		    <a class='btn' href="/autogost/archive/`+subject.id+`">Отчёты</a>
-		    <button class='btn' onclick='crudUpdateShowWindow("subjects", {"Название": {type: "plain", name: "name", default: "`+subject.name+`"}, "Название для программы": {type: "plain", name: "my_name", default: "`+subject.my_name+`"}, "Шифр": {type: "plain", name: "code", default: "`+subject.code+`"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers", default:`+subject.teacher_id+`}, "ID": {type: "hidden", name: "id", default: `+subject.id+`}}, "Обновление дисциплины", updateSubject)'>Изменить</button>
-		    <button class='btn danger' onclick='crudDelete("subjects", `+subject.id+`, "subject`+subject.id+`")'>Удалить</button>
-		</div>
-	    </div>`;
-	}
-</script>
-
-<?php }
-}
+    <?php }}

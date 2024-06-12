@@ -25,7 +25,7 @@ class AutoGostPracticeTitlePage extends AutoGostPage {
 
     <p class="t-center" style="font-size: 18pt;margin-top:20%;"><strong>ОТЧЁТ</strong></p>
     <div style="font-size:14pt;">
-        <p class="t-center">по <?= static::$work_type['name_titlepage'] ?></p>
+        <p class="t-center">по практической работе</p>
         <p class="t-center"><?= static::$subject['name'] ?></p>
         <p class="t-center">Специальность 09.02.07. Информационные системы и программирование</p>
     </div>

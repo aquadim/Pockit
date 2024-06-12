@@ -66,6 +66,8 @@ for ($version = $existing + 1; $version <= pockit_version; $version++) {
 
 	    // Тема по умолчанию
 	    // TODO
+
+        // переименованы таблицы regen
 	    break;
 	    
 	default:

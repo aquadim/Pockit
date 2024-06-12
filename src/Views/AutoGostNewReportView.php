@@ -1,7 +1,7 @@
 <?php
-namespace Pockit\Views;
-
 // Страница создания отчёта
+
+namespace Pockit\Views;
 
 class AutoGostNewReportView extends LayoutView {
 	protected $subjects;

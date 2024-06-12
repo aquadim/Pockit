@@ -3,22 +3,45 @@ namespace Pockit\Controllers;
 
 // Контроллер API
 
-use Pockit\Models\ReportModel;
-use Pockit\Models\SubjectModel;
-use Pockit\Models\WorkTypeModel;
-use Pockit\Models\TeacherModel;
-use Pockit\Models\PasswordModel;
-use Pockit\Models\LinkModel;
-use Pockit\Models\ThemeModel;
+use Pockit\Common\Database;
+use Pockit\Models\Subject;
+use Pockit\Models\Teacher;
 
 class ApiController {
 
 	#region CREATE
 	// Добавление предмета
 	public static function createSubject() {
-		$id = SubjectModel::create($_POST['name'], $_POST['code'], $_POST['teacher_id'], $_POST['my_name']);
-		$subject = SubjectModel::getById($id);
-		echo json_encode($subject);
+        if (!isset($_POST['name']) || $_POST['name'] === '') {
+            self::echoError('Не введено название дисциплины');
+            exit();
+        }
+        if (!isset($_POST['code']) || $_POST['code'] === '') {
+            self::echoError('Не введён шифр дисциплины');
+            exit();
+        }
+        if (!isset($_POST['myName']) || $_POST['myName'] === '') {
+            $my_name = $_POST['name'];
+        } else {
+            $my_name = $_POST['myName'];
+        }
+
+        // Поиск препода по ID
+        $em = Database::getEm();
+        $teacher = $em->find(Teacher::class, $_POST['teacherId']);
+
+        // Создание дисциплины
+        $subject = new Subject();
+        $subject->setName($_POST['name']);
+        $subject->setMyName($my_name);
+        $subject->setCode($_POST['code']);
+        $subject->setTeacher($teacher);
+        $subject->setHidden(false);
+
+        $em->persist($subject);
+        $em->flush();
+
+        echo json_encode(['ok'=>true, 'obj'=>$subject->toArray()]);
 	}
 	
 	// Добавление ссылки
@@ -46,13 +69,17 @@ class ApiController {
 
 	// Получение всех преподавателей
 	public static function getTeachers() {
-		$teachers = TeacherModel::all();
-		$output = [];
-		while ($teacher = $teachers->fetchArray(SQLITE3_ASSOC)) {
-			$teacher['repr'] = $teacher['surname'];
-			$output[] = $teacher;
-		}
-		echo json_encode($output);
+		$em = Database::getEm();
+        $query = $em->createQuery(
+            'SELECT teacher FROM '.Teacher::class.' teacher '
+        );
+        $teachers = $query->getResult();
+
+        $output = [];
+        foreach ($teachers as $t) {
+            $output[] = $t->toArray();
+        }
+        echo json_encode($output);
 	}
 
 	// Получение всех типов работ
@@ -65,6 +92,22 @@ class ApiController {
 		}
 		echo json_encode($output);
 	}
+
+    // Получение всех дисциплин
+    public static function readSubject() {
+        $em = Database::getEm();
+        $query = $em->createQuery(
+            'SELECT subject FROM '.Subject::class.' subject '.
+            'WHERE subject.hidden=false'
+        );
+        $subjects = $query->getResult();
+
+        $output = [];
+        foreach ($subjects as $s) {
+            $output[] = $s->toArray();
+        }
+        echo json_encode($output);
+    }
 	#endregion
 
 	#region UPDATE
@@ -120,7 +163,10 @@ class ApiController {
 	#region DELETE
 	// Удаление предмета
 	public static function deleteSubject() {
-		SubjectModel::hideById($_GET['id']);
+		$em = Database::getEm();
+        $subject = $em->find(Subject::class, $_GET['id']);
+        $subject->setHidden(true);
+        $em->flush();
 	}
 	
 	// Удаление ссылки

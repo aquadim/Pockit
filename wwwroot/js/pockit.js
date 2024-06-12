@@ -18,6 +18,7 @@ function crudDelete(route, id, containerID=null) {
 		url: url,
 		success: function() {
 			document.getElementById(containerID).remove();
+            notify('Успешно удалено', 'success');
 		}
 	});
 	return true;
@@ -68,14 +69,13 @@ async function createWindow(route, action, name, options, onSuccess, multipart) 
 			method: 'post',
 			body: fd
 		});
-
-		removeModalWindows();
-
 		const jsonData = await response.json();
         if (jsonData.ok) {
-            onSuccess(jsonData.object);
+            onSuccess(jsonData.obj);
+            removeModalWindows();
+            notify('Успешно создано', 'success');
         } else {
-            // TODO: onError
+            notify(jsonData.message, 'danger');
         }
 	};
 
@@ -168,6 +168,25 @@ async function createWindow(route, action, name, options, onSuccess, multipart) 
 			}
 			control_container.append(input);
 
+        } else if (value.type == 'select') {
+            const input = document.createElement('select');
+			input.classList.add('form-control');
+			input.id = key;
+			input.name = value.name;
+
+            const opts = value.options;
+            for (let i = 0; i < opts.length; ++i) {
+				const option = document.createElement('option');
+				option.value = opts[i].id;
+				option.textContent = opts[i].repr;
+				if (opts[i].id == value.default) {
+					// Это значение по-умолчанию
+					option.selected = 'selected';
+				}
+				input.append(option);
+			}
+			control_container.append(input);
+
 		} else {
 			console.log("Неизвестный тип: " + value.type);
 			continue;	
@@ -212,3 +231,27 @@ async function createWindow(route, action, name, options, onSuccess, multipart) 
 function removeModalWindows() {
 	$('.modal, .dark-overlay').remove();
 }
+
+// Создаёт уведомление
+function notify(message, notifClass) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notifyArea.append(notification);
+    notification.classList.add('notification', 'notifSlideLeft', notifClass);
+    setTimeout(function() {
+        notification.classList.add('notifSlideRight');
+    }, 5000);
+    setTimeout(function() {
+        notification.remove();
+    }, 5500);
+    notification.onclick = () => notification.classList.add('notifSlideRight');
+}
+
+// API: Возвращает всех преподавателей
+async function getAllTeachers() {
+    const response = await fetch('/teachers/read');
+    const teachers = await response.json();
+    return teachers;
+}
+
+const notifyArea = document.getElementById('notifyArea');
