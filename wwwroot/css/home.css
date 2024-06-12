@@ -1,23 +1,18 @@
 #bg {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  z-index: -1;
-  width: 100%;
-  background-position: center center;
-  background-size: cover;
-  animation: fade-in 1s;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100%;
+    background-position: center center;
+    background-size: cover;
+    opacity: 0;
+    -webkit-transition: all 2s ease; 
+    -moz-transition: all 2s ease; 
+    -ms-transition: all 2s ease; 
+    -o-transition: all 2s ease;
 }
 
 .breadcrumb {
-  display: none;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+    display: none;
 }

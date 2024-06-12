@@ -1,13 +1,11 @@
 <?php
+// Файл, на который поступают запросы
 
 namespace Pockit;
 
-// Файл, на который поступают запросы
-
+require_once "src/bootstrap.php";
 use Pockit\Common\Router;
 use Pockit\Controllers;
-
-require_once "src/bootstrap.php";
 
 // Определение маршрутов
 $router = new Router();

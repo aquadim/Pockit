@@ -18,17 +18,17 @@ class HomeView extends LayoutView {
 	body {
 		background-color: <?=$this->background_color?>;
 	}
-
-	#bg {
-		background-image: url('<?= $this->background_image ?>');
-	}
 </style>
 
 <?php }
 	
 	public function content() : void { ?>
 
-<div id="bg"></div>
+<img
+    src="<?= $this->background_image ?>"
+    onload="this.style.opacity=1"
+    id="bg"/>
+
 <span style='position:absolute;top:0px;right:0px;'>
 	<a style='color:#fff' href='/settings'>Настройки</a>
 </span>
