@@ -1,17 +1,17 @@
 <?php
 // Скрипт первоначальной установки
 
-namespace Pockit;
+namespace Pockit\Setup;
 
 // env файл надо создать до загрузки bootstrap.php
-$env_path = __DIR__ . "/.env";
+$env_path = __DIR__ . "/../../.env";
 $env_exists = file_exists($env_path);
 if (!$env_exists) {
 	// Создать пустой .env файл чтобы не было ошибок
 	file_put_contents($env_path, '');
 }
 
-require_once "bootstrap.php";
+require_once __DIR__ . "/../bootstrap.php";
 
 use Pockit\Common\Database;
 
@@ -75,10 +75,8 @@ function databaseUp() {
 	"id"	INTEGER,
 	"name"	TEXT,
 	"author"	TEXT,
-	"col_bg"	TEXT,
-	"col_fg"	TEXT,
-	"col_accent"	TEXT,
-	PRIMARY KEY("id")');
+	"css"	TEXT,
+	PRIMARY KEY("id"))');
 
 	$db->query('CREATE TABLE "home_images" (
 	"id"	INTEGER,

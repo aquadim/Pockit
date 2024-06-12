@@ -45,7 +45,7 @@ async function crudCreateShowWindow(route, options, name, afterCreatedCallback, 
 	$(document.body).append($('<div class="dark-overlay"></div>'));
 }
 
-async function createWindow(route, action, name, options, afterCallback, multipart) {
+async function createWindow(route, action, name, options, onSuccess, multipart) {
 	// Создание карточки-контейнера
 	const card = document.createElement('div');
 	card.classList.add('card', 'modal');
@@ -72,7 +72,11 @@ async function createWindow(route, action, name, options, afterCallback, multipa
 		removeModalWindows();
 
 		const jsonData = await response.json();
-		afterCallback(jsonData);
+        if (jsonData.ok) {
+            onSuccess(jsonData.object);
+        } else {
+            // TODO: onError
+        }
 	};
 
 	// Добавление к форме полей ввода

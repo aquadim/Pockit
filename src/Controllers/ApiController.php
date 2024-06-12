@@ -9,6 +9,7 @@ use Pockit\Models\WorkTypeModel;
 use Pockit\Models\TeacherModel;
 use Pockit\Models\PasswordModel;
 use Pockit\Models\LinkModel;
+use Pockit\Models\ThemeModel;
 
 class ApiController {
 
@@ -136,6 +137,11 @@ class ApiController {
 	public static function deleteReport() {
 		ReportModel::hideById($_GET['id']);
 	}
+
+    // Удаление темы
+    public static function deleteTheme() {
+        ThemeModel::deleteById($_GET['id']);
+    }
 	#endregion
 
 	#region THEMES
@@ -184,12 +190,45 @@ class ApiController {
 			exit();
 		}
 
-		// Чтение изображений домашней страницы
+		// TODO: Чтение изображений домашней страницы
+		// TODO: Чтение изображений действий
+		// TODO: Чтение шрифтов
+        $zip->close();
 
-		// Чтение изображений действий
-			
-		$zip->close();
+        // -- Генерация CSS кода --
+        $theme_spec = json_decode($theme_config, true);
+        $css = ':root{';
+        // color-scheme
+        $css .= 'color-scheme: '.$theme_spec['color-scheme'].';';
+        // --var
+        foreach ($theme_spec['colors'] as $variable => $color_code) {
+            $css .= '--'.$variable.':'.$color_code.';';
+        }
+        $css .= '}';
+
+        // Добавление в базу данных
+        $theme_id = ThemeModel::create(
+            $theme_spec['name'],
+            $theme_spec['author'],
+            $css);
+        $created_theme = ThemeModel::getById($theme_id);
+        echo json_encode(['ok' => true, 'object' => $created_theme]);
 	}
+
+    // Активирует определённую тему
+    public static function activateTheme($theme_id) {
+        // Получаем CSS данные темы
+        $theme = ThemeModel::getById($theme_id);
+
+        // Перезаписываем CSS файл
+        if ($theme !== false) {
+            file_put_contents(
+                index_dir . '/wwwroot/css/theme.css',
+                $theme['css']);
+        }
+
+        header("Location: /settings/themes");
+    }
 	#endregion
 
 	#region UTILS

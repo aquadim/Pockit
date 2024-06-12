@@ -60,6 +60,8 @@ $router->register('/links/update', 'Pockit\Controllers\ApiController::updateLink
 $router->register('/links/delete', 'Pockit\Controllers\ApiController::deleteLink');
 
 $router->register('/themes/create', 'Pockit\Controllers\ApiController::addThemeFromZip');
+$router->register('/themes/delete', 'Pockit\Controllers\ApiController::deleteTheme');
+$router->register('/themes/activate/{theme_id}', 'Pockit\Controllers\ApiController::activateTheme');
 
 $router->register404('Pockit\Controllers\NotFoundController::index');
 

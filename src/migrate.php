@@ -47,14 +47,12 @@ for ($version = $existing + 1; $version <= pockit_version; $version++) {
 	case 2:
 	    // Добавлены таблицы тем
 	    $db->query('
-	    CREATE TABLE "themes" (
-	    "id"	INTEGER,
-	    "name"	TEXT,
-	    "author"	TEXT,
-	    "col_bg"	TEXT,
-	    "col_fg"	TEXT,
-	    "col_accent"	TEXT,
-	    PRIMARY KEY("id")');
+        CREATE TABLE "themes" (
+        "id"	INTEGER,
+        "name"	TEXT,
+        "author"TEXT,
+        "css"	TEXT
+        PRIMARY KEY("id")');
 
 	    $db->query('
 	    CREATE TABLE "home_images" (
