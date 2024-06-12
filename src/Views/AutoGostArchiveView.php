@@ -23,7 +23,7 @@ class AutoGostArchiveView extends LayoutView {
 		<?php } ?>
 	</div>
 
-	<button class='btn success w-100' onclick='crudCreateShowWindow("subjects", {"Название": {type: "plain", name: "name"}, "Название для программы": {type: "plain", name: "my_name"}, "Шифр": {type: "plain", name: "code"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers"}}, "Добавление дисциплины", createSubject)' class='createbutton form-control'>Добавить</button>
+	<button class='btn success w-100' onclick='crudCreateShowWindow("subjects", {"Название": {type: "plain", name: "name"}, "Название для программы": {type: "plain", name: "my_name"}, "Шифр": {type: "plain", name: "code"}, "Преподаватель": {type: "crudRead", name: "teacher_id", route: "teachers"}}, "Добавление дисциплины", createSubject)' class='createbutton form-control'>Добавить дисциплину</button>
 </div>
 
 <script>

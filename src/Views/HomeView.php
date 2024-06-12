@@ -30,7 +30,7 @@ class HomeView extends LayoutView {
 
 <div id="bg"></div>
 <span style='position:absolute;top:0px;right:0px;'>
-	<a style='color:#B3B3B3' href='/settings'>Настройки</a>
+	<a style='color:#fff' href='/settings'>Настройки</a>
 </span>
 
 <div class='text-center' style='color: white; text-shadow: black 2px 2px; margin-top: 5rem;'>

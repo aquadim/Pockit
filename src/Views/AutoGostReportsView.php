@@ -64,7 +64,7 @@ class AutoGostReportsView extends LayoutView {
 		viewButton.href = '/autogost/edit/' + report.id;
 
 		const updateButton = document.createElement('button');
-		updateButton.textContent = 'Обновить';
+		updateButton.textContent = 'Обновить данные';
 		updateButton.classList.add('btn');
 		updateButton.onclick = function() {
 			crudUpdateShowWindow('reports', {

@@ -137,4 +137,64 @@ class ApiController {
 		ReportModel::hideById($_GET['id']);
 	}
 	#endregion
+
+	#region THEMES
+	public static function addThemeFromZip() {
+		if (!isset($_FILES['themeFile'])) {
+			self::echoError('Не выбран файл темы');
+			exit();
+		}
+		
+		if (!is_uploaded_file($_FILES['themeFile']['tmp_name'])) {
+			switch ($_FILES['themeFile']['error']) {
+				case 0:
+					$msg = "Обнаружена проблема с вашим файлом.";
+					break;
+				case 1:
+				case 2:
+					$msg = "Слишком большой файл";
+					break;
+				case 3:
+					$msg = "Файл загружен только частично";
+					break;
+				case 4:
+					$msg = "Вы должны загрузить файл";
+					break;
+				default:
+					$msg = "Обнаружена проблема с вашим файлом";
+					break;
+			}
+			self::echoError($msg);
+			exit();
+		}
+
+		$zip = new \ZipArchive;
+		$result = $zip->open($_FILES['themeFile']['tmp_name']);
+		if ($result !== true) {
+			self::echoError('Не удалось открыть архив');
+			$zip->close();
+			exit();
+		}
+
+		// Получение файла с цветами
+		$theme_config = $zip->getFromName('theme.json');
+		if ($theme_config === false) {
+			self::echoError('Не найден theme.json');
+			$zip->close();
+			exit();
+		}
+
+		// Чтение изображений домашней страницы
+
+		// Чтение изображений действий
+			
+		$zip->close();
+	}
+	#endregion
+
+	#region UTILS
+	private static function echoError(string $error_message) {
+		echo json_encode(['ok'=>false, 'message'=>$error_message]);
+	}
+	#endregion
 }

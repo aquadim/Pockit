@@ -1,0 +1,49 @@
+:root {
+    /* Общее */
+    color-scheme: dark;
+    --accent: #7B68EE;
+    /* Навигация */
+    --crumbsBg: #161616;
+    --crumbsFg: #338AFF;
+    /* Страница */
+    --pageBg: #1f1f1f;
+    --pageFg: #CCCCCC;
+    /* Карточки */
+    --cardBg: #252525;
+    --cardBorder: #666666;
+    /* Формы */
+    --formInputBg: #333333;
+    --formInputHighlight: #4D4D4D;
+    --formInputFg: #BBBBBB;
+    --formInputFocusedFg: #CCCCCC;
+    /* Кнопки */
+    --btnBg: #333333;
+    --btnFg: #E6E6E6;
+    --btnBorder: #404040;
+    --btnHoverBg: #4D4D4D;
+    --btnHoverFg: #E6E6E6;
+    --btnFocusBg: #272727;
+    --btnFocusFg: #FFFFFF;
+    /* Списки */
+    --listBg: #1f1f1f;
+    --listBorder: #333;
+    /* Цвета положительные */
+    --suggestedBg: #2B4B22;
+    --suggestedFg: #ffffff;
+    --suggestedHoverBg: #3A662E;
+    --suggestedHoverFg: #ffffff;
+    --suggestedFocusBg: #25401D;
+    --suggestedFocusFg: #ffffff;
+    --suggestedBorder: green;
+    /* Цвета отрицательные */
+    --destructiveBg: #4B2224;
+    --destructiveFg: #ffffff;
+    --destructiveHoverBg: #803A3D;
+    --destructiveHoverFg: #ffffff;
+    --destructiveFocusBg: #411E1E;
+    --destructiveFocusFg: #ffffff;
+    --destructiveBorder: #733033;
+    /* Боковая панель */
+    --sidebarBg: #161616;
+	--sidebarWidth: 250px;
+}

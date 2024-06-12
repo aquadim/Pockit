@@ -59,6 +59,8 @@ $router->register('/links/create', 'Pockit\Controllers\ApiController::createLink
 $router->register('/links/update', 'Pockit\Controllers\ApiController::updateLink');
 $router->register('/links/delete', 'Pockit\Controllers\ApiController::deleteLink');
 
+$router->register('/themes/create', 'Pockit\Controllers\ApiController::addThemeFromZip');
+
 $router->register404('Pockit\Controllers\NotFoundController::index');
 
 return $router->handle($_SERVER['REQUEST_URI']);

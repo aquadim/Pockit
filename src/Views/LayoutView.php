@@ -39,6 +39,7 @@ class LayoutView extends View {
 		<meta http-equiv="Cache-control" content="public">
 		<title><?= $this->page_title ?> | Карманный сервер</title>
 		<link rel='icon' type='image/png' href='/img/favicon.png'>
+		<link rel='stylesheet' href='/css/theme.css'>
 		<link rel="stylesheet" href="/css/pockit.css">
 		<link rel="stylesheet" href="/css/spinner.css">
 		<script src="/js/jquery-3.7.1.min.js"></script>		

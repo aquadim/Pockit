@@ -31,101 +31,174 @@ async function crudUpdateShowWindow(route, options, name, afterUpdatedCallback) 
 }
 
 // Показывает форму создания элемента
-async function crudCreateShowWindow(route, options, name, afterCreatedCallback) {
-	const card = await createWindow(route, "create", name, options, afterCreatedCallback)
+async function crudCreateShowWindow(route, options, name, afterCreatedCallback, multipart=false) {
+	const card = await createWindow(
+		route,
+		"create",
+		name,
+		options,
+		afterCreatedCallback,
+		multipart
+	);
+
     $(document.body).append(card);
 	$(document.body).append($('<div class="dark-overlay"></div>'));
 }
 
-async function createWindow(route, action, name, options, afterCallback) {
+async function createWindow(route, action, name, options, afterCallback, multipart) {
 	// Создание карточки-контейнера
-	const card = $("<div class='card modal'></div>");
+	const card = document.createElement('div');
+	card.classList.add('card', 'modal');
 
 	// Создание формы и привязка к ней обратного вызова
-	const form = $("<form class='crudcreateform' method='post' action='/"+route+"/"+action+"'></form>");
-	form.submit(function(e) {
+	const form = document.createElement('form');
+	form.classList.add('crudcreateform');
+	form.method = 'post';
+	form.action = "/"+route+"/"+action;
+	if (multipart) {
+		form.enctype = 'multipart/form-data';
+	}
+	
+	form.onsubmit = async function(e) {
 		e.preventDefault();
-		$.ajax({
-			url: "/"+route+"/"+action,
-			type: 'post',
-			data: $(this).serialize(),
-			success: function(response) {
-				// Окно и слой затемнения удаляется
-				removeModalWindows();
-				// Вызывается функция обратного вызова с параметром - объектом с информацией о созданном элементе
-				afterCallback(JSON.parse(response));
-			}
+
+		// Собираем данные со всех полей, отсылаем
+		const fd = new FormData(this);
+		const response = await fetch("/"+route+"/"+action, {
+			method: 'post',
+			body: fd
 		});
-	});
+
+		removeModalWindows();
+
+		const jsonData = await response.json();
+		afterCallback(jsonData);
+	};
 
 	// Добавление к форме полей ввода
 	for (const [key, value] of Object.entries(options)) {
 
 		if (value.type == "hidden") {
 			// Невидимое поле ввода
-			form.append($('<input type="hidden" name="'+value.name+'" value="'+value.default+'"/>'));
+			const input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = value.name;
+			input.value = value.default;
+			form.append(input);
 			continue;
 		}
 		
 		// Добавляем контейнер поля
-		let control_container = $("<div class='form-control-container'></div>");
+		const control_container = document.createElement('div');
+		control_container.classList.add('form-control-container');
 
 		// Надпись
-		control_container.append($('<label for="'+key+'">'+ key +'</label>'));
+		const control_label = document.createElement('label');
+		control_label.for = key;
+		control_label.textContent = key;
+		control_container.append(control_label);
 
 		// Непосредственно поле ввода
 		if (value.type == 'plain')  {
 			// Текстовое
-			const input = $('<input class="form-control" id="'+key+'" type="text" name="'+value.name+'"/>');
+			const input = document.createElement('input');
+			input.classList.add('form-control');
+			input.id = key;
+			input.type = 'text';
+			input.name = value.name;
 			if (value.default != undefined) {
-				input.attr("value", value.default);
+				input.value = value.default;
 			}
 			control_container.append(input);
 			
 		} else if (value.type == 'crudRead') {
 			// Выбор из нескольких вариантов
-			
 			const values = JSON.parse(await crudRead(value.route));
-			const selectInput = $('<select class="form-control" id="'+key+'" name="'+value.name+'">');
+
+			const input = document.createElement('select');
+			input.classList.add('form-control');
+			input.id = key;
+			input.name = value.name;
+
 			for (let i = 0; i < values.length; ++i) {
+				const option = document.createElement('option');
+				option.value = values[i].id;
+				option.textContent = values[i].repr;
 				if (values[i].id == value.default) {
 					// Это значение по-умолчанию
-					selectInput.append($('<option selected="selected" value="'+values[i].id+'">'+values[i].repr+'</option>'));
-				} else {
-					selectInput.append($('<option value="'+values[i].id+'">'+values[i].repr+'</option>'));
+					option.selected = 'selected';
 				}
+				input.append(option);
 			}
-			control_container.append(selectInput);
+			control_container.append(input);
 
 		} else if (value.type == 'password') {
 			// Пароль
-			const input = $('<input class="form-control" id="'+key+'" type="password" name="'+value.name+'"/>');
+			const input = document.createElement('input');
+			input.classList.add('form-control');
+			input.id = key;
+			input.type = 'password';
+			input.name = value.name;
 			control_container.append(input);
 
 		} else if (value.type == 'date') {
 			// Дата
-			const input = $('<input class="form-control" id="'+key+'" type="date" name="'+value.name+'"/>');
+			const input = document.createElement('input');
+			input.classList.add('form-control');
+			input.id = key;
+			input.type = 'date';
+			input.name = value.name;
 			if (value.default != undefined) {
-				input.attr("value", value.default);
+				input.value = value.default;
+			}
+			control_container.append(input);
+
+		} else if (value.type == 'file') {
+			const input = document.createElement('input');
+			input.classList.add('form-control');
+			input.id = key;
+			input.type = 'file';
+			input.name = value.name;
+			if (value.accept != undefined) {
+				input.accept = value.accept;
 			}
 			control_container.append(input);
 
 		} else {
 			console.log("Неизвестный тип: " + value.type);
+			continue;	
 		}
-
 		form.append(control_container);
 	};
 
 	// Кнопки добавления и отмены
-	form.append($(`
-	<div class='succesCancelRow'>
-		<button type="submit" class="crudcreate success form-control">Сохранить</button>
-		<button type="submit" onclick='removeModalWindows()' class="crudcancel form-control">Отмена</button>
-	</div>`));
+	const okCancelRow = document.createElement('div');
+	okCancelRow.classList.add('succesCancelRow');
+
+	const btnSave = document.createElement('button');
+	btnSave.classList.add('btn', 'success');
+	btnSave.type = 'submit';
+	btnSave.textContent = 'Сохранить';
+
+	const btnCancel = document.createElement('button');
+	btnCancel.classList.add('btn');
+	btnCancel.type = 'button';
+	btnCancel.onclick = function() {
+		removeModalWindows();
+	}
+	btnCancel.textContent = 'Отмена';
+
+	okCancelRow.append(btnSave);
+	okCancelRow.append(btnCancel);
+
+	form.append(okCancelRow);
+
+	// Заголовок
+	const heading = document.createElement('h1');
+	heading.textContent = name;
 
 	// Добавление всех элементов и показ
-    card.append($('<h1>'+name+'</h1>'));
+    card.append(heading);
     card.append(form);
 
     return card;
