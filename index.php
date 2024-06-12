@@ -7,7 +7,7 @@ namespace Pockit;
 use Pockit\Common\Router;
 use Pockit\Controllers;
 
-require_once "bootstrap.php";
+require_once "src/bootstrap.php";
 
 // Определение маршрутов
 $router = new Router();

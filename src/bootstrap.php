@@ -1,9 +1,9 @@
 <?php
 
-require_once "vendor/autoload.php";
+define('pockit_version', 2);
+define('index_dir', realpath(__DIR__ . '/..'));
 
-define("pockit_version", 2);
-define('index_dir', __DIR__);
+require_once index_dir."/vendor/autoload.php";
 
 define("COLOR_DEFAULT", "");
 define("COLOR_YELLOW", "\033[93m");
