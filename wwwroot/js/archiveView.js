@@ -20,19 +20,20 @@ function getSubject(obj) {
     btnUpdate.textContent = 'Обновить информацию';
     btnUpdate.classList.add('btn');
     btnUpdate.onclick = async function() {
-        // Получаем список всех преподов
-        const teachers = await getAllTeachers();
         crudUpdateShowWindow(
             'subjects',
             {
                 'Название': {type: "plain", name: "name", default: obj.title},
                 'Название в программе': {type: "plain", name: "myName", default: obj.myName},
                 'Шифр без точки на конце': {type: "plain", name: "code", default: obj.code},
-                'Преподаватель': {type: 'select', name: "teacherId", options: teachers, default:obj.teacher.id}
+                'Преподаватель': {type: 'select', name: "teacherId", options: teachers, default:obj.teacher.id},
+                'id': {type: 'hidden', name: 'subjectId', default: obj.id}
             },
             "Обновление дисциплины",
-            function(obj) {
-                notify('updated', 'success');
+            function(receivedObj) {
+                const existingElement = document.getElementById('subject' + receivedObj.id);
+                existingElement.replaceWith(getSubject(receivedObj));
+                notify('Успешно обновлено', 'success');
             }
         );
     };
@@ -56,11 +57,16 @@ function getSubject(obj) {
 const lvSubjects = document.getElementById('lvSubjects');
 const loading = document.getElementById('loading');
 const btnAdd = document.getElementById('btnAdd');
+let teachers;
 
 window.onload = async function() {
     // Получить список из всех предметов
     const response = await fetch('/subjects/read');
     const data = await response.json();
+
+    // Получаем список всех преподов
+    teachers = await getAllTeachers();
+    
     data.forEach(function(obj) {
         const subject = getSubject(obj);
         lvSubjects.append(subject);
@@ -70,9 +76,6 @@ window.onload = async function() {
 };
 
 btnAdd.onclick = async function() {
-    // Получаем список всех преподов
-    const teachers = await getAllTeachers();
-
     crudCreateShowWindow(
         'subjects',
         {
@@ -84,6 +87,7 @@ btnAdd.onclick = async function() {
         'Добавление дисциплины',
         function(obj) {
             lvSubjects.append(getSubject(obj));
+            notify('Успешно создано', 'success');
         },
         false
     )

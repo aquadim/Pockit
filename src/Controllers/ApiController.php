@@ -9,9 +9,9 @@ use Pockit\Models\Teacher;
 
 class ApiController {
 
-	#region CREATE
-	// Добавление предмета
-	public static function createSubject() {
+    #region VALIDATE
+    // Проверяет запрос на создание/обновление предмета на правильность
+    private static function validateSubject() {
         if (!isset($_POST['name']) || $_POST['name'] === '') {
             self::echoError('Не введено название дисциплины');
             exit();
@@ -20,6 +20,13 @@ class ApiController {
             self::echoError('Не введён шифр дисциплины');
             exit();
         }
+    }
+    #endregion
+
+	#region CREATE
+	// Добавление предмета
+	public static function createSubject() {
+        self::validateSubject();
         if (!isset($_POST['myName']) || $_POST['myName'] === '') {
             $my_name = $_POST['name'];
         } else {
@@ -150,13 +157,25 @@ class ApiController {
 
 	// Обновление предмета
 	public static function updateSubject() {
-		$subject = SubjectModel::getById($_POST['id']);
-		$subject['name'] = $_POST['name'];
-		$subject['code'] = $_POST['code'];
-		$subject['teacher_id'] = $_POST['teacher_id'];
-		$subject['my_name'] = $_POST['my_name'];
-		SubjectModel::update($subject);
-		echo json_encode($subject);
+        self::validateSubject();
+        if (!isset($_POST['myName']) || $_POST['myName'] === '') {
+            $my_name = $_POST['name'];
+        } else {
+            $my_name = $_POST['myName'];
+        }
+        
+		$em = Database::getEm();
+        $subject = $em->find(Subject::class, $_POST['subjectId']);
+        $teacher = $em->find(Teacher::class, $_POST['teacherId']);
+
+        // Создание дисциплины
+        $subject->setName($_POST['name']);
+        $subject->setMyName($my_name);
+        $subject->setCode($_POST['code']);
+        $subject->setTeacher($teacher);
+        $em->flush();
+
+        echo json_encode(['ok'=>true, 'obj'=>$subject->toArray()]);
 	}
 	#endregion
 

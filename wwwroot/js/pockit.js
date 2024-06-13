@@ -73,7 +73,6 @@ async function createWindow(route, action, name, options, onSuccess, multipart) 
         if (jsonData.ok) {
             onSuccess(jsonData.obj);
             removeModalWindows();
-            notify('Успешно создано', 'success');
         } else {
             notify(jsonData.message, 'danger');
         }
@@ -112,27 +111,6 @@ async function createWindow(route, action, name, options, onSuccess, multipart) 
 			input.name = value.name;
 			if (value.default != undefined) {
 				input.value = value.default;
-			}
-			control_container.append(input);
-			
-		} else if (value.type == 'crudRead') {
-			// Выбор из нескольких вариантов
-			const values = JSON.parse(await crudRead(value.route));
-
-			const input = document.createElement('select');
-			input.classList.add('form-control');
-			input.id = key;
-			input.name = value.name;
-
-			for (let i = 0; i < values.length; ++i) {
-				const option = document.createElement('option');
-				option.value = values[i].id;
-				option.textContent = values[i].repr;
-				if (values[i].id == value.default) {
-					// Это значение по-умолчанию
-					option.selected = 'selected';
-				}
-				input.append(option);
 			}
 			control_container.append(input);
 
