@@ -35,6 +35,11 @@ class Subject
     #[ORM\Column(type: "boolean")]
     private bool $hidden;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * Set code
      *

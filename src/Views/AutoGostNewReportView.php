@@ -5,7 +5,7 @@ namespace Pockit\Views;
 
 class AutoGostNewReportView extends LayoutView {
 	protected $subjects;
-	protected $worktypes;
+	protected $work_types;
 	protected $error_text;
 	protected $selected;
 
@@ -24,8 +24,12 @@ class AutoGostNewReportView extends LayoutView {
 		<div class="form-control-container">
 			<label for="sel-subject_id">Предмет</label>
 			<select class="form-control" id="sel-subject_id" name="subject_id">
-				<?php while ($row = $this->subjects->fetchArray()) { ?>
-					<option value="<?= $row['id'] ?>" <?= $row['id'] == $this->selected ? "selected" : '' ?>><?= $row['my_name'] ?></option>
+				<?php foreach ($this->subjects as $s) { ?>
+					<option
+                        value="<?= $s->getId() ?>"
+                        <?= $s->getId() == $this->selected ? "selected" : '' ?>>
+                        <?= $s->getMyName() ?>
+                    </option>
 				<?php } ?>
 			</select>
 		</div>
@@ -33,8 +37,10 @@ class AutoGostNewReportView extends LayoutView {
 		<div class="form-control-container">
 			<label for="sel-work_type">Тип работы</label>
 			<select class="form-control" id="sel-work_type" name="work_type">
-				<?php while ($row = $this->worktypes->fetchArray()) { ?>
-					<option value="<?= $row['id'] ?>"><?= $row['name_nom'] ?></option>
+				<?php foreach ($this->work_types as $wt) { ?>
+					<option value="<?= $wt->getId() ?>">
+                        <?= $wt->getNameNom() ?>
+                    </option>
 				<?php } ?>
 			</select>
 		</div>

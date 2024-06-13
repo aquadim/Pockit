@@ -37,7 +37,7 @@ class Report
     private \DateTime $created_at;
 
     // Разметка
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: "text")]
     private string $markup;
 
     // Дата документа
@@ -48,12 +48,16 @@ class Report
     #[ORM\Column(type: "boolean")]
     private bool $hidden;
 
+    public function getId() {
+        return $this->id;
+    }
+
     /**
      * Set subject
      *
      * @param string
      */
-    public function setSubject(string $subject)
+    public function setSubject($subject)
     {
         $this->subject = $subject;
     }
@@ -63,7 +67,7 @@ class Report
      *
      * @return string
      */
-    public function getSubject(): string
+    public function getSubject()
     {
         return $this->subject;
     }
@@ -111,9 +115,9 @@ class Report
     /**
      * Set created at
      *
-     * @param DateTimeImmutable
+     * @param \DateTime
      */
-    public function setCreatedAt(DateTimeImmutable $createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->created_at = $createdAt;
     }
@@ -121,15 +125,15 @@ class Report
     /**
      * Get created at
      *
-     * @return DateTimeImmutable
+     * @return \DateTime
      */
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTime
     {
         return $this->created_at;
     }
 
     /**
-     * Set created at
+     * Set work type
      *
      * @param WorkType
      */
@@ -139,7 +143,7 @@ class Report
     }
 
     /**
-     * Get created at
+     * Get work type
      *
      * @return WorkType
      */
@@ -171,9 +175,9 @@ class Report
     /**
      * Set date for
      *
-     * @param DateTimeImmutable
+     * @param \DateTime
      */
-    public function setDateFor(DateTimeImmutable $dateFor)
+    public function setDateFor(\DateTime $dateFor)
     {
         $this->date_for = $dateFor;
     }
@@ -181,9 +185,9 @@ class Report
     /**
      * Get date for
      *
-     * @return DateTimeImmutable
+     * @return \DateTime
      */
-    public function getDateFor(): DateTimeImmutable
+    public function getDateFor(): \DateTime
     {
         return $this->date_for;
     }
@@ -206,5 +210,18 @@ class Report
     public function isHidden(): bool
     {
         return $this->hidden;
+    }
+
+    public function toArray() : array {
+        return [
+            'id' => $this->id,
+            'subject' => $this->subject->toArray(),
+            'workType' => $this->work_type->toArray(),
+            'workNumber' => $this->work_number,
+            'comment' => $this->comment,
+            'createdAt' => $this->created_at,
+            'dateFor' => $this->date_for,
+            'hidden' => $this->hidden
+        ];
     }
 }

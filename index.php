@@ -45,9 +45,12 @@ $router->register('/subjects/read', 'Pockit\Controllers\ApiController::readSubje
 $router->register('/subjects/update', 'Pockit\Controllers\ApiController::updateSubject');
 $router->register('/subjects/delete', 'Pockit\Controllers\ApiController::deleteSubject');
 
-$router->register('/reports/get', 'Pockit\Controllers\ApiController::getReport');
+$router->register('/workTypes/read', 'Pockit\Controllers\ApiController::readWorkType');
+
+$router->register('/reports/read/{subject_id}', 'Pockit\Controllers\ApiController::readReport');
 $router->register('/reports/update', 'Pockit\Controllers\ApiController::updateReport');
 $router->register('/reports/delete', 'Pockit\Controllers\ApiController::deleteReport');
+$router->register('/reports/getMarkup', 'Pockit\Controllers\ApiController::getReportMarkup');
 $router->register('/reports/updateMarkup', 'Pockit\Controllers\ApiController::updateReportMarkup');
 
 $router->register('/teachers/read', 'Pockit\Controllers\ApiController::getTeachers');

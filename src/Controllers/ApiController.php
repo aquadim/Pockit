@@ -4,8 +4,11 @@ namespace Pockit\Controllers;
 // Контроллер API
 
 use Pockit\Common\Database;
+
 use Pockit\Models\Subject;
+use Pockit\Models\Report;
 use Pockit\Models\Teacher;
+use Pockit\Models\WorkType;
 
 class ApiController {
 
@@ -18,6 +21,18 @@ class ApiController {
         }
         if (!isset($_POST['code']) || $_POST['code'] === '') {
             self::echoError('Не введён шифр дисциплины');
+            exit();
+        }
+    }
+    
+    // Проверяет запрос на создание/обновление отчёта на правильность
+    private static function validateReport() {
+        if (!isset($_POST['workNumber']) || $_POST['workNumber'] === '') {
+            self::echoError('Не введён номер работы');
+            exit();
+        }
+        if (!isset($_POST['dateFor']) || $_POST['dateFor'] === '') {
+            self::echoError('Не указана дата отчёта');
             exit();
         }
     }
@@ -115,6 +130,40 @@ class ApiController {
         }
         echo json_encode($output);
     }
+    
+    // Получение всех типов работ
+    public static function readWorkType() {
+        $em = Database::getEm();
+        $query = $em->createQuery(
+            'SELECT workType FROM '.WorkType::class.' workType '
+        );
+        $work_types = $query->getResult();
+
+        $output = [];
+        foreach ($work_types as $wt) {
+            $output[] = $wt->toArray();
+        }
+        echo json_encode($output);
+    }
+    
+    // Получение всех отчётов по дисциплине
+    public static function readReport($subject_id) {
+        $em = Database::getEm();
+        $subject = $em->find(Subject::class, $subject_id);
+
+        $query = $em->createQuery(
+            'SELECT report FROM '.Report::class.' report '.
+            'WHERE report.subject=:subject AND report.hidden=false'
+        );
+        $query->setParameters(['subject'=>$subject]);
+		$reports = $query->getResult();
+
+        $output = [];
+        foreach ($reports as $r) {
+            $output[] = $r->toArray();
+        }
+        echo json_encode($output);
+    }
 	#endregion
 
 	#region UPDATE
@@ -128,22 +177,14 @@ class ApiController {
 	
 	// Обновление отчёта
 	public static function updateReport() {
-		$report = ReportModel::getById($_POST['id']);
-
-		$fields = [
-			'work_number',
-			'work_type',
-			'notice',
-			'markup',
-			'date_for'
-		];
-		foreach ($fields as $field) {
-			if (isset($_POST[$field])) {
-				$report[$field] = $_POST[$field];
-			}
-		}
-		ReportModel::update($report);
-		echo json_encode($report);
+        self::validateReport();
+        $em = Database::getEm();
+		$report = $em->find(Report::class, $_POST['reportId']);
+        $report->setWorkNumber($_POST['workNumber']);
+        $report->setComment($_POST['comment']);
+        $report->setDateFor(new \DateTime($_POST['dateFor']));
+        $em->flush();
+        echo json_encode(['ok'=>true, 'obj'=>$report->toArray()]);
 	}
 
 	// Обновление ссылки
@@ -200,7 +241,10 @@ class ApiController {
 
 	// Удаление отчёта
 	public static function deleteReport() {
-		ReportModel::hideById($_GET['id']);
+		$em = Database::getEm();
+        $report = $em->find(Report::class, $_GET['id']);
+        $report->setHidden(true);
+        $em->flush();
 	}
 
     // Удаление темы

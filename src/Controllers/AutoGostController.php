@@ -3,10 +3,10 @@ namespace Pockit\Controllers;
 
 // Контроллер автогоста
 
-use Pockit\Models\ReportModel;
-use Pockit\Models\SubjectModel;
-use Pockit\Models\WorkTypeModel;
-use Pockit\Models\TeacherModel;
+use Pockit\Models\Report;
+use Pockit\Models\Subject;
+use Pockit\Models\WorkType;
+use Pockit\Models\Teacher;
 
 use Pockit\Views\AutoGostArchiveView;
 use Pockit\Views\AutoGostReportsView;
@@ -21,6 +21,7 @@ use Pockit\AutoGostSections\TitleSection;
 use Pockit\AutoGostSections\PracticeTitleSection;
 use Pockit\AutoGostSections\SubSection;
 
+use Pockit\Common\Database;
 use Pockit\Common\AgstException;
 
 class AutoGostController {
@@ -70,14 +71,17 @@ class AutoGostController {
 
 	// Список отчётов по дисциплине
 	public static function listReports($subject_id) {
-		
-		$reports = ReportModel::where("subject_id", $subject_id, true);
-		$subject = SubjectModel::getById($subject_id);
+		$em = Database::getEm();
+
+        // Поиск предмета
+		$subject = $em->find(Subject::class, $subject_id);
 
 		$view = new AutoGostReportsView([
-			"page_title" => "Автогост: архив ".$subject['name'],
-			"crumbs" => ["Главная" => "/", "Автогост: дисциплины" => "/autogost/archive", $subject['name'] => ""],
-			"reports" => $reports,
+			"page_title" => "Автогост: архив ".$subject->getMyName(),
+			"crumbs" => [
+                "Главная" => "/",
+                "Автогост: дисциплины" => "/autogost/archive",
+                $subject->getMyName() => ""],
 			"subject" => $subject
 		]);
 		$view->view();
@@ -94,17 +98,21 @@ class AutoGostController {
 
 	// Редактирование отчёта
 	public static function edit($report_id) {
-		$report = ReportModel::getById($report_id);
-		$subject = SubjectModel::getById($report['subject_id']);
-		$filename = "Автогост - ".$subject['name']." #".$report['work_number']." - ".$_ENV['autogost_surname'];
-
-		$markup = str_replace("\n", '\n', $report['markup']);
-		$markup = str_replace('"', '\"', $markup);
+        $em = Database::getEm();
+		$report = $em->find(Report::class, $report_id);
+        $subject = $report->getSubject();
+		$filename =
+        "Автогост - ".$subject->getName()." #".$report->getWorkNumber().
+        " - ".$_ENV['autogost_surname'];
 
 		$view = new AutoGostEditView([
 			"page_title" => $filename,
-			"crumbs" => ["Главная"=>"/", "Автогост: дисциплины" => "/autogost/archive/", $subject['name'] => "/autogost/archive/".$subject['id'], "Редактирование"=>"/"],
-			"markup" => $markup,
+			"crumbs" => [
+                "Главная"=>"/",
+                "Автогост: дисциплины" => "/autogost/archive/",
+                $subject->getName() => "/autogost/archive/".$subject->getId(),
+                "Редактирование"=>""
+            ],
 			"filename" => $filename,
 			"report_id" => $report_id
 		]);
@@ -116,37 +124,43 @@ class AutoGostController {
 		if (mb_strlen($_POST["number"]) == 0) {
 			return 'Не указан номер работы';
 		}
-		
-		if (SubjectModel::countAll() == 0 || TeacherModel::countAll() == 0) {
-			return 'В базе данных нет либо предметов, либо преподавателей. '.
-			'Выполните стартовую настройку карманного сервера';
-		}
-		
 		return true;
 	}
 
 	// Создание отчёта
 	public static function newReport() {
+        $em = Database::getEm();
 
-		if (!empty($_POST)) {
+        if (!empty($_POST)) {
 			$response = self::validateCreation();
 			if ($response === true) {
 				// Валидация успешна
-
 				// Создаём запись
-				$work_type = WorkTypeModel::getById($_POST['work_type']);
-				
-				$report_id = ReportModel::create(
-					$_POST["subject_id"],
-					$_POST['work_type'],
-					$_POST['number'],
-					$_POST['notice'],
-					"@titlepage\n@section:{$work_type['name_nom']} №{$_POST['number']}\n@section:Ответы на контрольные вопросы",
-					$_POST['date_for']
-				);
+                $subject = $em->find(Subject::class, $_POST['subject_id']);
+				$work_type = $em->find(WorkType::class, $_POST['work_type']);
+
+                $report = new Report();
+                $report->setSubject($subject);
+                $report->setComment($_POST['notice']);
+                $report->setCreatedAt(new \DateTime('now'));
+                $report->setWorkType($work_type);
+                $report->setMarkup(
+                "@titlepage\n".
+                "@section:".$work_type->getNameNom()." №".$_POST['number']."\n".
+                "@section:Ответы на контрольные вопросы"
+                );
+                $report->setWorkNumber($_POST['number']);
+                $report->setDateFor(new \DateTime($_POST['date_for']));
+                $report->setHidden(false);
+
+                $em->persist($report);
+                $em->flush();
+
+                $report_id = $report->getId();
 
 				// Перенаправляем на предпросмотр этого отчёта
 				header("Location: /autogost/edit/".$report_id);
+                exit();
 				return;
 			} else {
 				// Валидация провалена
@@ -155,9 +169,18 @@ class AutoGostController {
 		} else {
 			$error_text = null;
 		}
-		
-		$subjects = SubjectModel::all(true);
-		$worktypes = WorkTypeModel::all();
+
+        // Поиск всех предметов
+        $squery = $em->createQuery(
+            'SELECT s FROM '.Subject::class.' s WHERE s.hidden=false'
+        );
+        $subjects = $squery->getResult();
+
+        // Поиск всех типов работ
+        $wtquery = $em->createQuery(
+            'SELECT wt FROM '.WorkType::class.' wt'
+        );
+        $work_types = $wtquery->getResult();
 
 		// Дисциплина по умолчанию
 		if (isset($_GET['selected'])) {
@@ -169,9 +192,9 @@ class AutoGostController {
 		$view = new AutoGostNewReportView([
 			"page_title" => "Автогост: создание отчёта",
 			'subjects' => $subjects,
-			'worktypes' => $worktypes,
+			'work_types' => $work_types,
 			'error_text' => $error_text,
-			"crumbs" => ["Главная"=>"/", "Автогост: создание отчёта" => "/"],
+			"crumbs" => ["Главная"=>"/", "Автогост: создание отчёта" => ""],
 			"selected" => $selected
 		]);
 		$view->view();

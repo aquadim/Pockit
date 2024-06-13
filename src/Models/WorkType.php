@@ -26,6 +26,11 @@ class WorkType
     #[ORM\Column(type: "boolean")]
     private bool $hidden;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * Set name nom
      *
@@ -84,5 +89,15 @@ class WorkType
     public function isHidden(): bool
     {
         return $this->hidden;
+    }
+
+    public function toArray() : array {
+        return [
+            'id'=>$this->id,
+            'nameNom' => $this->name_nom,
+            'nameGen' => $this->name_gen,
+            'hidden' => $this->hidden,
+            'repr' => $this->name_nom
+        ];
     }
 }

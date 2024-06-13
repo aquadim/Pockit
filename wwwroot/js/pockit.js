@@ -232,4 +232,18 @@ async function getAllTeachers() {
     return teachers;
 }
 
+// API: Возвращает все типы работ
+async function getAllWorkTypes() {
+    const response = await fetch('/workTypes/read');
+    const workTypes = await response.json();
+    return workTypes;
+}
+
+// API: Возвращает все отчёты по предмету
+async function getReportsBySubjectId(id) {
+    const response = await fetch('/reports/read/'+id);
+    const reports = await response.json();
+    return reports;
+}
+
 const notifyArea = document.getElementById('notifyArea');

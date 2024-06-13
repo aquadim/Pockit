@@ -1,10 +1,9 @@
 <?php
-namespace Pockit\Views;
-
 // Архив AutoGost
 
+namespace Pockit\Views;
+
 class AutoGostArchiveView extends LayoutView {
-	protected $subjects;
 
     public function customScripts() { ?>
 <script src="/js/archiveView.js"></script>
@@ -14,7 +13,6 @@ class AutoGostArchiveView extends LayoutView {
 <div class='card m-1'>
 	<h1 class='text-center card-title'>Архив отчётов</h1>
     <div id='loading' class='text-center'>
-        <p class='mono'>Загрузка...</p>
         <div class='loader'></div>
     </div>
 	<div id='lvSubjects'></div>

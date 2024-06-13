@@ -4,7 +4,6 @@ namespace Pockit\Views;
 // Страница редактирования отчёта
 
 class AutoGostEditView extends LayoutView {
-	protected $markup;
 	protected $filename;
 	protected $report_id;
 
@@ -83,8 +82,8 @@ class AutoGostEditView extends LayoutView {
 
 <!--Связь с javascript-->
 <script type="text/javascript">
-	var PHP_report_id = <?= $this->report_id ?>;
-	var PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
+var PHP_report_id = <?= $this->report_id ?>;
+var PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
 </script>
 
 <?php }
