@@ -228,27 +228,30 @@ class AutoGostController {
 
 	// Возвращает файл HTML для скачивания
 	public static function jsHTML($report_id) {
-
-		$report 	= ReportModel::getById($report_id);
-		$subject 	= SubjectModel::getById($report["subject_id"]);
-		$work_type	= WorkTypeModel::getById($report["work_type"]);
-		$teacher	= TeacherModel::getById($subject["teacher_id"]);
-		$filename 	= "Автогост - ".$subject['name']." #".$report['work_number']." - ".$_ENV['autogost_surname'];
+        $em         = Database::getEm();
+        $report     = $em->find(Report::class, $report_id);
+		$subject 	= $report->getSubject();
+		$work_type	= $report->getWorkType();
+		$teacher	= $subject->getTeacher();
+		$filename 	=
+        "Автогост - ".$subject->getName()." #".$report->getWorkNumber().
+        " - ".$_ENV['autogost_surname'];
 
 		header('Content-Type: text/html');
-		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		//header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 		// Читаем стили
 		$styles = file_get_contents(index_dir.'/wwwroot/css/portable.css');
 
 		// Добавляем структуру чтобы был нормальный HTML
 		echo '
+        <!DOCTYPE html>
 		<html>
 			<head>
 				<style>'.
-				// Стили
-				$styles
+				$styles // Стили
 				.'</style>
+                <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
 			</head>
 		<body>';
 
