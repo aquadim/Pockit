@@ -15,8 +15,8 @@ class AutoGostTitlePage extends AutoGostPage {
 
     <div style='margin-top: 5cm;'>
         <p class='t-center'>ОТЧЁТ О ВЫПОЛНЕНИИ</p>
-        <p class='t-center'><?= static::$work_type['name_gen'] ?> №<?= static::$work_number ?></p>
-        <p class='t-center'>по дисциплине «<?= static::$subject['name'] ?>»</p>
+        <p class='t-center'><?= static::$work_type->getNameGen() ?> №<?= static::$work_number ?></p>
+        <p class='t-center'>по дисциплине «<?= static::$subject->getName() ?>»</p>
     </div>
 
     <div style='margin-top: 5cm;'>

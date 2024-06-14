@@ -43,16 +43,16 @@ class AutoGostPage extends View {
         $report
     )
     {
-        static::$work_code = $subject['code'].$_ENV['autogost_code'];
-        static::$teacher_full = $teacher["surname"]." ".mb_substr($teacher['name'],0,1).'. '.mb_substr($teacher['patronymic'],0,1).'.';
+        static::$work_code = $subject->getCode().$_ENV['autogost_code'];
+        static::$teacher_full = $teacher->getFullName();
         static::$author_surname = $_ENV['autogost_surname'];
         static::$author_full = $_ENV['autogost_full'];
         static::$subject = $subject;
         static::$work_type = $work_type;
         static::$author_group = $_ENV['autogost_group'];
-        static::$work_number = $report['work_number'];
-        static::$teacher_surname = $teacher['surname'];
-	static::$report_date = \DateTime::createFromFormat('Y-m-d', $report['date_for']);
+        static::$work_number = $report->getWorkNumber();
+        static::$teacher_surname = $teacher->getSurname();
+        static::$report_date = $report->getDateFor();
     }
 
     // Номер страницы

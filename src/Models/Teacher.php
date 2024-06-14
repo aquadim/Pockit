@@ -106,11 +106,15 @@ class Teacher
         return $this->patronymic;
     }
 
-    public function toArray()
-    {
-        $full_name = $this->surname . ' ' .
+    public function getFullName() : string {
+        return $this->surname . ' ' .
             mb_substr($this->name, 0, 1) . '. ' .
             mb_substr($this->patronymic, 0, 1) . '.';
+    }
+
+    public function toArray()
+    {
+        $full_name = $this->getFullName();
             
         return [
             'id' => $this->id,

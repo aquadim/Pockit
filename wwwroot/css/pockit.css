@@ -46,6 +46,37 @@ body {
 	z-index: 1;
 }
 
+/* Уведомления */
+#notifyArea {
+    position: fixed;
+    top: 16px;
+    z-index: 3;
+    width: 33%;
+    min-width: 300px;
+    right: 16px;
+}
+
+.notification {
+    position: relative;
+    padding: 1em;
+    color: var(--cardFg);
+    margin-bottom: 16px;
+    transition: 300ms;
+    border-radius: 5px;
+    border-width: 2px;
+    border-style: dashed;
+    border-color: var(--cardBorder);
+    background-color: var(--cardBg);
+}
+
+.notifSlideLeft {
+    animation: slideToLeft 0.25s forwards;
+}
+
+.notifSlideRight {
+    animation: slideToRight 0.5s forwards;
+}
+
 /* Cards */
 .card {
 	background-color: var(--cardBg);
@@ -389,33 +420,4 @@ p.textwall {
         transform: translateX(100%);
         opacity: 0%;
     }
-}
-
-/* Уведомления */
-#notifyArea {
-    position: fixed;
-    top: 16px;
-    z-index: 3;
-    width: 33%;
-    min-width: 300px;
-    right: 16px;
-}
-
-.notification {
-    position: relative;
-    padding: 1em;
-    color: white;
-    margin-bottom: 16px;
-    transition: 300ms;
-    border-radius: 5px;
-    border-width: 2px;
-    border-style: dashed;
-}
-
-.notifSlideLeft {
-    animation: slideToLeft 0.25s forwards;
-}
-
-.notifSlideRight {
-    animation: slideToRight 0.5s forwards;
 }

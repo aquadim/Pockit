@@ -42,7 +42,6 @@ class LayoutView extends View {
 		<link rel='stylesheet' href='/css/theme.css'>
 		<link rel="stylesheet" href="/css/pockit.css">
 		<link rel="stylesheet" href="/css/spinner.css">
-		<script src="/js/jquery-3.7.1.min.js"></script>
 		<?php $this->customHead() ?>
 	</head>
 	<body>

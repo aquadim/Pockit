@@ -1,7 +1,7 @@
 <?php
-namespace Pockit\Controllers;
-
 // Контроллер автогоста
+
+namespace Pockit\Controllers;
 
 use Pockit\Models\Report;
 use Pockit\Models\Subject;
@@ -23,6 +23,7 @@ use Pockit\AutoGostSections\SubSection;
 
 use Pockit\Common\Database;
 use Pockit\Common\AgstException;
+use Pockit\Common\getErrorText;
 
 class AutoGostController {
 
@@ -43,30 +44,36 @@ class AutoGostController {
 
 	// Загрузка изображений
 	public static function uploadImage() {
-		if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-			$mime_type = mime_content_type($_FILES['file']['tmp_name']);
-			$filepath = index_dir."/wwwroot/img/autogost/agstupload".uniqid();
+		if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
+            // Провал загрузки
+            echo json_encode(
+                [
+                    'ok'=>false,
+                    'message'=>getFileUploadErrorText($_FILES['file']['error'])
+                ]
+            );
+            exit();
+        }
 
-			if ($mime_type == "image/png") {
-				// Конвертирование png в gif
-				$png_image = imagecreatefrompng($_FILES['file']['tmp_name']);
-				$gif_image = imagecreatetruecolor(imagesx($png_image), imagesy($png_image));
-				imagecopy($gif_image, $png_image, 0, 0, 0, 0, imagesx($png_image), imagesy($png_image));
-				imagegif($gif_image, $filepath);
-			} else {
-				// Просто перемещение файла
-				move_uploaded_file($_FILES['file']['tmp_name'], $filepath);
-			}
+        $mime_type = mime_content_type($_FILES['file']['tmp_name']);
+        $filepath = index_dir."/wwwroot/img/autogost/img".uniqid();
 
-			$output = [
-				"ok" => true,
-				"filename"=> basename($filepath),
-				"clientName" => pathinfo($_FILES['file']['name'], PATHINFO_FILENAME)
-			];
-		} else {
-			$output = ["ok"=>false];
-		}
-		echo json_encode($output);
+        if ($mime_type == "image/png") {
+            // Конвертирование png в gif
+            $png_image = imagecreatefrompng($_FILES['file']['tmp_name']);
+            $gif_image = imagecreatetruecolor(imagesx($png_image), imagesy($png_image));
+            imagecopy($gif_image, $png_image, 0, 0, 0, 0, imagesx($png_image), imagesy($png_image));
+            imagegif($gif_image, $filepath);
+        } else {
+            // Просто перемещение файла
+            move_uploaded_file($_FILES['file']['tmp_name'], $filepath);
+        }
+
+        echo json_encode([
+            "ok" => true,
+            "filename"=> basename($filepath),
+            "clientName" => pathinfo($_FILES['file']['name'], PATHINFO_FILENAME)
+        ]);
 	}
 
 	// Список отчётов по дисциплине
@@ -110,7 +117,7 @@ class AutoGostController {
 			"crumbs" => [
                 "Главная"=>"/",
                 "Автогост: дисциплины" => "/autogost/archive/",
-                $subject->getName() => "/autogost/archive/".$subject->getId(),
+                $subject->getMyName() => "/autogost/archive/".$subject->getId(),
                 "Редактирование"=>""
             ],
 			"filename" => $filename,
@@ -201,13 +208,12 @@ class AutoGostController {
 	}
 
 	// Получение HTML
-	public static function getHtml() {
-
-		$input		= json_decode(file_get_contents("php://input"), true);
-		$report 	= ReportModel::getById($input['report_id']);
-		$subject 	= SubjectModel::getById($report["subject_id"]);
-		$work_type	= WorkTypeModel::getById($report["work_type"]);
-		$teacher	= TeacherModel::getById($subject["teacher_id"]);
+	public static function getHtml($report_id) {
+        $em         = Database::getEm();
+        $report     = $em->find(Report::class, $report_id);
+		$subject 	= $report->getSubject();
+		$work_type	= $report->getWorkType();
+		$teacher	= $subject->getTeacher();
 
 		try {
 			self::echoReportHTML($report, $subject, $work_type, $teacher);
@@ -252,14 +258,13 @@ class AutoGostController {
 	}
 
 	// Печатает HTML отчёта
-	// $img_as_b64 -- кодировать ли изображения в base64
 	private static function echoReportHTML(
 		$report, $subject, $work_type, $teacher, $img_as_b64=false)
 	{
 		$document 				= [];		// Секции документа
 		$current_img 			= 1; 		// Номер текущего рисунка
 		$current_section_index 	= -1;		// Индекс текущей секции в документе
-		$lines 					= explode("\n", $report['markup']);
+		$lines 					= explode("\n", $report->getMarkup());
 		$line_num 				= 0;		// Номер обрабатываемой строки
 		$page_added				= false;	// Добавлена ли какая-либо страница?
 

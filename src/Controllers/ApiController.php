@@ -174,11 +174,12 @@ class ApiController {
 
 	#region UPDATE
 	// Обновление разметки отчёта
-	public static function updateReportMarkup() {
+	public static function updateReportMarkup($report_id) {
 		$input = json_decode(file_get_contents("php://input"), true);
-		$report = ReportModel::getById($input['id']);
-		$report['markup'] = $input['markup'];
-		ReportModel::update($report);
+        $em = Database::getEm();
+		$report = $em->find(Report::class, $report_id);
+		$report->setMarkup($input['markup']);
+        $em->flush();
 	}
 	
 	// Обновление отчёта

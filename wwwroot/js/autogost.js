@@ -77,6 +77,8 @@ function insertTable(caretAt, name, delimeter, content) {
     editor.dispatch({
         selection: EditorSelection.single(newPos)
     });
+
+    unsavedChanges = true;
 }
 
 // caretAt маркер изображения на данную позицию
@@ -109,29 +111,33 @@ function pasteImageMarker(caretAt, filename, label='Изображение') {
     editor.dispatch({
         selection: EditorSelection.single(newPos)
     });
+
+    unsavedChanges = true;
 }
 
 // Отправляет запрос на получение HTML
 async function getHTML(report_id) {
-    const response = await fetch("http://localhost:9000/autogost/gethtml", {
-        method: "post",
-        body: JSON.stringify({report_id: report_id})
-    });
+    const response = await fetch(
+        "http://localhost:9000/autogost/getHtml/"+report_id, 
+    );
     return response;
 }
 
 // Возвращает разметку для отчёта
 async function getMarkup(report_id) {
-    const response = await fetch("http://localhost:9000/reports/get", {
-        method: "post",
-        body: JSON.stringify({id: report_id})
-    });
+    const response = await fetch(
+        "http://localhost:9000/reports/getMarkup/" + report_id,
+        {
+            method: "post",
+            body: JSON.stringify({id: report_id})
+        }
+    );
     return response;
 }
 
 // Обновляет #preview на странице, отсылая запрос на получение HTML
 // НЕ СОХРАНЯЕТ РАЗМЕТКУ
-async function updatePreview(onSuccess) {
+async function updatePreview(onSuccess, onFail) {
     const response = await getHTML(PHP_report_id);
 
     if (response.ok) {
@@ -140,16 +146,11 @@ async function updatePreview(onSuccess) {
         onSuccess();
         console.log("Updating preview finished successfully");
     } else {
-        console.error("Error when generating preview");
-
         const data = await response.json();
-        agstErrors.innerHTML =
-            'Произошла ошибка на строке <strong>'+
-            data.line + '</strong>: <strong>' + data.text + '</strong>';
-
+        console.log("Error when generating preview");
+        onFail(data);
         editorLoader.classList.add('hidden');
         agstErrorsContainer.classList.remove('hidden');
-        
     }
 }
 
@@ -192,8 +193,10 @@ async function editorToPreview() {
     editorToLoader();
 
     // Некоторые кнопки недоступны
-    lblAddImage.setAttribute("disabled", "disabled");
     btnAddImage.setAttribute("disabled", "disabled");
+
+    // Скрыть ошибки (но может они опять появятся)
+    agstErrorsContainer.classList.add('hidden');
 
     // Переключение видимости секций
 	editorSection.classList.add("hidden");
@@ -206,10 +209,20 @@ async function editorToPreview() {
     // 3.1 Скрываем загрузку
     // 3.2 Открываем превью
 	await saveMarkup(async function() {
-		await updatePreview(function() {
-            editorLoader.classList.add('hidden');
-            previewOut.classList.remove('hidden');
-		});
+		await updatePreview(
+            // on success:
+            function() {
+                editorLoader.classList.add('hidden');
+                previewOut.classList.remove('hidden');
+            },
+            // on fail:
+            function(data) {
+                agstErrorsContainer.innerHTML = 
+                '<p>Ошибка на строке <strong>'+ data.line + ': ' +
+                data.text + '</strong>';
+                agstErrorsContainer.classList.remove('hidden');
+            }
+        );
 	});
 }
 
@@ -220,7 +233,6 @@ async function editorToMarkup() {
 	btnToMarkup.classList.add('border-accent');
 	editorSection.classList.remove("hidden");
 	previewSection.classList.add("hidden");
-	lblAddImage.removeAttribute("disabled");
     btnAddImage.removeAttribute("disabled");
     previewOut.classList.add('hidden');
     editorLoader.classList.add('hidden');
@@ -229,24 +241,19 @@ async function editorToMarkup() {
 
 // Сохранение разметки
 async function saveMarkup(successCallback) {
-    const response = await fetch("http://localhost:9000/reports/updateMarkup", {
+    const response = await fetch(
+        "http://localhost:9000/reports/updateMarkup/"+PHP_report_id, {
         method: "post",
         body: JSON.stringify(
-            {id: PHP_report_id, markup: editor.state.doc.toString()}
+            {markup: editor.state.doc.toString()}
         )
     });
 
-    if (response.ok) {
-        unsavedChanges = true;
-        btnSave.blur();
-        console.log("Markup saved");
-        if (successCallback) {
-            successCallback();
-        }
-        return;
+    unsavedChanges = false;
+    console.log("Markup saved");
+    if (successCallback) {
+        successCallback();
     }
-
-    console.error("Failed to save markup");
 }
 
 // Автодополнение
@@ -272,7 +279,6 @@ const btnSidebarToggle  = document.getElementById('btnToggleSidebar');
 const btnToPreview 	= document.getElementById("switchPreview");
 const btnToMarkup 	= document.getElementById("switchMarkup");
 const btnAddImage 	= document.getElementById("btnAddImage");
-const lblAddImage 	= document.getElementById("lblAddImage");
 const loaderAddImage= document.getElementById("loaderAddImage");
 const btnPrint 		= document.getElementById("printReport");
 const btnFilename 	= document.getElementById("getFilename");
@@ -286,7 +292,7 @@ const previewOut 	        = document.getElementById("agstOutput");
 const editorLoader          = document.getElementById('agstLoader');
 const agstErrors            = document.getElementById('agstErrors');
 const agstErrorsContainer   = document.getElementById('agstErrorsContainer');
-let unsavedChanges  = false;
+let unsavedChanges          = false;
 
 // -- Привязка событий --
 btnSidebarToggle.onclick = async function(e) {
@@ -301,6 +307,7 @@ btnToPreview.onclick = async function(e) {
 btnSave.onclick = async function(e) {
     saveMarkup(function() {
         btnSave.blur();
+        notify('Сохранено', 'success');
     });
 }
 
@@ -308,46 +315,69 @@ btnToMarkup.onclick = async function(e) {
     await editorToMarkup();
 }
 
-btnAddImage.onchange = async function(e) {
-    if (!e.target.files[0]) return; // Файлы не были выбраны
+btnAddImage.onclick = async function(e) {
+    // Создание поля ввода для выбора изображений
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = 'multiple';
 
-    let uploadData;
-    
-    loaderAddImage.classList.remove('hidden');
-    for (const f of e.target.files) {
-        // Если файл не изображение, пропускаем
-        if (!isImage(f)) continue;
-
-        // Загружаем изображение
-        uploadData = await uploadImage(f);
-        if (!uploadData.ok) {
-            console.error('Failed to upload image!');
-            continue;
+    input.onchange = async function(e) {
+        if (!e.target.files[0]) {
+            // Файлы не были выбраны
+            return;
         }
 
-        // Вставляем текст
-        pasteImageMarker(
-            editor.state.selection.main.head,
-            uploadData.filename,
-            uploadData.clientName
-        );
+        notify('Загрузка началась');
+    
+        for (const f of e.target.files) {
+            // Если файл не изображение, пропускаем
+            if (!isImage(f)) continue;
+
+            // Загружаем изображение
+            const uploadData = await uploadImage(f);
+            if (!uploadData.ok) {
+                notify(
+                    'Не удалось загрузить изображение. ' +
+                    uploadData.message,
+                    'danger'
+                );
+                continue;
+            }
+
+            // Вставляем текст
+            pasteImageMarker(
+                editor.state.selection.main.head,
+                uploadData.filename,
+                uploadData.clientName
+            );
+        }
+        notify('Загрузка завершена', 'success');
     }
-    loaderAddImage.classList.add('hidden');
+    input.click();
 }
 
 btnPrint.onclick = function() {
     // При печати сохраняем разметку, затем обновляем превью, а потом вызываем
     // window.print
     saveMarkup(function() {
-        updatePreview(function() {
-            window.print();
-        });
+        updatePreview(
+            // on success:
+            function() {
+                window.print();
+            },
+            // on fail:
+            function(data) {
+                notify('Ошибка на строке '+ data.line + ': ' + data.text, 'danger');
+            }
+        );
     });
 }
 
 btnFilename.onclick = async function() {
     // Получение названия файла для сохранения
 	await navigator.clipboard.writeText(PHP_filename);
+    notify('Название скопировано', 'success');
+    btnFilename.blur();
 }
 
 btnAddTable.onclick = async function() {
@@ -464,6 +494,14 @@ btnAddTable.onclick = async function() {
     document.body.append(overlay);
 }
 
+window.addEventListener('beforeunload', function(e) {
+    if (unsavedChanges === false) {
+        return;
+    }
+    e.preventDefault();
+    e.returnValue = true;
+});
+
 // ===CODEMIRROR===
 let editor;
 editorToLoader();
@@ -510,36 +548,7 @@ let editorEventHandlers = {
             });
         }
     },
-
-    // Обработчик события дропа на редактор
-    // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
-    drop: function(e) {
-        if (!e.dataTransfer.items) return true;
-
-        let uploadData;
-        
-        for (const item of e.dataTransfer.items) {
-            // Если файл - не файл и не изображение - пропускаем
-            if (!item.kind === "file") continue;
-            const file = item.getAsFile();
-            if (!isImage(file)) continue;
-
-            // Загружаем изображение
-            uploadImage(file).then(function(uploadData) {
-                if (!uploadData.ok) {
-                    console.error('Failed to upload image!');
-                    return;
-                }
-
-                // Вставляем текст
-                pasteImageMarker(
-                    editor.state.selection.main.head,
-                    uploadData.filename,
-                    uploadData.clientName
-                );
-            });
-        }
-    }
+    keyup: () => unsavedChanges = true
 }
 
 // Тема редактора
@@ -668,7 +677,14 @@ then(async function(response) {
             autocompletion({override: [autogostCompletions]}),
             keymap.of([{
                 key: "Ctrl-s",
-                run() { saveMarkup(null); return true }
+                run() {
+                    saveMarkup(() =>
+                    {
+                        notify('Сохранено', 'success');
+                        unsavedChanges = false;
+                    });
+                    return true;
+                }
             }]),
             EditorView.domEventHandlers(editorEventHandlers),
             agstTheme,

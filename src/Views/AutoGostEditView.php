@@ -12,6 +12,12 @@ class AutoGostEditView extends LayoutView {
 <?php }
 
 	public function customScripts():void { ?>
+
+<script>
+const PHP_report_id = <?= $this->report_id ?>;
+const PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
+</script>
+
 <script src="/js/autogost.bundle.js"></script>
 <?php }
 
@@ -25,12 +31,14 @@ class AutoGostEditView extends LayoutView {
 		<button class='btn' id="printReport">Печать</button>
 		<button class='btn' id="getFilename">Скопировать название файла</button>
 		<a href="/autogost/jshtml/<?= $this->report_id ?>" class='btn' id='btnGetHTML'>Скачать HTML</a>
-
+        <button class='btn' id='btnAddImage'>Добавить изображения</button>
+<!--
 		<label class='btn' id='lblAddImage'>
 			<input type='file' multiple="multiple" id='btnAddImage'/>
 			Добавить изображения
 			<div class='loader hidden' id='loaderAddImage'></div>
 		</label>
+-->
 
 		<button class='btn' id='btnAddTable'>Добавить таблицу</button>
 
@@ -79,12 +87,6 @@ class AutoGostEditView extends LayoutView {
 		<button id="btnToggleSidebar" class='btn m-1' onclick="toggleSidebar()">❌ Закрыть панель инструментов</button>
 	</div>
 </div>
-
-<!--Связь с javascript-->
-<script type="text/javascript">
-var PHP_report_id = <?= $this->report_id ?>;
-var PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
-</script>
 
 <?php }
 }

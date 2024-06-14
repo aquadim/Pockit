@@ -26,7 +26,7 @@ $router->register('/grades/get', 'Pockit\Controllers\GradesController::collect')
 $router->register('/autogost/new', 'Pockit\Controllers\AutoGostController::newReport');
 $router->register('/autogost/upload-image', 'Pockit\Controllers\AutoGostController::uploadImage');
 $router->register('/autogost/edit/{report_id}', 'Pockit\Controllers\AutoGostController::edit');
-$router->register("/autogost/gethtml", 'Pockit\Controllers\AutoGostController::getHtml');
+$router->register("/autogost/getHtml/{report_id}", 'Pockit\Controllers\AutoGostController::getHtml');
 $router->register("/autogost/archive", 'Pockit\Controllers\AutoGostController::archive');
 $router->register("/autogost/archive/{subject_id}", 'Pockit\Controllers\AutoGostController::listReports');
 $router->register("/autogost/jshtml/{report_id}", 'Pockit\Controllers\AutoGostController::jsHTML');
@@ -51,7 +51,7 @@ $router->register('/reports/read/{subject_id}', 'Pockit\Controllers\ApiControlle
 $router->register('/reports/update', 'Pockit\Controllers\ApiController::updateReport');
 $router->register('/reports/delete', 'Pockit\Controllers\ApiController::deleteReport');
 $router->register('/reports/getMarkup/{report_id}', 'Pockit\Controllers\ApiController::getReportMarkup');
-$router->register('/reports/updateMarkup', 'Pockit\Controllers\ApiController::updateReportMarkup');
+$router->register('/reports/updateMarkup/{report_id}', 'Pockit\Controllers\ApiController::updateReportMarkup');
 
 $router->register('/teachers/read', 'Pockit\Controllers\ApiController::getTeachers');
 $router->register('/work_types/read', 'Pockit\Controllers\ApiController::getWorkTypes');
