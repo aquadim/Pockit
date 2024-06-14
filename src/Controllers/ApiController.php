@@ -10,6 +10,7 @@ use Pockit\Models\Report;
 use Pockit\Models\Teacher;
 use Pockit\Models\WorkType;
 use Pockit\Models\Password;
+use Pockit\Models\Link;
 
 class ApiController {
 
@@ -53,6 +54,18 @@ class ApiController {
             exit();
         }
     }
+    
+    // Проверяет запрос на создание/обновление ссылки на правильность
+    private static function validateLink() {
+        if (!isset($_POST['name']) || $_POST['name'] === '') {
+            self::echoError('Не введено название');
+            exit();
+        }
+        if (!isset($_POST['href']) || $_POST['href'] === '') {
+            self::echoError('Не указано назначение ссылки');
+            exit();
+        }
+    }
     #endregion
 
 	#region CREATE
@@ -85,9 +98,17 @@ class ApiController {
 	
 	// Добавление ссылки
 	public static function createLink() {
-		$id = LinkModel::create($_POST['name'], $_POST['href']);
-		$link = LinkModel::getById($id);
-		echo json_encode($link);
+        self::validateLink();
+        $em = Database::getEm();
+        $link = new Link();
+        $link->setName($_POST['name']);
+        $link->setHref($_POST['href']);
+        $link->setHidden(false);
+
+        $em->persist($link);
+        $em->flush();
+
+        echo json_encode(['ok'=>true, 'obj'=>$link->toArray()]);
 	}
 	
 	// Добавление пароля
@@ -131,13 +152,29 @@ class ApiController {
 
 	// Получение всех типов работ
 	public static function getWorkTypes() {
-		$worktypes = WorkTypeModel::all();
-		$output = [];
-		while ($worktype = $worktypes->fetchArray(SQLITE3_ASSOC)) {
-			$worktype['repr'] = $worktype['name_nom'];
-			$output[] = $worktype;
-		}
-		echo json_encode($output);
+		//~ $worktypes = WorkTypeModel::all();
+		//~ $output = [];
+		//~ while ($worktype = $worktypes->fetchArray(SQLITE3_ASSOC)) {
+			//~ $worktype['repr'] = $worktype['name_nom'];
+			//~ $output[] = $worktype;
+		//~ }
+		//~ echo json_encode($output);
+	}
+    
+	// Получение всех ссылок
+	public static function readLink() {
+		$em = Database::getEm();
+        $query = $em->createQuery(
+            'SELECT link FROM '.Link::class.' link '.
+            'WHERE link.hidden=false'
+        );
+        $links = $query->getResult();
+
+        $output = [];
+        foreach ($links as $l) {
+            $output[] = $l->toArray();
+        }
+        echo json_encode($output);
 	}
 
     // Получение всех дисциплин
@@ -236,11 +273,13 @@ class ApiController {
 
 	// Обновление ссылки
 	public static function updateLink() {
-		$link = LinkModel::getById($_POST['id']);
-		$link['name'] = $_POST['name'];
-		$link['href'] = $_POST['href'];
-		LinkModel::update($link);
-		echo json_encode($link);
+        self::validateLink();
+        $em = Database::getEm();
+		$link = $em->find(Link::class, $_POST['linkId']);
+        $link->setName($_POST['name']);
+        $link->setHref($_POST['href']);
+        $em->flush();
+        echo json_encode(['ok'=>true, 'obj'=>$link->toArray()]);
 	}
 
 	// Обновление предмета
@@ -278,7 +317,10 @@ class ApiController {
 	
 	// Удаление ссылки
 	public static function deleteLink() {
-		LinkModel::hideById($_GET['id']);
+        $em = Database::getEm();
+        $subject = $em->find(Link::class, $_GET['id']);
+        $subject->setHidden(true);
+        $em->flush();
 	}
 	
 	// Удаление пароля

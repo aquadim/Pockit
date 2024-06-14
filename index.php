@@ -61,6 +61,7 @@ $router->register('/passwords/read', 'Pockit\Controllers\ApiController::readPass
 $router->register('/passwords/delete', 'Pockit\Controllers\ApiController::deletePassword');
 
 $router->register('/links/create', 'Pockit\Controllers\ApiController::createLink');
+$router->register('/links/read', 'Pockit\Controllers\ApiController::readLink');
 $router->register('/links/update', 'Pockit\Controllers\ApiController::updateLink');
 $router->register('/links/delete', 'Pockit\Controllers\ApiController::deleteLink');
 
