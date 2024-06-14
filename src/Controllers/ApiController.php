@@ -164,6 +164,12 @@ class ApiController {
         }
         echo json_encode($output);
     }
+	
+	public static function getReportMarkup($report_id) {
+		$em = Database::getEm();
+		$report = $em->find(Report::class, $report_id);
+		echo json_encode(['ok'=>true, 'markup'=>$report->getMarkup()]);
+	}
 	#endregion
 
 	#region UPDATE
