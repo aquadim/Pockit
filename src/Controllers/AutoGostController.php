@@ -238,7 +238,7 @@ class AutoGostController {
         " - ".$_ENV['autogost_surname'];
 
 		header('Content-Type: text/html');
-		//header('Content-Disposition: attachment; filename="'.$filename.'"');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 		// Читаем стили
 		$styles = file_get_contents(index_dir.'/wwwroot/css/portable.css');
