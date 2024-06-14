@@ -252,4 +252,11 @@ async function getAllPasswords() {
     return passwords;
 }
 
+// API: Возвращает все темы
+async function getAllThemes() {
+    const response = await fetch('/themes/read');
+    const themes = await response.json();
+    return themes;
+}
+
 const notifyArea = document.getElementById('notifyArea');

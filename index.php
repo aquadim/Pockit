@@ -53,8 +53,8 @@ $router->register('/reports/delete', 'Pockit\Controllers\ApiController::deleteRe
 $router->register('/reports/getMarkup/{report_id}', 'Pockit\Controllers\ApiController::getReportMarkup');
 $router->register('/reports/updateMarkup/{report_id}', 'Pockit\Controllers\ApiController::updateReportMarkup');
 
-$router->register('/teachers/read', 'Pockit\Controllers\ApiController::getTeachers');
-$router->register('/work_types/read', 'Pockit\Controllers\ApiController::getWorkTypes');
+$router->register('/teachers/read', 'Pockit\Controllers\ApiController::readTeacher');
+$router->register('/work_types/read', 'Pockit\Controllers\ApiController::readWorkType');
 
 $router->register('/passwords/create', 'Pockit\Controllers\ApiController::createPassword');
 $router->register('/passwords/read', 'Pockit\Controllers\ApiController::readPassword');
@@ -65,6 +65,7 @@ $router->register('/links/read', 'Pockit\Controllers\ApiController::readLink');
 $router->register('/links/update', 'Pockit\Controllers\ApiController::updateLink');
 $router->register('/links/delete', 'Pockit\Controllers\ApiController::deleteLink');
 
+$router->register('/themes/read', 'Pockit\Controllers\ApiController::readTheme');
 $router->register('/themes/create', 'Pockit\Controllers\ApiController::addThemeFromZip');
 $router->register('/themes/delete', 'Pockit\Controllers\ApiController::deleteTheme');
 $router->register('/themes/activate/{theme_id}', 'Pockit\Controllers\ApiController::activateTheme');

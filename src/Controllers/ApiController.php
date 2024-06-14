@@ -1,7 +1,7 @@
 <?php
-namespace Pockit\Controllers;
-
 // Контроллер API
+
+namespace Pockit\Controllers;
 
 use Pockit\Common\Database;
 
@@ -11,6 +11,7 @@ use Pockit\Models\Teacher;
 use Pockit\Models\WorkType;
 use Pockit\Models\Password;
 use Pockit\Models\Link;
+use Pockit\Models\Theme;
 
 class ApiController {
 
@@ -128,15 +129,9 @@ class ApiController {
 	#endregion
 
 	#region READ
-	// Получение отчёта
-	public static function getReport() {
-		$data = json_decode(file_get_contents("php://input"), true);
-		$report = ReportModel::getById($data['id']);
-		echo json_encode($report);
-	}
 
 	// Получение всех преподавателей
-	public static function getTeachers() {
+	public static function readTeacher() {
 		$em = Database::getEm();
         $query = $em->createQuery(
             'SELECT teacher FROM '.Teacher::class.' teacher '
@@ -148,17 +143,6 @@ class ApiController {
             $output[] = $t->toArray();
         }
         echo json_encode($output);
-	}
-
-	// Получение всех типов работ
-	public static function getWorkTypes() {
-		//~ $worktypes = WorkTypeModel::all();
-		//~ $output = [];
-		//~ while ($worktype = $worktypes->fetchArray(SQLITE3_ASSOC)) {
-			//~ $worktype['repr'] = $worktype['name_nom'];
-			//~ $output[] = $worktype;
-		//~ }
-		//~ echo json_encode($output);
 	}
     
 	// Получение всех ссылок
@@ -219,6 +203,24 @@ class ApiController {
         $output = [];
         foreach ($passwords as $p) {
             $output[] = $p->toArray();
+        }
+        echo json_encode($output);
+    }
+    
+    // Получение всех тем
+    public static function readTheme() {
+        $em = Database::getEm();
+        $query = $em->createQuery(
+            'SELECT theme FROM '.Theme::class.' theme'
+        );
+        $themes = $query->getResult();
+
+        $output = [];
+        foreach ($themes as $t) {
+            $p_array = $p->toArray();
+            // Оставляем всё кроме CSS
+            unset($p_array['css']);
+            $output[] = $p_array;
         }
         echo json_encode($output);
     }
@@ -379,7 +381,6 @@ class ApiController {
 		$result = $zip->open($_FILES['themeFile']['tmp_name']);
 		if ($result !== true) {
 			self::echoError('Не удалось открыть архив');
-			$zip->close();
 			exit();
 		}
 

@@ -20,15 +20,13 @@ class SettingsController {
 
     // Настройки тем
 	public static function themes() {
-        $all_themes = ThemeModel::all();
 		$view = new ThemeView([
             'page_title' => 'Настройки',
 			'crumbs' => [
                 'Главная' => '/',
                 'Настройки' => "/settings",
                 'Темы' => ''
-            ],
-            'themes' => $all_themes
+            ]
 		]);
 		$view->view();
 	}
