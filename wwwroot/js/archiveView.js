@@ -39,7 +39,7 @@ function getSubject(obj) {
     };
 
     const btnDelete = document.createElement('button');
-    btnDelete.textContent = 'Скрыть';
+    btnDelete.textContent = 'Удалить';
     btnDelete.classList.add('btn', 'danger');
     btnDelete.onclick = () => {
         crudDelete('subjects', obj.id, 'subject'+obj.id);

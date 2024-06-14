@@ -1,5 +1,5 @@
 <?php
-// Модель дисциплины
+// Модель отчёта
 
 namespace Pockit\Models;
 
@@ -14,7 +14,7 @@ class Report
     #[ORM\GeneratedValue]
     private int|null $id = null;
 
-    // Предмет дисциплины
+    // Предмет отчёта
     #[ORM\ManyToOne(Subject::class)]
     #[ORM\JoinColumn(nullable: false)]
     private Subject $subject;

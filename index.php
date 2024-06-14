@@ -34,7 +34,7 @@ $router->register("/autogost/help", "Pockit\Controllers\AutoGostController::help
 
 // Пароли
 $router->register("/passwords", "Pockit\Controllers\PasswordController::index");
-$router->register("/passwords/decrypt", "Pockit\Controllers\PasswordController::getPassword");
+$router->register("/passwords/decrypt/{password_id}", "Pockit\Controllers\PasswordController::getPassword");
 
 // Закладки
 $router->register("/links", "Pockit\Controllers\LinksController::index");
@@ -55,8 +55,11 @@ $router->register('/reports/updateMarkup/{report_id}', 'Pockit\Controllers\ApiCo
 
 $router->register('/teachers/read', 'Pockit\Controllers\ApiController::getTeachers');
 $router->register('/work_types/read', 'Pockit\Controllers\ApiController::getWorkTypes');
+
 $router->register('/passwords/create', 'Pockit\Controllers\ApiController::createPassword');
+$router->register('/passwords/read', 'Pockit\Controllers\ApiController::readPassword');
 $router->register('/passwords/delete', 'Pockit\Controllers\ApiController::deletePassword');
+
 $router->register('/links/create', 'Pockit\Controllers\ApiController::createLink');
 $router->register('/links/update', 'Pockit\Controllers\ApiController::updateLink');
 $router->register('/links/delete', 'Pockit\Controllers\ApiController::deleteLink');

@@ -1,41 +1,41 @@
 <?php
+// Контроллер паролей
+
 namespace Pockit\Controllers;
 
-// Контроллер страницы паролей
-
 use Pockit\Views\PasswordView;
-use Pockit\Models\PasswordModel;
+use Pockit\Models\Password;
+use Pockit\Common\Database;
 
 class PasswordController {
 
 	// Главная домашняя страница
 	public static function index() {
-		$passwords = PasswordModel::all(true);
-		$json_passwords = [];
-		while ($row = $passwords->fetchArray()) {
-			$json_passwords[] = [
-				"name" => $row['name'],
-				"value" => $row['value'],
-				"id" => $row['id']
-			];
-		}
-		
 		$view = new PasswordView([
-			'passwords' => $json_passwords,
 			"page_title"=>"Менеджер паролей",
-			"crumbs" => ["Главная" => "/", "Менеджер паролей" => "/passwords"]
+			"crumbs" => ["Главная" => "/", "Менеджер паролей" => ""]
 		]);
 		$view->view();
 	}
 
-	public static function getPassword() {
-		$password = PasswordModel::decryptPassword($_POST['id'], $_POST['secret']);
+	public static function getPassword($password_id) {
+        $em = Database::getEm();
+        $password = $em->find(Password::class, $password_id);
+        $decrypted = openssl_decrypt(
+			$password->getValue(),
+			'aes-128-cbc',
+            $_POST['secretKey'],
+			$options=0,
+			$password->getIv()
+		);
 
-		if ($password === false) {
+		if ($decrypted == false) {
+            $ok = false;
 			$output = "Неверный секретный ключ";
 		} else {
-			$output = $password;
+            $ok = true;
+			$output = $decrypted;
 		}
-		echo $output;
+		echo json_encode(['ok'=>$ok, 'output' => $output]);
 	}
 }

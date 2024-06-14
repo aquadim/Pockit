@@ -131,6 +131,9 @@ class AutoGostController {
 		if (mb_strlen($_POST["number"]) == 0) {
 			return 'Не указан номер работы';
 		}
+        if (!isset($_POST['date_for']) || mb_strlen($_POST['date_for']) == 0) {
+            return 'Не указана дата документа';
+        }
 		return true;
 	}
 

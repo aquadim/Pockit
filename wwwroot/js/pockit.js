@@ -1,12 +1,3 @@
-// Возвращает список значений из БД
-async function crudRead(route, limit = 999) {
-	const url = "/"+route+"/read?limit="+limit;
-	return $.ajax({
-		type: 'POST',
-		url: url
-	});
-}
-
 // Отправляет запрос к API на удаление
 // После удаления на странице удаляется элемент с ID контейнера
 function crudDelete(route, id, containerID=null) {
@@ -14,21 +5,24 @@ function crudDelete(route, id, containerID=null) {
 		return false;
 	}
 	const url = '/'+route+'/delete?id='+id;
-	$.ajax({
-		url: url,
-		success: function() {
+    fetch(url).then(
+        function() {
 			document.getElementById(containerID).remove();
             notify('Успешно удалено', 'success');
 		}
-	});
+	);
 	return true;
 }
 
 // Показывает форму обновления элемента
 async function crudUpdateShowWindow(route, options, name, afterUpdatedCallback) {
 	const card = await createWindow(route, "update", name, options, afterUpdatedCallback)
-    $(document.body).append(card);
-	$(document.body).append($('<div class="dark-overlay"></div>'));
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('dark-overlay');
+
+    document.body.append(card);
+	document.body.append(overlay);
 }
 
 // Показывает форму создания элемента
@@ -42,8 +36,11 @@ async function crudCreateShowWindow(route, options, name, afterCreatedCallback, 
 		multipart
 	);
 
-    $(document.body).append(card);
-	$(document.body).append($('<div class="dark-overlay"></div>'));
+    const overlay = document.createElement('div');
+    overlay.classList.add('dark-overlay');
+
+    document.body.append(card);
+	document.body.append(overlay);
 }
 
 async function createWindow(route, action, name, options, onSuccess, multipart) {
@@ -207,7 +204,9 @@ async function createWindow(route, action, name, options, onSuccess, multipart) 
 
 // Удаляет все компоненты с модальными окнами
 function removeModalWindows() {
-	$('.modal, .dark-overlay').remove();
+    document.querySelectorAll('.modal, .dark-overlay').forEach(item => {
+        item.remove();
+    });
 }
 
 // Создаёт уведомление
@@ -244,6 +243,13 @@ async function getReportsBySubjectId(id) {
     const response = await fetch('/reports/read/'+id);
     const reports = await response.json();
     return reports;
+}
+
+// API: Возвращает все пароли
+async function getAllPasswords() {
+    const response = await fetch('/passwords/read');
+    const passwords = await response.json();
+    return passwords;
 }
 
 const notifyArea = document.getElementById('notifyArea');

@@ -9,6 +9,7 @@ use Pockit\Models\Subject;
 use Pockit\Models\Report;
 use Pockit\Models\Teacher;
 use Pockit\Models\WorkType;
+use Pockit\Models\Password;
 
 class ApiController {
 
@@ -33,6 +34,22 @@ class ApiController {
         }
         if (!isset($_POST['dateFor']) || $_POST['dateFor'] === '') {
             self::echoError('Не указана дата отчёта');
+            exit();
+        }
+    }
+    
+    // Проверяет запрос на создание/обновление пароля на правильность
+    private static function validatePassword() {
+        if (!isset($_POST['name']) || $_POST['name'] === '') {
+            self::echoError('Не введено название');
+            exit();
+        }
+        if (!isset($_POST['password']) || $_POST['password'] === '') {
+            self::echoError('Не указан пароль');
+            exit();
+        }
+        if (!isset($_POST['secretKey']) || $_POST['secretKey'] === '') {
+            self::echoError('Не указан секретный ключ');
             exit();
         }
     }
@@ -75,9 +92,17 @@ class ApiController {
 	
 	// Добавление пароля
 	public static function createPassword() {
-		$id = PasswordModel::create($_POST['name'], $_POST['password'], $_POST['key']);
-		$password = PasswordModel::getById($id);
-		echo json_encode($password);
+        self::validatePassword();
+        $em = Database::getEm();
+        $password = new Password();
+        $password->setName($_POST['name']);
+        $password->setPassword($_POST['password'], $_POST['secretKey']);
+        $password->setHidden(false);
+
+        $em->persist($password);
+        $em->flush();
+
+        echo json_encode(['ok'=>true, 'obj'=>$password->toArray()]);
 	}
 	#endregion
 
@@ -142,6 +167,21 @@ class ApiController {
         $output = [];
         foreach ($work_types as $wt) {
             $output[] = $wt->toArray();
+        }
+        echo json_encode($output);
+    }
+    
+    // Получение всех паролей
+    public static function readPassword() {
+        $em = Database::getEm();
+        $query = $em->createQuery(
+            'SELECT password FROM '.Password::class.' password WHERE password.hidden=false'
+        );
+        $passwords = $query->getResult();
+
+        $output = [];
+        foreach ($passwords as $p) {
+            $output[] = $p->toArray();
         }
         echo json_encode($output);
     }
@@ -243,7 +283,10 @@ class ApiController {
 	
 	// Удаление пароля
 	public static function deletePassword() {
-		PasswordModel::hideById($_GET['id']);
+		$em = Database::getEm();
+        $subject = $em->find(Password::class, $_GET['id']);
+        $subject->setHidden(true);
+        $em->flush();
 	}
 
 	// Удаление отчёта

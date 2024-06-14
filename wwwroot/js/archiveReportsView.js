@@ -54,7 +54,7 @@ function getReport(obj) {
     };
 
     const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Скрыть';
+    deleteButton.textContent = 'Удалить';
     deleteButton.classList.add('btn', 'danger');
     deleteButton.onclick = function() {
         crudDelete('reports', obj.id, 'report'+obj.id);
