@@ -5,14 +5,9 @@
     z-index: -1;
     width: 100%;
 	height: 100%;
-    background-position: center center;
+    background-color: var(--homeBgColor);
+    background-image: var(--homeBgImage);
     background-size: cover;
-    opacity: 0;
-    -webkit-transition: all 2s ease; 
-    -moz-transition: all 2s ease; 
-    -ms-transition: all 2s ease; 
-    -o-transition: all 2s ease;
-	object-fit: covert;
 }
 
 .breadcrumb {

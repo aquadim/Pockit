@@ -6,31 +6,20 @@ namespace Pockit\Views;
 class HomeView extends LayoutView {
 	protected $page_title = "Дом";
 	protected $welcome_text;
-	protected $background_image;
-	protected $background_color;
+	protected $bg;
 
 	protected function customHead() { ?>
 
 <link rel="stylesheet" href="/css/home.css"/>
-<link rel="preload" href="<?= $this->background_image ?>" as="image"/>
-
-<style>
-	body {
-		background-color: <?=$this->background_color?>;
-	}
-</style>
+<link rel="preload" href="/img/home/<?= $this->bg ?>" as="image"/>
 
 <?php }
 	
 	public function content() : void { ?>
 
-<img
-    src="<?= $this->background_image ?>"
-    onload="this.style.opacity=1"
-    id="bg"/>
-
+<div id="bg"></div>
 <span style='position:absolute;top:0px;right:0px;'>
-	<a style='color:#fff' href='/settings'>Настройки</a>
+	<a style='color:currentColor' href='/settings'>Настройки</a>
 </span>
 
 <div class='text-center' style='color: white; text-shadow: black 2px 2px; margin-top: 5rem;'>

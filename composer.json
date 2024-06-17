@@ -16,6 +16,9 @@
     "autoload": {
 	    "psr-4": {
 		    "Pockit\\": "src/"
-	    }
+	    },
+        "files": [
+            "src/Common/UtilFunctions.php"
+        ]
     }
 }

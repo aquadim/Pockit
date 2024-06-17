@@ -4,6 +4,7 @@
 namespace Pockit\Controllers;
 
 use Pockit\Common\Database;
+use Pockit\Common\SettingType;
 
 use Pockit\Models\Subject;
 use Pockit\Models\Report;
@@ -217,10 +218,7 @@ class ApiController {
 
         $output = [];
         foreach ($themes as $t) {
-            $p_array = $p->toArray();
-            // Оставляем всё кроме CSS
-            unset($p_array['css']);
-            $output[] = $p_array;
+            $output[] = $t->toArray();;
         }
         echo json_encode($output);
     }
@@ -343,7 +341,10 @@ class ApiController {
 
     // Удаление темы
     public static function deleteTheme() {
-        ThemeModel::deleteById($_GET['id']);
+        $em = Database::getEm();
+        $theme = $em->find(Theme::class, $_GET['id']);
+        $em->remove($theme);
+        $em->flush();
     }
 	#endregion
 
@@ -355,24 +356,7 @@ class ApiController {
 		}
 		
 		if (!is_uploaded_file($_FILES['themeFile']['tmp_name'])) {
-			switch ($_FILES['themeFile']['error']) {
-				case 0:
-					$msg = "Обнаружена проблема с вашим файлом.";
-					break;
-				case 1:
-				case 2:
-					$msg = "Слишком большой файл";
-					break;
-				case 3:
-					$msg = "Файл загружен только частично";
-					break;
-				case 4:
-					$msg = "Вы должны загрузить файл";
-					break;
-				default:
-					$msg = "Обнаружена проблема с вашим файлом";
-					break;
-			}
+			$msg = getFileUploadErrorText($_FILES['themeFile']['error']);
 			self::echoError($msg);
 			exit();
 		}
@@ -392,49 +376,109 @@ class ApiController {
 			exit();
 		}
 
-		// TODO: Чтение изображений домашней страницы
-		// TODO: Чтение изображений действий
-		// TODO: Чтение шрифтов
-        $zip->close();
+        $theme_spec = json_decode($theme_config, true);
+
+        // -- Проверка необходимых ключей --
+        $required_keys = [
+            'color-scheme',
+            'colors',
+            'homeBgSource',
+            'homeBgDest'];
+        foreach ($required_keys as $key) {
+            if (!isset($theme_spec[$key])) {
+                self::echoError('Повреждён файл темы. Не найден ключ '.$key);
+                exit();
+            }
+        }
 
         // -- Генерация CSS кода --
-        $theme_spec = json_decode($theme_config, true);
         $css = ':root{';
+        $color_keys = [
+            "accent", "crumbsBg", "crumbsFg", "pageBg", "pageFg",
+            "cardBg", "cardBorder", "formInputBg", "formInputHighlight",
+            "formInputFg", "formInputFocusedFg", "btnBg", "btnFg",
+            "btnBorder", "btnHoverBg", "btnHoverFg", "btnFocusBg",
+            "btnFocusFg", "btnDisabledBg", "btnDisabledFg", "btnDisabledBorder",
+            "listBg", "listBorder", "suggestedBg", "suggestedFg",
+            "suggestedHoverBg", "suggestedHoverFg", "suggestedFocusBg",
+            "suggestedFocusFg", "suggestedBorder", "destructiveBg",
+            "destructiveFg", "destructiveHoverBg", "destructiveHoverFg",
+            "destructiveFocusBg", "destructiveFocusFg", "destructiveBorder",
+            "sidebarBg", "sidebarWidth", "notifBg", "homeBgColor"
+        ];
         // color-scheme
         $css .= 'color-scheme: '.$theme_spec['color-scheme'].';';
         // --var
         foreach ($theme_spec['colors'] as $variable => $color_code) {
+            if (!in_array($variable, $color_keys)) {
+                // Ключ в теме какой то странный, такого не должно быть
+                // не продолжаем выполнение!
+                self::echoError(
+                    'Повреждён файл темы. Неизвестный ключ цвета '.
+                    htmlspecialchars($variable));
+                exit();
+            }
             $css .= '--'.$variable.':'.$color_code.';';
         }
+
+        // -- Изображение главной страницы --
+        $home_bg = $zip->getFromName($theme_spec['homeBgSource']);
+        file_put_contents(
+            index_dir.'/wwwroot/img/home/'.$theme_spec['homeBgDest'],
+            $home_bg);
+        $css .= '--homeBgImage:url("/img/home/'.$theme_spec['homeBgDest'].'");';
+        
+        $zip->close();
         $css .= '}';
 
         // Добавление в базу данных
-        $theme_id = ThemeModel::create(
-            $theme_spec['name'],
-            $theme_spec['author'],
-            $css);
-        $created_theme = ThemeModel::getById($theme_id);
-        echo json_encode(['ok' => true, 'object' => $created_theme]);
+        $theme = new Theme();
+        $theme->setName($theme_spec['name']);
+        $theme->setAuthor($theme_spec['author']);
+        $theme->setCss($css);
+        $theme->setHomeBgLocation($theme_spec['homeBgDest']);
+        $theme->setCanBeDeleted(true);
+
+        $em = Database::getEm();
+        $em->persist($theme);
+        $em->flush();
+        
+        echo json_encode(['ok' => true, 'obj' => $theme->toArray()]);
 	}
 
     // Активирует определённую тему
     public static function activateTheme($theme_id) {
         // Получаем CSS данные темы
-        $theme = ThemeModel::getById($theme_id);
+        $em = Database::getEm();
+        $theme = $em->find(Theme::class, $theme_id);
 
-        // Перезаписываем CSS файл
+        if ($theme === null) {
+            self::echoError('Тема не существует');
+            exit();
+        }
+
+        // Перезаписываем CSS файл темы
         if ($theme !== false) {
             file_put_contents(
                 index_dir . '/wwwroot/css/theme.css',
-                $theme['css']);
+                $theme->getCss());
         }
 
-        header("Location: /settings/themes");
+        // Устанавливаем настройку текущей темы
+        setSettingValue(SettingType::ActiveThemeId, $theme_id);
+
+        // Отправляем обратно, либо выводим сообщение об успехе
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            header('Location: '.$_SERVER['HTTP_REFERER']);
+        }
+        header('Content-Type: application/json');
+        echo json_encode(['ok'=>true]);
     }
 	#endregion
 
 	#region UTILS
 	private static function echoError(string $error_message) {
+        header('Content-Type: application/json');
 		echo json_encode(['ok'=>false, 'message'=>$error_message]);
 	}
 	#endregion

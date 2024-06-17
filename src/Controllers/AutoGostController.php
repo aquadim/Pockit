@@ -23,7 +23,7 @@ use Pockit\AutoGostSections\SubSection;
 
 use Pockit\Common\Database;
 use Pockit\Common\AgstException;
-use Pockit\Common\getErrorText;
+use Pockit\Common\getFileUploadErrorText;
 
 class AutoGostController {
 

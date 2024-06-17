@@ -46,7 +46,7 @@ body {
 	z-index: 1;
 }
 
-/* Уведомления */
+/*===Notifications===*/
 #notifyArea {
     position: fixed;
     top: 16px;
@@ -77,7 +77,7 @@ body {
     animation: slideToRight 0.5s forwards;
 }
 
-/* Cards */
+/*===Cards===*/
 .card {
 	background-color: var(--cardBg);
 	border: 1px solid var(--cardBorder);
@@ -102,18 +102,18 @@ body {
 	right: 0;
 	z-index: 2;
 }
-/* End Cards */
+/*===End Cards===*/
 
-/* Links */
+/*===Links===*/
 a {
 	text-decoration: underline;
 }
 a:hover {
 	text-decoration: none;
 }
-/* End Links */
+/*===End Links===*/
 
-/* Forms */
+/*===Forms===*/
 .form-control-container {
 	margin: 1em auto;
 	position: relative;
@@ -134,7 +134,7 @@ a:hover {
 .form-control:focus {
 	border-color: var(--formInputHighlight);
 }
-/* End Forms */
+/*===End Forms===*/
 
 /* Buttons */
 .btn,
@@ -147,7 +147,8 @@ input[type=file]::file-selector-button {
 	text-decoration: none;
 	margin: 0.1em;
 	font-size: 14px;
-	cursor: pointer;
+	cursor: auto;
+    user-select: none;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -172,6 +173,30 @@ input[type=file]::file-selector-button {
 .btn.selected {
 	background-color: var(--btnFocusBg);
 	color: var(--btnFocusFg);
+}
+.btn.danger:hover:enabled {
+	background-color: var(--destructiveHoverBg);
+	color: var(--destructiveHoverFg);
+}
+.btn.danger:active:enabled,
+.btn.danger:focus:enabled {
+	background-color: var(--destructiveFocusBg);
+	color: var(--destructiveFocusFg);
+}
+.btn.success:hover:enabled {
+	background-color: var(--suggestedHoverBg);
+	color: var(--suggestedHoverFg);
+}
+.btn.success:active:enabled,
+.btn.success:focus:enabled {
+	background-color: var(--suggestedFocusBg);
+	color: var(--suggestedFocusFg);
+}
+.btn:disabled {
+    background-color: #6B6B6B;
+    color: var(--btnDisabledFg);
+    border-color: #808080;
+    cursor: not-allowed;
 }
 /* End buttons */
 
@@ -274,46 +299,6 @@ input[type=file]::file-selector-button {
 	z-index: 1;
 }
 
-/*===Colors===*/
-.danger {
-	background-color: var(--destructiveBg);
-	border-color: var(--destructiveBorder);
-	color: var(--destructiveFg);
-}
-.btn.danger:hover {
-	background-color: var(--destructiveHoverBg);
-	color: var(--destructiveHoverFg);
-}
-.btn.danger:active,
-.btn.danger:focus {
-	background-color: var(--destructiveFocusBg);
-	color: var(--destructiveFocusFg);
-}
-
-.success {
-	background-color: var(--suggestedBg);
-	border-color: var(--suggestedBorder);
-	color: var(--suggestedFg);
-}
-.btn.success:hover {
-	background-color: var(--suggestedHoverBg);
-	color: var(--suggestedHoverFg);
-}
-.btn.success:active,
-.btn.success:focus {
-	background-color: var(--suggestedFocusBg);
-	color: var(--suggestedFocusFg);
-}
-
-.fg-accent {
-	color: var(--accent);
-}
-
-.border-accent {
-	border-color: var(--accent);
-}
-/*===/Colors===*/
-
 /*===Sizes===*/
 .w-100 {
 	width: 100%;
@@ -399,6 +384,25 @@ p.textwall {
 	width: 100%;
 	margin-top: 1em;
 }
+
+/*===Colors===*/
+.danger {
+	background-color: var(--destructiveBg);
+	border-color: var(--destructiveBorder);
+	color: var(--destructiveFg);
+}
+.success {
+	background-color: var(--suggestedBg);
+	border-color: var(--suggestedBorder);
+	color: var(--suggestedFg);
+}
+.fg-accent {
+	color: var(--accent);
+}
+.border-accent {
+	border-color: var(--accent);
+}
+/*===END Colors===*/
 
 @keyframes slideToLeft {
     0% {

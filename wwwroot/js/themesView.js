@@ -20,8 +20,12 @@ function getTheme(obj) {
     const btnDelete = document.createElement('button');
     btnDelete.textContent = 'Удалить навсегда';
     btnDelete.classList.add('btn', 'danger');
-    btnDelete.onclick = () => {
-        crudDelete('themes', obj.id, 'theme'+obj.id);
+    if (obj.canBeDeleted) {
+        btnDelete.onclick = () => {
+            crudDelete('themes', obj.id, 'theme'+obj.id);
+        }
+    } else {
+        btnDelete.disabled = 'disabled';
     }
 
     crudButtons.append(btnEnable);
@@ -37,9 +41,9 @@ const btnAddTheme = document.getElementById('btnAddTheme');
 
 window.onload = async function() {
     // Получить список всех тем
-    const themes = await getAllPasswords();
+    const themes = await getAllThemes();
     themes.forEach(function(obj) {
-        const theme = getPassword(obj);
+        const theme = getTheme(obj);
         lvThemes.append(theme);
     });
     lvThemes.classList.remove('hidden');

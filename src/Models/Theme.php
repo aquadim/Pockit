@@ -26,6 +26,11 @@ class Theme
     #[ORM\Column(type: "string")]
     private string $css;
 
+    // Расположение файла заднего фона стартовой страницы
+    // Относительно /wwwroot/img/home
+    #[ORM\Column(type: "string")]
+    private string $homebg_location;
+
     // Можно ли удалить
     #[ORM\Column(type: "boolean")]
     private bool $can_be_deleted;
@@ -125,9 +130,17 @@ class Theme
      *
      * @return bool
      */
-    public function isCanBeDeleted(): bool
+    public function canBeDeleted(): bool
     {
         return $this->can_be_deleted;
+    }
+
+    public function setHomeBgLocation(string $location) {
+        $this->homebg_location = $location;
+    }
+
+    public function getHomeBgLocation() : string {
+        return $this->homebg_location;
     }
 
     public function toArray() : array
@@ -138,6 +151,8 @@ class Theme
             'name' => $this->name,
             'author' => $this->author,
             'css' => $this->css,
+            'canBeDeleted' => $this->can_be_deleted,
+            'homeBgLocation' => $this->homebg_location,
             'repr' => $this->name.'@'.$this->author
         ];
     }
