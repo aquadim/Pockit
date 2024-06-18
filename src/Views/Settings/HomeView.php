@@ -11,7 +11,7 @@ class HomeView extends LayoutView {
 
 <div class='card m-1'>
 	<h1 class='text-center card-title'>Настройки</h1>
-    <div class='actions'>
+    <div class='actions shadowedFg'>
 
 		<div class='action'>
 			<img src="/img/actions/color.png"/>

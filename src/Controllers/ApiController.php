@@ -404,7 +404,7 @@ class ApiController {
             "suggestedFocusFg", "suggestedBorder", "destructiveBg",
             "destructiveFg", "destructiveHoverBg", "destructiveHoverFg",
             "destructiveFocusBg", "destructiveFocusFg", "destructiveBorder",
-            "sidebarBg", "sidebarWidth", "notifBg", "homeBgColor"
+            "sidebarBg", "sidebarWidth", "homeBgColor"
         ];
         // color-scheme
         $css .= 'color-scheme: '.$theme_spec['color-scheme'].';';

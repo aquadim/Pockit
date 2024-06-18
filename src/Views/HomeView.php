@@ -19,14 +19,14 @@ class HomeView extends LayoutView {
 
 <div id="bg"></div>
 <span style='position:absolute;top:0px;right:0px;'>
-	<a style='color:currentColor' href='/settings'>Настройки</a>
+	<a class='shadowedFg' href='/settings'>Настройки</a>
 </span>
 
-<div class='text-center' style='color: white; text-shadow: black 2px 2px; margin-top: 5rem;'>
-	<h1><?= $this->welcome_text ?></h1>
-	<h3>Выбери действие</h3>
+<div class='text-center' style='margin-top: 128px;'>
+	<h1 class='shadowedFg'><?= $this->welcome_text ?></h1>
+	<h3 class='shadowedFg'>Выбери действие</h3>
 
-	<div class='actions'>
+	<div class='actions shadowedFg'>
 
 		<div class='action'>
 			<img src="/img/actions/newReport.png"/>

@@ -1,1 +1,46 @@
-:root{color-scheme: light;--accent:#7B68EE;--crumbsBg:#D9D9D9;--crumbsFg:#0043FF;--pageBg:#fafafa;--pageFg:#2d2d32;--cardBg:#F2F2F2;--cardBorder:#C7C7C7;--formInputBg:#D4D4D4;--formInputHighlight:#BDBDBD;--formInputFg:#2d2d32;--formInputFocusedFg:#CCCCCC;--btnBg:#f1f3f4;--btnFg:#000;--btnBorder:#B0B2B3;--btnHoverBg:#d4d4d4;--btnHoverFg:#000;--btnFocusBg:#272727;--btnFocusFg:#000;--btnDisabledBg:#808080;--btnDisabledFg:#252525;--listBg:#eeeeec;--listBorder:#CCCCCA;--suggestedBg:#30A530;--suggestedFg:#ffffff;--suggestedBorder:#4A945B;--suggestedHoverBg:#3A662E;--suggestedHoverFg:#ffffff;--suggestedFocusBg:#25401D;--suggestedFocusFg:#ffffff;--destructiveBg:#D43F3F;--destructiveFg:#ffffff;--destructiveBorder:#C63535;--destructiveHoverBg:#B3365D;--destructiveHoverFg:#ffffff;--destructiveFocusBg:#411E1E;--destructiveFocusFg:#ffffff;--sidebarBg:#161616;--sidebarWidth:250px;--notifBg:#252525;--homeBgImage:url("/img/home/pockitLightHome.jpg");}
+:root {
+  color-scheme: dark;
+  --accent: #7b68ee;
+  --crumbsBg: #161616;
+  --crumbsFg: #338aff;
+  --pageBg: #1f1f1f;
+  --pageFg: #cccccc;
+  --cardBg: #252525;
+  --cardBorder: #666666;
+  --formInputBg: #333333;
+  --formInputHighlight: #4d4d4d;
+  --formInputFg: #bbbbbb;
+  --formInputFocusedFg: #cccccc;
+  --btnBg: #333333;
+  --btnFg: #e6e6e6;
+  --btnBorder: #404040;
+  --btnHoverBg: #4d4d4d;
+  --btnHoverFg: #e6e6e6;
+  --btnFocusBg: #272727;
+  --btnFocusFg: #ffffff;
+  --btnDisabledBg: #6b6b6b;
+  --btnDisabledFg: #252525;
+  --btnDisabledBorder: #808080;
+  --listBg: #1f1f1f;
+  --listBorder: #333;
+  --suggestedBg: #2b4b22;
+  --suggestedFg: #ffffff;
+  --suggestedHoverBg: #3a662e;
+  --suggestedHoverFg: #ffffff;
+  --suggestedFocusBg: #25401d;
+  --suggestedFocusFg: #ffffff;
+  --suggestedBorder: green;
+  --destructiveBg: #4b2224;
+  --destructiveFg: #ffffff;
+  --destructiveHoverBg: #803a3d;
+  --destructiveHoverFg: #ffffff;
+  --destructiveFocusBg: #411e1e;
+  --destructiveFocusFg: #ffffff;
+  --destructiveBorder: #733033;
+  --sidebarBg: #161616;
+  --sidebarWidth: 250px;
+  --shadowedFg: #E6E6E6;
+  --shadowedBg: #1f1f1f;
+  --homeBgColor: #39429f;
+  --homeBgImage: url("/img/home/pockitDarkHome.jpg");
+}
