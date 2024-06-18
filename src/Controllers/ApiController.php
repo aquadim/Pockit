@@ -404,7 +404,10 @@ class ApiController {
             "suggestedFocusFg", "suggestedBorder", "destructiveBg",
             "destructiveFg", "destructiveHoverBg", "destructiveHoverFg",
             "destructiveFocusBg", "destructiveFocusFg", "destructiveBorder",
-            "sidebarBg", "sidebarWidth", "homeBgColor"
+            "sidebarBg", "sidebarWidth", "homeBgColor", "agstFg", "agstBg",
+            "agstSelection", "agstGutterBg", "agstGutterFg", "agstKeyword",
+            "agstAttribute", "agstArgument", "agstComment", "agstActiveLine",
+            "shadowedFg", "shadowedBg"
         ];
         // color-scheme
         $css .= 'color-scheme: '.$theme_spec['color-scheme'].';';

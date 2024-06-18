@@ -194,6 +194,7 @@ async function editorToPreview() {
 
     // Некоторые кнопки недоступны
     btnAddImage.setAttribute("disabled", "disabled");
+    btnAddTable.setAttribute("disabled", "disabled");
 
     // Скрыть ошибки (но может они опять появятся)
     agstErrorsContainer.classList.add('hidden');
@@ -550,51 +551,41 @@ let editorEventHandlers = {
     },
     keyup: () => unsavedChanges = true
 }
-
-// Тема редактора
-const
-    ivory = "#b6c3cf",
-    background = "#3B3B3B",
-    cursor = "#E6E6FA",
-    selection = "#2f5692",
-    darkBackground = "#303030",
-    stone = "#7d8799";
     
 let agstTheme = EditorView.theme({
     "&": {
-    color: ivory,
-    backgroundColor: background
+        color: 'var(--agstFg)',
+        backgroundColor: 'var(--agstBg)'
     },
 
     ".cm-content": {
-        caretColor: cursor
+        caretColor: 'var(--agstFg)'
     },
 
-    ".cm-cursor, .cm-dropCursor": {borderLeftColor: cursor},
-    "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": {backgroundColor: selection},
-
-    ".cm-searchMatch": {
-        backgroundColor: "#C9BD3E",
-        outline: "2px solid #FF804C"
+    ".cm-cursor, .cm-dropCursor": {borderLeftColor: 'var(--agstFg)'},
+    "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground,\
+    .cm-selectionBackground, .cm-content ::selection": {
+        backgroundColor: 'var(--agstSelection)'
     },
 
-    ".cm-activeLine": {backgroundColor: "#4343437f"},
-    ".cm-selectionMatch": {backgroundColor: "#aafe661a"},
+    ".cm-activeLine": {
+        backgroundColor: "var(--agstActiveLine)"
+    },
 
     ".cm-gutters, .cm-activeLineGutter": {
-        backgroundColor: darkBackground,
-        color: stone,
+        backgroundColor: 'var(--agstGutterBg)',
+        color: 'var(--agstGutterFg)',
         border: "none"
     },
 }, {dark: true});
 
 // Тема синтаксиса
 let agstHighlightStyle = HighlightStyle.define([
-    {tag: tags.keyword, color: "#d58a4a"},
-    {tag: tags.separator, color: "#b6c3cf"},
-    {tag: tags.attributeValue, color: "#edc881"},
-    {tag: tags.labelName, color: "#a88ab6"},
-    {tag: tags.comment, color: "#919191"}
+    {tag: tags.keyword, color: "var(--agstKeyword)"},
+    {tag: tags.separator, color: "var(--agstFg)"},
+    {tag: tags.attributeValue, color: "var(--agstAttribute)"},
+    {tag: tags.labelName, color: "var(--agstArgument)"},
+    {tag: tags.comment, color: "var(--agstComment)"}
 ]);
 
 // Язык

@@ -368,7 +368,7 @@ input[type=file]::file-selector-button {
 /* Ключевое слово в помощи автогоста */
 .keyword {
 	font-family: monospace;
-	color: #D48A4A;
+	color: var(--agstKeyword);
 }
 
 /* Избежание стены текста */

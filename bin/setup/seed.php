@@ -54,14 +54,16 @@ function databaseSeed() {
     $dark_theme->setCanBeDeleted(false);
 
     // Светлая
-    //~ $light_theme = new Theme();
-    //~ $light_theme->setName('Pockit стандарт светлая');
-    //~ $light_theme->setAuthor('Разработчик');
-    //~ $light_theme_css = file_get_contents(__DIR__ . '/themes/dark.css');
-    //~ $light_theme->setCss($light_theme_css);
+    $light_theme = new Theme();
+    $light_theme->setName('Pockit стандарт светлая');
+    $light_theme->setAuthor('Разработчик');
+    $light_theme_css = file_get_contents(__DIR__ . '/themes/light.css');
+    $light_theme->setCss($light_theme_css);
+    $light_theme->setHomeBgLocation('pockitLight.jpg');
+    $light_theme->setCanBeDeleted(false);
 
     $em->persist($dark_theme);
-    //~ $em->persist($light_theme);
+    $em->persist($light_theme);
 
     // -- Настройки --
     // Id активной темы
