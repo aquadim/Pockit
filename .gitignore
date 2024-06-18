@@ -1,5 +1,6 @@
 *.geany
 vendor
+.env.old
 .env
 db.sqlite3
 node_modules

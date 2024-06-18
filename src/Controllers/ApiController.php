@@ -479,6 +479,56 @@ class ApiController {
     }
 	#endregion
 
+    #region OTHER
+    public static function welcomeRegister() {
+        // Проверить обязательные поля
+        if (!isset($_POST['surname']) || $_POST['surname'] === '') {
+            self::echoError('Не введена фамилия');
+            exit();
+        }
+        if (!isset($_POST['name']) || $_POST['name'] === '') {
+            self::echoError('Не введено имя');
+            exit();
+        }
+        if (!isset($_POST['patronymic']) || $_POST['patronymic'] === '') {
+            self::echoError('Не введено отчество');
+            exit();
+        }
+        if (!isset($_POST['group']) || $_POST['group'] === '') {
+            self::echoError('Не введена группа');
+            exit();
+        }
+        if (!isset($_POST['code']) || $_POST['code'] === '') {
+            self::echoError('Не введён шифр');
+            exit();
+        }
+        if ($_POST['code'][0] !== '.') {
+            self::echoError('Шифр не начинается с точки');
+            exit();
+        }
+
+        $env_contents =
+        'user_name=' . $_POST['name'] . "\n" .
+        'journal_login=' . $_POST['login'] . "\n" .
+        'journal_password=' . $_POST['password'] . "\n" .
+        "period_id=577\n" .
+        'autogost_group=' . $_POST['group'] . "\n" .
+        'autogost_code=' . $_POST['code'] . "\n" .
+        'autogost_surname=' . $_POST['surname'] . "\n" .
+        'autogost_full="' . $_POST['surname'] . ' ' .
+            mb_substr($_POST['name'], 0, 1) . '. ' .
+            mb_substr($_POST['patronymic'], 0, 1) . ".\"\n" .
+        "dsn=pdo-sqlite:///db.sqlite3\n".
+        "dev_mode=false";
+
+        file_put_contents(index_dir . '/.env', $env_contents);
+        
+        setSettingValue(SettingType::WelcomeSetupCompleted, 1);
+
+        echo json_encode(['ok'=>true]);
+    }
+    #endregion
+
 	#region UTILS
 	private static function echoError(string $error_message) {
         header('Content-Type: application/json');

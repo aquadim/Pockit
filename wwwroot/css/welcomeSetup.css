@@ -1,0 +1,6 @@
+.starFlight {
+    background-image: url(/img/stars.gif);
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: background-image 10s;
+}

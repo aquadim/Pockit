@@ -70,6 +70,8 @@ $router->register('/themes/create', 'Pockit\Controllers\ApiController::addThemeF
 $router->register('/themes/delete', 'Pockit\Controllers\ApiController::deleteTheme');
 $router->register('/themes/activate/{theme_id}', 'Pockit\Controllers\ApiController::activateTheme');
 
+$router->register('/api/welcomeRegister', 'Pockit\Controllers\ApiController::welcomeRegister');
+
 $router->register404('Pockit\Controllers\NotFoundController::index');
 
 return $router->handle($_SERVER['REQUEST_URI']);

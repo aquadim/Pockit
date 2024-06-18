@@ -66,8 +66,10 @@ function databaseSeed() {
     $em->persist($light_theme);
 
     // -- Настройки --
-    // Id активной темы
-    $settings = [1];
+    $settings = [
+        1, // Id активной темы
+        0  // Была ли выполнена первоначальная настройка
+    ];
     foreach ($settings as $setting) {
         $obj = new Setting();
         $obj->setValue($setting);

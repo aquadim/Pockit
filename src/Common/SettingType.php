@@ -5,4 +5,5 @@ namespace Pockit\Common;
 
 enum SettingType : int {
     case ActiveThemeId = 1;
+    case WelcomeSetupCompleted = 2;
 }

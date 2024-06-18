@@ -7,13 +7,23 @@ use Pockit\Common\Database;
 use Pockit\Common\SettingType;
 use Pockit\Views\HomeView;
 use Pockit\Views\AboutView;
+use Pockit\Views\WelcomeSetupView;
 use Pockit\Models\Theme;
 
 class HomeController {
 
 	// Главная домашняя страница
 	public static function index() {
-		// Определяем текст приветствия
+
+        $completed = getSettingValue(SettingType::WelcomeSetupCompleted);
+        if (!$completed) {
+            // Первоначальная настройка не выполнена, делаем
+            $view = new WelcomeSetupView();
+            $view->view();
+            return;
+        }
+
+        // Определяем текст приветствия
 		date_default_timezone_set('Europe/Kirov');
 		$now_hour = localtime(time(), true)['tm_hour'];
 
