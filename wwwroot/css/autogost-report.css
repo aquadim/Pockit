@@ -1,3 +1,8 @@
+@font-face{
+	font-family: 'gosttypeb';
+	src: url('/fonts/gosttypeb.ttf');
+}
+
 /*===Редактор разметки===*/
 
 /* Главная карточка */
@@ -71,7 +76,6 @@
 /*===/Редактор разметки===*/
 
 #agstOutput {
-	font-family: "Times New Roman";
 	background-color: var(--gray-3);
 	color: #aaaaaa;
 	font-size: 12pt;
@@ -79,6 +83,14 @@
 	overflow-y: visible;
 	line-height: 1.5;
 	min-height: 256px;
+}
+
+.fontTimes {
+    font-family: "Times New Roman";
+}
+
+.fontGostTypeB {
+    font-family: "gosttypeb";
 }
 
 .page {
@@ -211,6 +223,10 @@
 	body {
 		visibility: hidden;
 	}
+
+    a, .btn {
+        display: none;
+    }
 
 	#agstPreview {
 		display: block;

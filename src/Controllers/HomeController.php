@@ -23,6 +23,14 @@ class HomeController {
             return;
         }
 
+        // Получаем задний фон текущей темы
+        $em = Database::getEm();
+        $current_theme_id = getSettingValue(SettingType::ActiveThemeId);
+        $theme = $em->find(Theme::class, $current_theme_id);
+
+        // Получаем имя пользователя
+        $user_name = getSettingValue(SettingType::UserName);
+
         // Определяем текст приветствия
 		date_default_timezone_set('Europe/Kirov');
 		$now_hour = localtime(time(), true)['tm_hour'];
@@ -36,12 +44,7 @@ class HomeController {
 		} else {
 			$welcome_text = 'Добрый вечер';
 		}
-		$welcome_text .= ", ".$_ENV['user_name'];
-
-        // Получаем задний фон
-        $em = Database::getEm();
-        $current_theme_id = getSettingValue(SettingType::ActiveThemeId);
-        $theme = $em->find(Theme::class, $current_theme_id);
+		$welcome_text .= ", ".$user_name;        
 
 		$view = new HomeView([
 			"welcome_text" => $welcome_text,

@@ -24,6 +24,7 @@ use Pockit\AutoGostSections\SubSection;
 use Pockit\Common\Database;
 use Pockit\Common\AgstException;
 use Pockit\Common\getFileUploadErrorText;
+use Pockit\Common\SettingType;
 
 class AutoGostController {
 
@@ -108,9 +109,13 @@ class AutoGostController {
         $em = Database::getEm();
 		$report = $em->find(Report::class, $report_id);
         $subject = $report->getSubject();
+        $agst_surname = getSettingValue(SettingType::AgstSurname);
 		$filename =
         "Автогост - ".$subject->getName()." #".$report->getWorkNumber().
-        " - ".$_ENV['autogost_surname'];
+        " - ".$agst_surname;
+
+        // Узнаём какой шрифт надо применить
+        $use_gosttypeb = getSettingValue(SettingType::AgstUseGostTypeB) == true;
 
 		$view = new AutoGostEditView([
 			"page_title" => $filename,
@@ -121,7 +126,8 @@ class AutoGostController {
                 "Редактирование"=>""
             ],
 			"filename" => $filename,
-			"report_id" => $report_id
+			"report_id" => $report_id,
+            "use_gosttypeb" => $use_gosttypeb
 		]);
 		$view->view();
 	}
@@ -231,14 +237,15 @@ class AutoGostController {
 
 	// Возвращает файл HTML для скачивания
 	public static function jsHTML($report_id) {
-        $em         = Database::getEm();
-        $report     = $em->find(Report::class, $report_id);
-		$subject 	= $report->getSubject();
-		$work_type	= $report->getWorkType();
-		$teacher	= $subject->getTeacher();
-		$filename 	=
+        $em             = Database::getEm();
+        $report         = $em->find(Report::class, $report_id);
+		$subject 	    = $report->getSubject();
+		$work_type	    = $report->getWorkType();
+		$teacher	    = $subject->getTeacher();
+        $agst_surname   = getSettingValue(SettingType::AgstSurname);
+		$filename 	    =
         "Автогост - ".$subject->getName()." #".$report->getWorkNumber().
-        " - ".$_ENV['autogost_surname'];
+        " - ".$agst_surname;
 
 		header('Content-Type: text/html');
 		header('Content-Disposition: attachment; filename="'.$filename.'"');

@@ -2,6 +2,7 @@
 
 define('pockit_version', 2);
 define('index_dir', realpath(__DIR__ . '/..'));
+define('dsn', 'pdo-sqlite:///db.sqlite3');
 
 require_once index_dir."/vendor/autoload.php";
 
@@ -21,6 +22,3 @@ function userInput($prompt) : string {
 	displayMessage($prompt, COLOR_DEFAULT);
 	return rtrim(fgets(STDIN));
 }
-
-$dotenv = \Dotenv\Dotenv::createImmutable(index_dir);
-$dotenv->load();

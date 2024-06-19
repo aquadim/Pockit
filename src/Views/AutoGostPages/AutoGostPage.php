@@ -1,8 +1,9 @@
 <?php
-namespace Pockit\Views\AutoGostPages;
-
 // Страница отчёта Автогоста
 
+namespace Pockit\Views\AutoGostPages;
+
+use Pockit\Common\SettingType;
 use Pockit\Views\View;
 
 class AutoGostPage extends View {
@@ -43,13 +44,19 @@ class AutoGostPage extends View {
         $report
     )
     {
-        static::$work_code = $subject->getCode().$_ENV['autogost_code'];
+        // Получение данных из настроек
+        $code = getSettingValue(SettingType::AgstCode);
+        $surname = getSettingValue(SettingType::AgstSurname);
+        $agst_full = getSettingValue(SettingType::AgstFull);
+        $group = getSettingValue(SettingType::AgstGroup);
+        
+        static::$work_code = $subject->getCode().$code;
         static::$teacher_full = $teacher->getFullName();
-        static::$author_surname = $_ENV['autogost_surname'];
-        static::$author_full = $_ENV['autogost_full'];
+        static::$author_surname = $surname;
+        static::$author_full = $agst_full;
         static::$subject = $subject;
         static::$work_type = $work_type;
-        static::$author_group = $_ENV['autogost_group'];
+        static::$author_group = $group;
         static::$work_number = $report->getWorkNumber();
         static::$teacher_surname = $teacher->getSurname();
         static::$report_date = $report->getDateFor();

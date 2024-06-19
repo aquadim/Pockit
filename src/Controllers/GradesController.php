@@ -1,9 +1,10 @@
 <?php
-namespace Pockit\Controllers;
-
 // Контроллер оценок
 
+namespace Pockit\Controllers;
+
 use Pockit\Views\GradesView;
+use Pockit\Common\SettingType;
 
 class GradesController {
 
@@ -18,6 +19,10 @@ class GradesController {
 
 	// Сбор оценок
 	public static function collect() {
+
+        $login = getSettingValue(SettingType::JournalLogin);
+        $password = getSettingValue(SettingType::JournalPassword);
+        $period_id = getSettingValue(SettingType::JournalPeriodId);
 		
 		// Создаём разделяемый обработчик
 		$sh = curl_share_init();
@@ -28,13 +33,13 @@ class GradesController {
 		curl_setopt($auth, CURLOPT_COOKIEFILE, "");
 		curl_setopt($auth, CURLOPT_SHARE, $sh);
 		curl_setopt($auth, CURLOPT_POST, 1);
-		curl_setopt($auth, CURLOPT_POSTFIELDS, 'username='.$_ENV['journal_login'].'&userpass='.sha1($_ENV['journal_password']));
+		curl_setopt($auth, CURLOPT_POSTFIELDS, 'username='.$login.'&userpass='.sha1($password));
 		curl_setopt($auth, CURLOPT_ENCODING, 'windows-1251');
 		curl_setopt($auth, CURLOPT_RETURNTRANSFER, 1);
 		curl_exec($auth);
 
 		// Запрос на экспорт оценок
-		$grades = curl_init('http://avers.vpmt.ru:8081/region_pou/region.cgi/journal_och?page=1&marks=1&period_id='.$_ENV['period_id'].'&export=1');
+		$grades = curl_init('http://avers.vpmt.ru:8081/region_pou/region.cgi/journal_och?page=1&marks=1&period_id='.$period_id.'&export=1');
 		curl_setopt($grades, CURLOPT_COOKIEFILE, "");
 		curl_setopt($grades, CURLOPT_SHARE, $sh);
 		curl_setopt($grades, CURLOPT_RETURNTRANSFER, 1);

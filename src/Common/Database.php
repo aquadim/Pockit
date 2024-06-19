@@ -13,10 +13,10 @@ class Database {
     private $connection;
     private $entity_manager;
     
-    private function __construct($dsn) {
+    private function __construct() {
         // Подключение к БД
         $dsnParser = new DsnParser();
-        $connection_params = $dsnParser->parse($_ENV['dsn']);
+        $connection_params = $dsnParser->parse(dsn);
         $this->connection = DriverManager::getConnection($connection_params);
 
         // Получение менеджера сущностей
@@ -28,14 +28,14 @@ class Database {
     }
 
     // Инициализирует БД
-    public static function init($dsn): void {
-        self::$db = new Database($dsn);
+    public static function init(): void {
+        self::$db = new Database();
     }
 
     // Возвращает ссылку на $connection
     public static function getConnection() {
         if (self::$db == null) {
-            self::init($_ENV['dsn']);
+            self::init();
         }
         return self::$db->connection;
     }
@@ -43,7 +43,7 @@ class Database {
     // Возвращает ссылку на $entity_manager
     public static function getEM() {
         if (self::$db == null) {
-            self::init($_ENV['dsn']);
+            self::init();
         }
         return self::$db->entity_manager;
     }

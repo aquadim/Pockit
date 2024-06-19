@@ -5,7 +5,9 @@ namespace Pockit\Controllers;
 
 use Pockit\Views\Settings\HomeView;
 use Pockit\Views\Settings\ThemeView;
+use Pockit\Views\Settings\AutogostView;
 use Pockit\Models\ThemeModel;
+use Pockit\Common\SettingType;
 
 class SettingsController {
 
@@ -21,7 +23,7 @@ class SettingsController {
     // Настройки тем
 	public static function themes() {
 		$view = new ThemeView([
-            'page_title' => 'Настройки',
+            'page_title' => 'Настройки тем',
 			'crumbs' => [
                 'Главная' => '/',
                 'Настройки' => "/settings",
@@ -30,4 +32,13 @@ class SettingsController {
 		]);
 		$view->view();
 	}
+
+    // Настройка автогоста
+    public static function autogost() {
+        $use_gost_type_b = getSettingValue(SettingType::AgstUseGostTypeB);
+        $view = new AutogostView([
+            'use_gost_type_b' => $use_gost_type_b
+        ]);
+        $view->view();
+    }
 }

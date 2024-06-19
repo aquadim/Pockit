@@ -6,6 +6,7 @@ namespace Pockit\Views;
 class AutoGostEditView extends LayoutView {
 	protected $filename;
 	protected $report_id;
+    protected $use_gosttypeb;
 
 	public function customHead():void { ?>
 <link rel="stylesheet" href="/css/autogost-report.css">
@@ -59,7 +60,10 @@ const PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]
 				<p id="agstErrors"></p>
 			</div>
 			<!--Вывод HTML-->
-			<div id="agstOutput"></div>
+			<div
+                id="agstOutput"
+                class="<?= $this->use_gosttypeb ? 'fontGostTypeB' : 'fontTimes' ?>">
+            </div>
 		</div>
 		
 	</div>

@@ -17,6 +17,7 @@ $router->register('/about', 'Pockit\Controllers\HomeController::about');
 // Настройка
 $router->register('/settings', 'Pockit\Controllers\SettingsController::index');
 $router->register('/settings/themes', 'Pockit\Controllers\SettingsController::themes');
+$router->register('/settings/autogost', 'Pockit\Controllers\SettingsController::autogost');
 
 // Оценки
 $router->register('/grades', 'Pockit\Controllers\GradesController::index');
@@ -71,6 +72,7 @@ $router->register('/themes/delete', 'Pockit\Controllers\ApiController::deleteThe
 $router->register('/themes/activate/{theme_id}', 'Pockit\Controllers\ApiController::activateTheme');
 
 $router->register('/api/welcomeRegister', 'Pockit\Controllers\ApiController::welcomeRegister');
+$router->register('/api/saveAgstSettings', 'Pockit\Controllers\ApiController::saveAgstInfo');
 
 $router->register404('Pockit\Controllers\NotFoundController::index');
 
