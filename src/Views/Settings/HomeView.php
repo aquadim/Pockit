@@ -25,7 +25,7 @@ class HomeView extends LayoutView {
 
         <div class='action'>
 			<img src="/img/actions/aboutMe.png"/>
-			<a href="/settings/about">Обо мне<span class='stretched-link'></span></a>
+			<a href="/settings/aboutme">Обо мне<span class='stretched-link'></span></a>
 		</div>
 		
 	</div>

@@ -506,9 +506,6 @@ class ApiController {
             self::echoError('Шифр не начинается с точки');
             exit();
         }
-
-        $env_contents = "dsn=pdo-sqlite:///db.sqlite3\ndev_mode=false";
-        file_put_contents(index_dir . '/.env', $env_contents);
         
         setSettingValue(SettingType::WelcomeSetupCompleted, 1);
         setSettingValue(SettingType::UserName, $_POST['name']);
@@ -535,6 +532,54 @@ class ApiController {
         }
         setSettingValue(SettingType::AgstUseGostTypeB, $_POST['fontId']);
         echo json_encode(['ok'=>true]);
+    }
+
+    public static function saveAboutMe() {
+        // Проверка обязательных полей
+        if (!isset($_POST['surname']) || $_POST['surname'] === '') {
+            self::echoError('Не введена фамилия');
+            exit();
+        }
+        if (!isset($_POST['name']) || $_POST['name'] === '') {
+            self::echoError('Не введено имя');
+            exit();
+        }
+        if (!isset($_POST['patronymic']) || $_POST['patronymic'] === '') {
+            self::echoError('Не введено отчество');
+            exit();
+        }
+        if (!isset($_POST['group']) || $_POST['group'] === '') {
+            self::echoError('Не введена группа');
+            exit();
+        }
+        if (!isset($_POST['code']) || $_POST['code'] === '') {
+            self::echoError('Не введён шифр');
+            exit();
+        }
+        if ($_POST['code'][0] !== '.') {
+            self::echoError('Шифр не начинается с точки');
+            exit();
+        }
+
+        // Установка настроек
+        setSettingValue(SettingType::UserName, $_POST['name']);
+        setSettingValue(SettingType::JournalLogin, $_POST['login']);
+        setSettingValue(SettingType::JournalPeriodId, 577);
+        setSettingValue(SettingType::AgstGroup, $_POST['group']);
+        setSettingValue(SettingType::AgstCode, $_POST['code']);
+        setSettingValue(SettingType::AgstSurname, $_POST['surname']);
+        setSettingValue(SettingType::AgstFull,
+            $_POST['surname'] . ' ' .
+            mb_substr($_POST['name'], 0, 1) . '. ' .
+            mb_substr($_POST['patronymic'], 0, 1) . "."
+        );
+
+        // Если пароль менялся
+        if ($_POST['password'] !== '****') {
+            setSettingValue(SettingType::JournalPassword, $_POST['password']);
+        }
+
+        echo json_encode(['ok'=>true]);        
     }
     #endregion
 
