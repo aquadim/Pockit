@@ -179,19 +179,26 @@ input[type=file]::file-selector-button {
 	background-color: var(--btnFocusBg);
 	color: var(--btnFocusFg);
 }
+
+a.btn.danger:hover,
 .btn.danger:hover:enabled {
 	background-color: var(--destructiveHoverBg);
 	color: var(--destructiveHoverFg);
 }
+a.btn.danger:active,
+a.btn.danger:focus,
 .btn.danger:active:enabled,
 .btn.danger:focus:enabled {
 	background-color: var(--destructiveFocusBg);
 	color: var(--destructiveFocusFg);
 }
+a.btn.success:hover,
 .btn.success:hover:enabled {
 	background-color: var(--suggestedHoverBg);
 	color: var(--suggestedHoverFg);
 }
+a.btn.success:active,
+a.btn.success:focus,
 .btn.success:active:enabled,
 .btn.success:focus:enabled {
 	background-color: var(--suggestedFocusBg);
