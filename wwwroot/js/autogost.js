@@ -235,6 +235,7 @@ async function editorToMarkup() {
 	editorSection.classList.remove("hidden");
 	previewSection.classList.add("hidden");
     btnAddImage.removeAttribute("disabled");
+    btnAddTable.removeAttribute("disabled");
     previewOut.classList.add('hidden');
     editorLoader.classList.add('hidden');
     agstErrorsContainer.classList.add('hidden');
