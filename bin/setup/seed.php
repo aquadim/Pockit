@@ -59,7 +59,10 @@ function databaseSeed() {
     $light_theme->setAuthor('Разработчик');
     $light_theme_css = file_get_contents(__DIR__ . '/themes/light.css');
     $light_theme->setCss($light_theme_css);
-    $light_theme->setHomeBgLocation('pockitLight.jpg');
+    copy(
+        __DIR__ . '/themes/pockitLight.jpg',
+        index_dir . '/wwwroot/img/home/pockitLightHome.jpg');
+    $light_theme->setHomeBgLocation('pockitLightHome.jpg');
     $light_theme->setCanBeDeleted(false);
 
     $em->persist($dark_theme);
