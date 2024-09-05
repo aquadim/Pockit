@@ -49,8 +49,8 @@ function databaseSeed() {
     $dark_theme->setCss($dark_theme_css);
     copy(
         __DIR__ . '/themes/pockitDark.jpg',
-        index_dir . '/wwwroot/img/home/pockitDark.jpg');
-    $dark_theme->setHomeBgLocation('pockitDark.jpg');
+        index_dir . '/wwwroot/img/home/pockitDarkHome.jpg');
+    $dark_theme->setHomeBgLocation('pockitDarkHome.jpg');
     $dark_theme->setCanBeDeleted(false);
 
     // Светлая
