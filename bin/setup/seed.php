@@ -70,18 +70,18 @@ function databaseSeed() {
 
     // -- Настройки --
     $settings = [
-        1,                  // Id активной темы
-        0,                  // Была ли выполнена первоначальная настройка,
-        '<placeholder>',    // UserName
-        '<placeholder>',    // JournalLogin
-        '<placeholder>',    // JournalPassword
-        1,                  // JournalPeriodId
-        '<placeholder>',    // AgstGroup
-        '<placeholder>',    // AgstCode
-        '<placeholder>',    // AgstSurname
-        '<placeholder>',    // AgstFull
-        0,                  // AgstUseGostTypeB
-        // AgstNamingTemplate
+        1,                      // Id активной темы
+        0,                      // Была ли выполнена первоначальная настройка,
+        '<placeholder>',        // UserName
+        '<placeholder>',        // JournalLogin
+        '<placeholder>',        // JournalPassword
+        1,                      // JournalPeriodId
+        '<placeholder>',        // AgstGroup
+        '<placeholder>',        // AgstCode
+        '<placeholder>',        // AgstSurname
+        '<placeholder>',        // AgstFull
+        0,                      // AgstUseGostTypeB
+        'Автогост - %d #%n - %f'// AgstNamingTemplate
     ];
     foreach ($settings as $setting) {
         $obj = new Setting();
