@@ -15,4 +15,5 @@ enum SettingType : int {
     case AgstSurname = 9;
     case AgstFull = 10;
     case AgstUseGostTypeB = 11;
+    case AgstNamingTemplate = 12;
 }

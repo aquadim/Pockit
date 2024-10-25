@@ -12,33 +12,42 @@ use Pockit\Common\SettingType;
 
 class SettingsController {
 
-	// Главная страница настроек
-	public static function index() {
-		$view = new HomeView([
+    // Главная страница настроек
+    public static function index() {
+        $view = new HomeView([
             'page_title' => 'Настройки',
-			"crumbs" => ["Главная" => "/", "Настройки" => ""]
-		]);
-		$view->view();
-	}
+            "crumbs" => ["Главная" => "/", "Настройки" => ""]
+        ]);
+        $view->view();
+    }
 
     // Настройки тем
-	public static function themes() {
-		$view = new ThemeView([
+    public static function themes() {
+        $view = new ThemeView([
             'page_title' => 'Настройки тем',
-			'crumbs' => [
-                'Главная' => '/',
-                'Настройки' => "/settings",
-                'Темы' => ''
-            ]
-		]);
-		$view->view();
-	}
+            'crumbs' => [
+            'Главная' => '/',
+            'Настройки' => "/settings",
+            'Темы' => ''
+        ]
+        ]);
+        $view->view();
+    }
 
     // Настройка автогоста
     public static function autogost() {
         $use_gost_type_b = getSettingValue(SettingType::AgstUseGostTypeB);
+        $naming_template = getSettingValue(SettingType::AgstNamingTemplate);
+        if ($naming_template == null) {
+            $naming_template = "Автогост - %d #%n - %f";
+            setSettingValue(
+                SettingType::AgstNamingTemplate,
+                $naming_template
+            );
+        }
         $view = new AutogostView([
-            'use_gost_type_b' => $use_gost_type_b
+            'use_gost_type_b' => $use_gost_type_b,
+            'naming_template' => htmlspecialchars($naming_template)
         ]);
         $view->view();
     }

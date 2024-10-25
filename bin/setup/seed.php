@@ -80,7 +80,8 @@ function databaseSeed() {
         '<placeholder>',    // AgstCode
         '<placeholder>',    // AgstSurname
         '<placeholder>',    // AgstFull
-        0                   // AgstUseGostTypeB
+        0,                  // AgstUseGostTypeB
+        // AgstNamingTemplate
     ];
     foreach ($settings as $setting) {
         $obj = new Setting();

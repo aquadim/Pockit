@@ -24,20 +24,29 @@ function getFileUploadErrorText($error_code) {
 }
 }
 
-// Записывает настройку
+// Возвращает значение настройки
 if (!function_exists('getSettingValue')) {
 function getSettingValue(SettingType $setting) {
     $em = Database::getEm();
     $setting = $em->find(Setting::class, $setting->value);
+    if ($setting === null) {
+        return null;
+    }
     return $setting->getValue();
 }
 }
 
 // Возвращает значение настройки
 if (!function_exists('setSettingValue')) {
-function setSettingValue(SettingType $setting, string $new_value) {
+function setSettingValue(SettingType $setting_type, string $new_value) {
     $em = Database::getEm();
-    $setting = $em->find(Setting::class, $setting->value);
+    $setting = $em->find(Setting::class, $setting_type->value);
+    if ($setting === null) {
+        // В БД такой настройки нет, создаём
+        $setting = new Setting();
+        $setting->setId($setting_type->value);
+        $em->persist($setting);
+    }
     $setting->setValue($new_value);
     $em->flush();
 }

@@ -28,24 +28,24 @@ use Pockit\Common\SettingType;
 
 class AutoGostController {
 
-	// Применение правил подписи рисунков
-	// https://www.php.net/manual/ru/function.ucfirst.php#84122
-	private static function makeValidPictureTitle(string $title) : string {
-		return mb_strtoupper(mb_substr($title, 0, 1)) .
-			mb_strtolower(mb_substr($title, 1));
-	}
+    // Применение правил подписи рисунков
+    // https://www.php.net/manual/ru/function.ucfirst.php#84122
+    private static function makeValidPictureTitle(string $title) : string {
+        return mb_strtoupper(mb_substr($title, 0, 1)) .
+            mb_strtolower(mb_substr($title, 1));
+    }
 
-	// Помощь
-	public static function help() {
-		$view = new AutoGostHelpView([
-			"crumbs" => ["Главная" => "/", "Автогост: помощь" => ""]
-		]);
-		$view->view();
-	}
+    // Помощь
+    public static function help() {
+        $view = new AutoGostHelpView([
+            "crumbs" => ["Главная" => "/", "Автогост: помощь" => ""]
+        ]);
+        $view->view();
+    }
 
-	// Загрузка изображений
-	public static function uploadImage() {
-		if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
+    // Загрузка изображений
+    public static function uploadImage() {
+        if (!is_uploaded_file($_FILES['file']['tmp_name'])) {
             // Провал загрузки
             echo json_encode(
                 [
@@ -75,85 +75,101 @@ class AutoGostController {
             "filename"=> basename($filepath),
             "clientName" => pathinfo($_FILES['file']['name'], PATHINFO_FILENAME)
         ]);
-	}
+    }
 
-	// Список отчётов по дисциплине
-	public static function listReports($subject_id) {
-		$em = Database::getEm();
+    // Список отчётов по дисциплине
+    public static function listReports($subject_id) {
+        $em = Database::getEm();
 
         // Поиск предмета
-		$subject = $em->find(Subject::class, $subject_id);
+        $subject = $em->find(Subject::class, $subject_id);
 
-		$view = new AutoGostReportsView([
-			"page_title" => "Автогост: архив ".$subject->getMyName(),
-			"crumbs" => [
+        $view = new AutoGostReportsView([
+            "page_title" => "Автогост: архив ".$subject->getMyName(),
+            "crumbs" => [
                 "Главная" => "/",
                 "Автогост: дисциплины" => "/autogost/archive",
                 $subject->getMyName() => ""],
-			"subject" => $subject
-		]);
-		$view->view();
-	}
+            "subject" => $subject
+        ]);
+        $view->view();
+    }
 
-	// Архив отчётов
-	public static function archive() {
-		$view = new AutoGostArchiveView([
-			"page_title" => "Автогост: архив",
-			"crumbs" => ["Главная" => "/", "Автогост: дисциплины" => "/"]
-		]);
-		$view->view();
-	}
+    // Архив отчётов
+    public static function archive() {
+        $view = new AutoGostArchiveView([
+            "page_title" => "Автогост: архив",
+            "crumbs" => ["Главная" => "/", "Автогост: дисциплины" => "/"]
+        ]);
+        $view->view();
+    }
 
-	// Редактирование отчёта
-	public static function edit($report_id) {
-        $em = Database::getEm();
-		$report = $em->find(Report::class, $report_id);
-        $subject = $report->getSubject();
-        $agst_surname = getSettingValue(SettingType::AgstSurname);
-		$filename =
-        "Автогост - ".$subject->getName()." #".$report->getWorkNumber().
-        " - ".$agst_surname;
+    // Редактирование отчёта
+    public static function edit($report_id) {
+        $em             = Database::getEm();
+        $report         = $em->find(Report::class, $report_id);
+        $subject        = $report->getSubject();
+        $agst_surname   = getSettingValue(SettingType::AgstSurname);
+        $work_type      = $report->getWorkType();
+
+        // Построение имени на основании шаблона
+        $naming_template = getSettingValue(SettingType::AgstNamingTemplate);
+        if ($naming_template == null) {
+            $naming_template = "Автогост - %d #%n - %f";
+            setSettingValue(
+                SettingType::AgstNamingTemplate,
+                $naming_template
+            );
+        }
+        $subject_name   = $subject->getName();
+        $report_number  = $report->getWorkNumber();
+        $work_type_name = mb_strtolower($work_type->getNameNom());
+        $filename = str_replace(
+            ["%d", "%n", "%f", "%w"],
+            [$subject_name, $report_number, $agst_surname, $work_type_name],
+            $naming_template
+        );
 
         // Узнаём какой шрифт надо применить
         $use_gosttypeb = getSettingValue(SettingType::AgstUseGostTypeB) == true;
 
-		$view = new AutoGostEditView([
-			"page_title" => $filename,
-			"crumbs" => [
+        $view = new AutoGostEditView([
+            "page_title" => $filename,
+            "crumbs" => [
                 "Главная"=>"/",
                 "Автогост: дисциплины" => "/autogost/archive/",
                 $subject->getMyName() => "/autogost/archive/".$subject->getId(),
                 "Редактирование"=>""
             ],
-			"filename" => $filename,
-			"report_id" => $report_id,
+            "filename" => $filename,
+            "report_id" => $report_id,
             "use_gosttypeb" => $use_gosttypeb
-		]);
-		$view->view();
-	}
+        ]);
+        $view->view();
+    }
 
-	// Валидация создания отчёта
-	private static function validateCreation() {
-		if (mb_strlen($_POST["number"]) == 0) {
-			return 'Не указан номер работы';
-		}
+    // Валидация создания отчёта
+    private static function validateCreation() {
+        if (mb_strlen($_POST["number"]) == 0) {
+            return 'Не указан номер работы';
+        }
         if (!isset($_POST['date_for']) || mb_strlen($_POST['date_for']) == 0) {
             return 'Не указана дата документа';
         }
-		return true;
-	}
+        return true;
+    }
 
-	// Создание отчёта
-	public static function newReport() {
+    // Создание отчёта
+    public static function newReport() {
         $em = Database::getEm();
 
         if (!empty($_POST)) {
-			$response = self::validateCreation();
-			if ($response === true) {
-				// Валидация успешна
-				// Создаём запись
+            $response = self::validateCreation();
+            if ($response === true) {
+                // Валидация успешна
+                // Создаём запись
                 $subject = $em->find(Subject::class, $_POST['subject_id']);
-				$work_type = $em->find(WorkType::class, $_POST['work_type']);
+                $work_type = $em->find(WorkType::class, $_POST['work_type']);
 
                 $report = new Report();
                 $report->setSubject($subject);
@@ -174,17 +190,17 @@ class AutoGostController {
 
                 $report_id = $report->getId();
 
-				// Перенаправляем на предпросмотр этого отчёта
-				header("Location: /autogost/edit/".$report_id);
+                // Перенаправляем на предпросмотр этого отчёта
+                header("Location: /autogost/edit/".$report_id);
                 exit();
-				return;
-			} else {
-				// Валидация провалена
-				$error_text = $response;
-			}
-		} else {
-			$error_text = null;
-		}
+                return;
+            } else {
+                // Валидация провалена
+                $error_text = $response;
+            }
+        } else {
+            $error_text = null;
+        }
 
         // Поиск всех предметов
         $squery = $em->createQuery(
@@ -198,343 +214,343 @@ class AutoGostController {
         );
         $work_types = $wtquery->getResult();
 
-		// Дисциплина по умолчанию
-		if (isset($_GET['selected'])) {
-			$selected = $_GET['selected'];
-		} else {
-			$selected = -1;
-		}
-		
-		$view = new AutoGostNewReportView([
-			"page_title" => "Автогост: создание отчёта",
-			'subjects' => $subjects,
-			'work_types' => $work_types,
-			'error_text' => $error_text,
-			"crumbs" => ["Главная"=>"/", "Автогост: создание отчёта" => ""],
-			"selected" => $selected
-		]);
-		$view->view();
-	}
+        // Дисциплина по умолчанию
+        if (isset($_GET['selected'])) {
+            $selected = $_GET['selected'];
+        } else {
+            $selected = -1;
+        }
+        
+        $view = new AutoGostNewReportView([
+            "page_title" => "Автогост: создание отчёта",
+            'subjects' => $subjects,
+            'work_types' => $work_types,
+            'error_text' => $error_text,
+            "crumbs" => ["Главная"=>"/", "Автогост: создание отчёта" => ""],
+            "selected" => $selected
+        ]);
+        $view->view();
+    }
 
-	// Получение HTML
-	public static function getHtml($report_id) {
+    // Получение HTML
+    public static function getHtml($report_id) {
         $em         = Database::getEm();
         $report     = $em->find(Report::class, $report_id);
-		$subject 	= $report->getSubject();
-		$work_type	= $report->getWorkType();
-		$teacher	= $subject->getTeacher();
+        $subject    = $report->getSubject();
+        $work_type  = $report->getWorkType();
+        $teacher    = $subject->getTeacher();
 
-		try {
-			self::echoReportHTML($report, $subject, $work_type, $teacher);
-		} catch (AgstException $ex) {
-			http_response_code(400);
-			echo json_encode([
-				"line"=>$ex->getErrorLine(),
-				"text"=>$ex->getUserMessage()
-			]);
-		}
-	}
+        try {
+            self::echoReportHTML($report, $subject, $work_type, $teacher);
+        } catch (AgstException $ex) {
+            http_response_code(400);
+            echo json_encode([
+                "line"=>$ex->getErrorLine(),
+                "text"=>$ex->getUserMessage()
+            ]);
+        }
+    }
 
-	// Возвращает файл HTML для скачивания
-	public static function jsHTML($report_id) {
+    // Возвращает файл HTML для скачивания
+    public static function jsHTML($report_id) {
         $em             = Database::getEm();
         $report         = $em->find(Report::class, $report_id);
-		$subject 	    = $report->getSubject();
-		$work_type	    = $report->getWorkType();
-		$teacher	    = $subject->getTeacher();
+        $subject        = $report->getSubject();
+        $work_type      = $report->getWorkType();
+        $teacher        = $subject->getTeacher();
         $agst_surname   = getSettingValue(SettingType::AgstSurname);
-		$filename 	    =
+        $filename       =
         "Автогост - ".$subject->getName()." #".$report->getWorkNumber().
         " - ".$agst_surname;
 
-		header('Content-Type: text/html');
-		header('Content-Disposition: attachment; filename="'.$filename.'"');
+        header('Content-Type: text/html');
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-		// Читаем стили
-		$styles = file_get_contents(index_dir.'/wwwroot/css/portable.css');
+        // Читаем стили
+        $styles = file_get_contents(index_dir.'/wwwroot/css/portable.css');
 
-		// Добавляем структуру чтобы был нормальный HTML
-		echo '
+        // Добавляем структуру чтобы был нормальный HTML
+        echo '
         <!DOCTYPE html>
-		<html>
-			<head>
-				<style>'.
-				$styles // Стили
-				.'</style>
+        <html>
+            <head>
+                <style>'.
+                $styles // Стили
+                .'</style>
                 <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-			</head>
-		<body>';
+            </head>
+        <body>';
 
-		self::echoReportHTML($report, $subject, $work_type, $teacher, true);
+        self::echoReportHTML($report, $subject, $work_type, $teacher, true);
 
-		echo '</body></html>';
-	}
+        echo '</body></html>';
+    }
 
-	// Печатает HTML отчёта
-	private static function echoReportHTML(
-		$report, $subject, $work_type, $teacher, $img_as_b64=false)
-	{
-		$document 				= [];		// Секции документа
-		$current_img 			= 1; 		// Номер текущего рисунка
-		$current_section_index 	= -1;		// Индекс текущей секции в документе
-		$lines 					= explode("\n", $report->getMarkup());
-		$line_num 				= 0;		// Номер обрабатываемой строки
-		$page_added				= false;	// Добавлена ли какая-либо страница?
+    // Печатает HTML отчёта
+    private static function echoReportHTML(
+        $report, $subject, $work_type, $teacher, $img_as_b64=false)
+    {
+        $document               = [];       // Секции документа
+        $current_img            = 1;        // Номер текущего рисунка
+        $current_section_index  = -1;       // Индекс текущей секции в документе
+        $lines                  = explode("\n", $report->getMarkup());
+        $line_num               = 0;        // Номер обрабатываемой строки
+        $page_added             = false;    // Добавлена ли какая-либо страница?
 
-		// Является ли текущее выражение строкой таблицы?
-		$expr_is_table			= false;
-		// Номер текущей таблицы
-		$current_table			= 1;
-		// Разделитель данных текущей таблицы
-		$current_table_delim	= '';
-		// Номер строки, на которой объявлена текущая таблица
-		$current_table_line_num	= 0;
-		// Идентификатор текущей таблицы
-		$current_table_class	= '';
+        // Является ли текущее выражение строкой таблицы?
+        $expr_is_table          = false;
+        // Номер текущей таблицы
+        $current_table          = 1;
+        // Разделитель данных текущей таблицы
+        $current_table_delim    = '';
+        // Номер строки, на которой объявлена текущая таблица
+        $current_table_line_num = 0;
+        // Идентификатор текущей таблицы
+        $current_table_class    = '';
 
-		foreach ($lines as $expr) {
-			$line_num++;
-			if (mb_strlen($expr) == 0) {
-				continue;
-			}
+        foreach ($lines as $expr) {
+            $line_num++;
+            if (mb_strlen($expr) == 0) {
+                continue;
+            }
 
-			if (!$page_added && !self::isSectionCommand($expr)) {
-				// Ни одной страницы не было добавлено
-				// Сейчас добавляется НЕ страница
-				// Это ошибка
-				throw new AgstException(
-					"Необходимо добавить секции прежде чем писать разметку",
-					$line_num);
-			}
+            if (!$page_added && !self::isSectionCommand($expr)) {
+                // Ни одной страницы не было добавлено
+                // Сейчас добавляется НЕ страница
+                // Это ошибка
+                throw new AgstException(
+                    "Необходимо добавить секции прежде чем писать разметку",
+                    $line_num);
+            }
 
-			if ($expr[0] != "@") {
-				// Выражение - обычный текст
-				if ($expr_is_table) {
-					// Текущая строка - данные колонок таблиц
-					// Разделить текст на колонки в соответствии с
-					// current_table_delim
-					$columns = str_getcsv($expr, $current_table_delim);
-					$HTML = "<tr>";
-					foreach ($columns as $col) {
-						$HTML .= "<td>".$col."</td>";
-					}
-					$HTML .= "</tr>";
-				} else {
-					// Текущая строка - абзац текста
-					$HTML = "<p class='report-text'>".$expr."</p>";
-				}
+            if ($expr[0] != "@") {
+                // Выражение - обычный текст
+                if ($expr_is_table) {
+                    // Текущая строка - данные колонок таблиц
+                    // Разделить текст на колонки в соответствии с
+                    // current_table_delim
+                    $columns = str_getcsv($expr, $current_table_delim);
+                    $HTML = "<tr>";
+                    foreach ($columns as $col) {
+                        $HTML .= "<td>".$col."</td>";
+                    }
+                    $HTML .= "</tr>";
+                } else {
+                    // Текущая строка - абзац текста
+                    $HTML = "<p class='report-text'>".$expr."</p>";
+                }
 
-				$document[$current_section_index]->addHTML(
-					$HTML,
-					$line_num
-				);
-				
-				continue;
-			} else {
-				// Выражение - ключевое слово
+                $document[$current_section_index]->addHTML(
+                    $HTML,
+                    $line_num
+                );
+                
+                continue;
+            } else {
+                // Выражение - ключевое слово
 
-				if ($expr_is_table && $expr != "@endtable" && $expr != "@-") {
-					// Ключевое слово в таблице - нельзя
-					// Кроме: разрыв страницы (@-)
-					throw new AgstException(
-						"В разметке таблицы запрещены ключевые слова кроме ".
-						"разрыва таблицы (@-)",
-						$line_num
-					);
-				}
-			}
+                if ($expr_is_table && $expr != "@endtable" && $expr != "@-") {
+                    // Ключевое слово в таблице - нельзя
+                    // Кроме: разрыв страницы (@-)
+                    throw new AgstException(
+                        "В разметке таблицы запрещены ключевые слова кроме ".
+                        "разрыва таблицы (@-)",
+                        $line_num
+                    );
+                }
+            }
 
-			$command = explode(":", $expr);
-			$command_name = $command[0];
-			switch ($command_name) {
-				case "@titlepage":
-					// Титульный лист
-					$document[] = new TitleSection();
-					$current_section_index++;
-					$page_added = true;
-					break;
+            $command = explode(":", $expr);
+            $command_name = $command[0];
+            switch ($command_name) {
+                case "@titlepage":
+                    // Титульный лист
+                    $document[] = new TitleSection();
+                    $current_section_index++;
+                    $page_added = true;
+                    break;
 
-				case "@practicetitle":
-					// Титульный лист практики
-					$document[] = new PracticeTitleSection();
-					$current_section_index++;
-					$page_added = true;
-					break;
+                case "@practicetitle":
+                    // Титульный лист практики
+                    $document[] = new PracticeTitleSection();
+                    $current_section_index++;
+                    $page_added = true;
+                    break;
 
-				case "@section":
-					// Секция основной части
-					$document[] = new SubSection($command[1]);
-					$current_section_index++;
-					$page_added = true;
-					break;
+                case "@section":
+                    // Секция основной части
+                    $document[] = new SubSection($command[1]);
+                    $current_section_index++;
+                    $page_added = true;
+                    break;
 
-				case "@img":
-					// Изображение
+                case "@img":
+                    // Изображение
 
-					// Проверить количество аргументов - должно быть минимум 2
-					if (count($command) < 3) {
-						throw new AgstException(
-							"Недостаточно параметров для создания изображения. ".
-							"Укажите как минимум источник и подпись ".
-							"данных. Например: @img:источник:подпись",
-							$line_num
-						);
-					}
+                    // Проверить количество аргументов - должно быть минимум 2
+                    if (count($command) < 3) {
+                        throw new AgstException(
+                            "Недостаточно параметров для создания изображения. ".
+                            "Укажите как минимум источник и подпись ".
+                            "данных. Например: @img:источник:подпись",
+                            $line_num
+                        );
+                    }
 
-					if (mb_strlen($command[1]) == 0) {
-						throw new AgstException(
-							"Не указан источник изображения",
-							$line_num);
-					}
+                    if (mb_strlen($command[1]) == 0) {
+                        throw new AgstException(
+                            "Не указан источник изображения",
+                            $line_num);
+                    }
 
-					if (mb_strlen($command[2]) == 0) {
-						throw new AgstException(
-							"Не указана подпись изображения",
-							$line_num);
-					}
-					
-					if (count($command) >= 4) {
-						$imgwidth = "width='".$command[3]."'";
-					} else {
-						$imgwidth = "";
-					}
+                    if (mb_strlen($command[2]) == 0) {
+                        throw new AgstException(
+                            "Не указана подпись изображения",
+                            $line_num);
+                    }
+                    
+                    if (count($command) >= 4) {
+                        $imgwidth = "width='".$command[3]."'";
+                    } else {
+                        $imgwidth = "";
+                    }
 
-					$pictitle = self::makeValidPictureTitle($command[2]);
+                    $pictitle = self::makeValidPictureTitle($command[2]);
 
-					$path = index_dir.'/wwwroot/img/autogost/'.$command[1];
-					if (!file_exists($path)) {
-						throw new AgstException(
-							"Изображение по пути \"".$path."\" не найдено",
-							$line_num
-						);
-					}
+                    $path = index_dir.'/wwwroot/img/autogost/'.$command[1];
+                    if (!file_exists($path)) {
+                        throw new AgstException(
+                            "Изображение по пути \"".$path."\" не найдено",
+                            $line_num
+                        );
+                    }
 
-					if ($img_as_b64) {
-						$type = pathinfo($path, PATHINFO_EXTENSION);
-						$data = file_get_contents($path);
-						$src = 'data:image/' . $type . ';base64,' . base64_encode($data);
-					} else {
-						$src = '/img/autogost/'.$command[1];
-					}
+                    if ($img_as_b64) {
+                        $type = pathinfo($path, PATHINFO_EXTENSION);
+                        $data = file_get_contents($path);
+                        $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                    } else {
+                        $src = '/img/autogost/'.$command[1];
+                    }
 
-					$document[$current_section_index]->addHTML(
-						"<figure>
-							<img ".$imgwidth." src='".$src."'>
-							<figcaption>Рисунок ".$current_img." - ".$pictitle."</figcaption>
-						</figure>",
-						$line_num
-					);
-					$current_img++;
-					break;
+                    $document[$current_section_index]->addHTML(
+                        "<figure>
+                            <img ".$imgwidth." src='".$src."'>
+                            <figcaption>Рисунок ".$current_img." - ".$pictitle."</figcaption>
+                        </figure>",
+                        $line_num
+                    );
+                    $current_img++;
+                    break;
 
-				case "@@":
-					// Комментарий
-					break;
+                case "@@":
+                    // Комментарий
+                    break;
 
-				case "@/":
-				case "@-":
-					// Разрыв страницы
+                case "@/":
+                case "@-":
+                    // Разрыв страницы
 
-					if ($expr_is_table) {
-						// Разрыв страницы в таблице
-						// Надо закрыть тэг таблицы, а после добавления страницы
-						// Добавить абзац с текстом продолжения
-						$document[$current_section_index]->addHTML(
-							"</table>",
-							$line_num);
-					}
+                    if ($expr_is_table) {
+                        // Разрыв страницы в таблице
+                        // Надо закрыть тэг таблицы, а после добавления страницы
+                        // Добавить абзац с текстом продолжения
+                        $document[$current_section_index]->addHTML(
+                            "</table>",
+                            $line_num);
+                    }
 
-					$document[$current_section_index]->pageBreak($line_num);
-					$page_added = true;
+                    $document[$current_section_index]->pageBreak($line_num);
+                    $page_added = true;
 
-					if ($expr_is_table) {
-						// Продолжение таблицы
-						$document[$current_section_index]->addHTML(
-							'<p>Продолжение таблицы '.$current_table.'</p>'.
-							'<table class="'.$current_table_class.'">',
-							$line_num);
-					}
-					break;
+                    if ($expr_is_table) {
+                        // Продолжение таблицы
+                        $document[$current_section_index]->addHTML(
+                            '<p>Продолжение таблицы '.$current_table.'</p>'.
+                            '<table class="'.$current_table_class.'">',
+                            $line_num);
+                    }
+                    break;
 
-				case "@table":
-					// Начало таблицы
+                case "@table":
+                    // Начало таблицы
 
-					// Проверить количество аргументов - должно быть минимум 2
-					if (count($command) < 3) {
-						throw new AgstException(
-							"Недостаточно параметров для создания таблицы. ".
-							"Укажите как минимум название и разделитель ".
-							"данных. Например: @table:подпись:,",
-							$line_num
-						);
-					}
+                    // Проверить количество аргументов - должно быть минимум 2
+                    if (count($command) < 3) {
+                        throw new AgstException(
+                            "Недостаточно параметров для создания таблицы. ".
+                            "Укажите как минимум название и разделитель ".
+                            "данных. Например: @table:подпись:,",
+                            $line_num
+                        );
+                    }
 
-					if (mb_strlen($command[1]) == 0) {
-						throw new AgstException(
-							"Не указана подпись таблицы",
-							$line_num);
-					}
+                    if (mb_strlen($command[1]) == 0) {
+                        throw new AgstException(
+                            "Не указана подпись таблицы",
+                            $line_num);
+                    }
 
-					if (mb_strlen($command[2]) == 0) {
-						throw new AgstException(
-							"Не указан разделитель данных в таблице",
-							$line_num);
-					}
-					
-					$expr_is_table = true;
-					$current_table_delim = $command[2];
-					$current_table_line_num = $line_num;
-					$current_table_class = uniqid('table');
+                    if (mb_strlen($command[2]) == 0) {
+                        throw new AgstException(
+                            "Не указан разделитель данных в таблице",
+                            $line_num);
+                    }
+                    
+                    $expr_is_table = true;
+                    $current_table_delim = $command[2];
+                    $current_table_line_num = $line_num;
+                    $current_table_class = uniqid('table');
 
-					$document[$current_section_index]->addHTML(
-						"<p>Таблица ".$current_table.' - '.
-						self::makeValidPictureTitle($command[1])."</p>".
-						"<table class=".$current_table_class.">",
-						$line_num
-					);
-					break;
+                    $document[$current_section_index]->addHTML(
+                        "<p>Таблица ".$current_table.' - '.
+                        self::makeValidPictureTitle($command[1])."</p>".
+                        "<table class=".$current_table_class.">",
+                        $line_num
+                    );
+                    break;
 
-				case "@endtable";
-					// Конец таблицы
-					$expr_is_table = false;
+                case "@endtable";
+                    // Конец таблицы
+                    $expr_is_table = false;
 
-					$document[$current_section_index]->addHTML(
-						"</table>",
-						$line_num
-					);
-					break;
-				
-				default:
-					throw new AgstException(
-						"Неизвестная команда: ".$command_name,
-						$line_num
-					);
-					break;
-			}
-		}
+                    $document[$current_section_index]->addHTML(
+                        "</table>",
+                        $line_num
+                    );
+                    break;
+                
+                default:
+                    throw new AgstException(
+                        "Неизвестная команда: ".$command_name,
+                        $line_num
+                    );
+                    break;
+            }
+        }
 
-		if ($expr_is_table) {
-			// Отчёт закончился, а таблица не закрыта!
-			throw new AgstException(
-				"Таблица, объявленная на строке ".$current_table_line_num.
-				" не закрыта",
-				$line_num
-			);
-		}
+        if ($expr_is_table) {
+            // Отчёт закончился, а таблица не закрыта!
+            throw new AgstException(
+                "Таблица, объявленная на строке ".$current_table_line_num.
+                " не закрыта",
+                $line_num
+            );
+        }
 
-		AutoGostPage::init(
-			$subject,
-			$teacher,
-			$work_type,
-			$report
-		);
-		foreach ($document as $section) {
-			$section->output();
-		}
-	}
+        AutoGostPage::init(
+            $subject,
+            $teacher,
+            $work_type,
+            $report
+        );
+        foreach ($document as $section) {
+            $section->output();
+        }
+    }
 
-	// Проверка: является ли строка командой добавления секции
-	private static function isSectionCommand(string $expr) : bool {
-		return preg_match('/^@(titlepage|practicetitle|section)/', $expr) === 1;
-	}
+    // Проверка: является ли строка командой добавления секции
+    private static function isSectionCommand(string $expr) : bool {
+        return preg_match('/^@(titlepage|practicetitle|section)/', $expr) === 1;
+    }
 }

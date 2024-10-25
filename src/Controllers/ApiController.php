@@ -530,7 +530,12 @@ class ApiController {
             self::echoError('Не выбрано значение для шрифта в отчётах');
             exit();
         }
+        if (!isset($_POST['namingTemplate']) || $_POST['namingTemplate'] === '') {
+            self::echoError('Не заполнен шаблон наименования');
+            exit();
+        }
         setSettingValue(SettingType::AgstUseGostTypeB, $_POST['fontId']);
+        setSettingValue(SettingType::AgstNamingTemplate, $_POST['namingTemplate']);
         echo json_encode(['ok'=>true]);
     }
 

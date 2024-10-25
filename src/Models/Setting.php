@@ -23,6 +23,11 @@ class Setting
         return $this->id;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     public function setValue(string $value)
     {
         $this->value = $value;

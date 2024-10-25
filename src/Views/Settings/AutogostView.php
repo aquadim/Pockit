@@ -13,6 +13,7 @@ class AutogostView extends LayoutView {
         'Автогост' => ''
     ];
     protected $use_gost_type_b;
+    protected $naming_template;
 
     public function customScripts() : void { ?>
 <script src='/js/agstSettings.js'></script>
@@ -24,7 +25,7 @@ class AutogostView extends LayoutView {
 
     <form action="/api/saveAgstSettings" method="post" id='formMain'>
         <div class="form-control-container">
-			<label for="selFont">Шрифт в отчётах</label>
+            <label for="selFont">Шрифт в отчётах</label>
             <select
                 class="form-control"
                 id="selFont"
@@ -43,7 +44,21 @@ class AutogostView extends LayoutView {
                 отображаться неправильно. Возможно понадобится расставить
                 маркеры разрыва страниц заново.
             </p>
-		</div>
+        </div>
+
+        <div class="form-control-container">
+            <label for="selFont">Шаблон наименования отчётов</label>
+            <input
+                class="form-control"
+                id="inpNamingTemplate"
+                name="namingTemplate"
+                value="<?= $this->naming_template ?>"
+                autocomplete="off"/>
+            <p>%d - имя дисциплины</p>
+            <p>%n - номер работы</p>
+            <p>%f - твоя фамилия</p>
+            <p>%w - тип работы</p>
+        </div>
 
         <button class='btn success w-100'>Сохранить</button>
     </form>

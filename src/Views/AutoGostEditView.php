@@ -16,7 +16,7 @@ class AutoGostEditView extends LayoutView {
 
 <script>
 const PHP_report_id = <?= $this->report_id ?>;
-const PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
+const PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\,+$~%'":*?<>{}]/g, "");
 </script>
 
 <script src="/js/autogost.bundle.js"></script>
