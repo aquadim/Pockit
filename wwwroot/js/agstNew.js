@@ -1,4 +1,5 @@
 const btnAddSubject = document.getElementById('btnAddSubject');
+const selSubjectId = document.getElementById('sel-subject_id');
 
 let teachers;
 
@@ -17,7 +18,11 @@ btnAddSubject.onclick = async function() {
         },
         'Добавление дисциплины',
         function(obj) {
-            lvSubjects.append(getSubject(obj));
+            const opt = document.createElement('option');
+            opt.value = obj.id;
+            opt.textContent = obj.repr;
+            opt.selected = true;
+            selSubjectId.append(opt);
             notify('Успешно создано', 'success');
         },
         false
