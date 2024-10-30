@@ -4,12 +4,12 @@ namespace Pockit\Views;
 // Страница помощи Автогоста
 
 class AutoGostHelpView extends LayoutView {
-    protected $page_title = 'Помощь автогоста';
+    protected $page_title = 'Справка Автогоста';
 
     public function content():void { ?>
 
 <div class='card m-3'>
-    <h1 class='text-center card-title'>Помощь автогоста</h1>
+    <h1 class='text-center card-title'>Справка Автогоста</h1>
 
     <h3 class='textwall'>Общая информация</h3>
     <p class='textwall'>
@@ -37,11 +37,7 @@ class AutoGostHelpView extends LayoutView {
     </ul>
     <p class='textwall'>
         На каждой строке распологается отдельный <span class='fg-accent'>абзац
-        текста</span>. Вы не можете писать текст до любого из маркеров страницы,
-        так как Автогост не знает какой странице/секции принадлежит текст.
-        В случае если вы случайно написали текст до маркеров страницы,
-        Автогост выдаст сообщение об ошибке и строку, на которой она была
-        найдена.
+        текста</span>.
     </p>
 
     <h3 class='textwall'>Вставка изображений</h3>
@@ -49,12 +45,12 @@ class AutoGostHelpView extends LayoutView {
         Вставлять изображения можно несколькими способами:
     </p>
     <ul class='textwall'>
-        <li>Вручную прописать ключевое слово <span class='keyword'>@img</span>,
-        указав источник и подпись</li>
-        <li>Скопировать изображение и вставить в редактор языка</li>
+        <li>Скопировать изображение и вставить в редактор</li>
         <li>
             Нажать на кнопку "Добавить изображения" и выбрать необходимые файлы
         </li>
+        <li>Вручную прописать ключевое слово <span class='keyword'>@img</span>,
+        указав источник и подпись (не рекомендуется)</li>
     </ul>
 
     <h3 class='textwall'>Вставка таблиц</h3>

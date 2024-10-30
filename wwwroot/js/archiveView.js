@@ -79,9 +79,9 @@ btnAdd.onclick = async function() {
     crudCreateShowWindow(
         'subjects',
         {
-            'Название': {type: "plain", name: "name"},
+            'Название для титульных листов': {type: "plain", name: "name"},
             'Название в программе': {type: "plain", name: "myName"},
-            'Шифр без точки на конце': {type: "plain", name: "code"},
+            'Шифр дисциплины без точки на конце (например МДК.05.02)': {type: "plain", name: "code"},
             'Преподаватель': {type: 'select', name: "teacherId", options: teachers}
         },
         'Добавление дисциплины',

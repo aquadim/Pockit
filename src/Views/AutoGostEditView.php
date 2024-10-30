@@ -30,13 +30,13 @@ const PHP_filename = "<?= $this->filename ?>".replace(/[&\/\\,+$~%'":*?<>{}]/g, 
 
 		<button class='btn success' id='saveMarkupButton'>Сохранить</button>
 		<button class='btn' id="printReport">Печать</button>
+		<a class='btn' href="/autogost/help" target="_blank">
+			Справка Автогоста
+		</a>
 		<button class='btn' id="getFilename">Скопировать название файла</button>
 		<a href="/autogost/jshtml/<?= $this->report_id ?>" class='btn' id='btnGetHTML'>Скачать HTML</a>
         <button class='btn' id='btnAddImage'>Добавить изображения</button>
 		<button class='btn' id='btnAddTable'>Добавить таблицу</button>
-		<a class='btn' href="/autogost/help" target="_blank">
-			Помощь
-		</a>
 		<button class='btn' id='switchPreview'>Превью</button>
 		<button class='btn border-accent' id='switchMarkup'>Разметка</button>
 		

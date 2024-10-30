@@ -30,7 +30,6 @@ class LayoutView extends View {
 	protected function customScripts() {}
 	
 	public function view() : void { ?>
-
 <!DOCTYPE html>
 <html lang="ru">
 	<head>

@@ -9,6 +9,10 @@ class AutoGostNewReportView extends LayoutView {
 	protected $error_text;
 	protected $selected;
 
+	protected function customScripts() : void { ?>
+		<script src="/js/agstNew.js"></script>
+<?php }
+
 	protected function content():void { ?>
 
 <div class="card m-1">
@@ -22,16 +26,28 @@ class AutoGostNewReportView extends LayoutView {
 
 	<form action="/autogost/new" method="POST">
 		<div class="form-control-container">
-			<label for="sel-subject_id">Предмет</label>
-			<select class="form-control" id="sel-subject_id" name="subject_id">
-				<?php foreach ($this->subjects as $s) { ?>
-					<option
-                        value="<?= $s->getId() ?>"
-                        <?= $s->getId() == $this->selected ? "selected" : '' ?>>
-                        <?= $s->getMyName() ?>
-                    </option>
-				<?php } ?>
-			</select>
+			<label for="sel-subject_id">Дисциплина</label>
+			<div style="display: flex">
+				<select
+					class="form-control"
+					id="sel-subject_id"
+					style="flex: 1; margin-right: 1em;"
+					name="subject_id">
+
+					<?php foreach ($this->subjects as $s) { ?>
+						<option
+							value="<?= $s->getId() ?>"
+							<?= $s->getId() == $this->selected ? "selected" : '' ?>>
+							<?= $s->getMyName() ?>
+						</option>
+					<?php } ?>
+				</select>
+				<button
+					type="button"
+					id="btnAddSubject"
+					class="btn"
+					>Добавить дисциплину</button>
+			</div>
 		</div>
 
 		<div class="form-control-container">

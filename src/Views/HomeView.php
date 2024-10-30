@@ -11,7 +11,6 @@ class HomeView extends LayoutView {
 	protected function customHead() { ?>
 
 <link rel="stylesheet" href="/css/home.css"/>
-<link rel="preload" href="/img/home/<?= $this->bg ?>" as="image"/>
 
 <?php }
 	

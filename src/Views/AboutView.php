@@ -38,7 +38,7 @@ class AboutView extends LayoutView {
                 Техбот
             </a>
         </p>
-        <p class='textwall'>Версия: <span class="fg-accent">1.0.1</span></p>
+        <p class='textwall'>Версия: <span class="fg-accent">1.0.2</span></p>
         
     </div>
         

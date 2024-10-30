@@ -96,9 +96,9 @@ body {
 	margin: 0.5em;
 }
 .card.error {
-	background-color: #4B2224;
-	border-color: red;
-	color: #f9fbf8;
+	background-color: var(--destructiveBg);
+	border-color: var(--destructiveBorder);
+	color: var(--destructiveFg);
 }
 .card.modal {
 	position: fixed;
