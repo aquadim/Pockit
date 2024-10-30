@@ -413,7 +413,7 @@ btnAddTable.onclick = async function() {
     delimInput.id = 'inpDelimeter';
     delimInput.classList.add('form-control');
     delimInput.type = 'text';
-    delimInput.value = ',';
+    delimInput.value = ';';
     delimInput.placeholder = 'Каким символом отделяются колонки';
 
     // Подпись

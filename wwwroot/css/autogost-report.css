@@ -225,7 +225,7 @@
 	}
 
     a, .btn, #agstEditor {
-        visibility: collapse;
+        display: none;
     }
 
 	#agstPreview {
